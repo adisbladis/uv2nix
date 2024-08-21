@@ -1,0 +1,21 @@
+[book]
+authors = ["adisbladis"]
+language = "en"
+multilingual = false
+src = "src"
+title = "uv2nix"
+
+[preprocessor.nixdoc]
+command = "mdbook-nixdoc"
+
+[preprocessor.open-on-gh]
+command = "mdbook-open-on-gh"
+renderer = ["html"]
+
+[output.html]
+git-repository-url = "https://github.com/adisbladis/uv2nix"
+git-branch = "master"
+open-on-text = """
+<hr style="margin-top: 5em;" />
+Found an issue? [Edit this page on GitHub.]
+"""
