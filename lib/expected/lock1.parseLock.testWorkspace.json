@@ -1,0 +1,17 @@
+{
+  "manifest": {
+    "members": [
+      "workspace",
+      "workspace-package"
+    ]
+  },
+  "options": {
+    "exclude-newer": null,
+    "prerelease-mode": null,
+    "resolution-mode": null
+  },
+  "requires-python": [],
+  "resolution-markers": [],
+  "supported-markers": [],
+  "version": 1
+}

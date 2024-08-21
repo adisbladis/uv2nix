@@ -1,0 +1,17 @@
+{
+  "manifest": {
+    "members": [
+      "pkg-a",
+      "pkg-b"
+    ]
+  },
+  "options": {
+    "exclude-newer": null,
+    "prerelease-mode": null,
+    "resolution-mode": null
+  },
+  "requires-python": [],
+  "resolution-markers": [],
+  "supported-markers": [],
+  "version": 1
+}

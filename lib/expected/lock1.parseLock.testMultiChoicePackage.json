@@ -1,0 +1,67 @@
+{
+  "manifest": {
+    "members": []
+  },
+  "options": {
+    "exclude-newer": null,
+    "prerelease-mode": null,
+    "resolution-mode": null
+  },
+  "requires-python": [],
+  "resolution-markers": [
+    {
+      "lhs": {
+        "type": "variable",
+        "value": "platform_release"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "5.10.65"
+      },
+      "type": "compare"
+    },
+    {
+      "lhs": {
+        "type": "variable",
+        "value": "platform_release"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "5.10.104"
+      },
+      "type": "compare"
+    },
+    {
+      "lhs": {
+        "lhs": {
+          "type": "variable",
+          "value": "platform_release"
+        },
+        "op": "!=",
+        "rhs": {
+          "type": "string",
+          "value": "5.10.104"
+        },
+        "type": "compare"
+      },
+      "op": "and",
+      "rhs": {
+        "lhs": {
+          "type": "variable",
+          "value": "platform_release"
+        },
+        "op": "!=",
+        "rhs": {
+          "type": "string",
+          "value": "5.10.65"
+        },
+        "type": "compare"
+      },
+      "type": "boolOp"
+    }
+  ],
+  "supported-markers": [],
+  "version": 1
+}

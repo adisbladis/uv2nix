@@ -1,0 +1,59 @@
+{
+  "dependencies": [],
+  "dev-dependencies": {},
+  "metadata": {
+    "requires-dev": {},
+    "requires-dist": [
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "string",
+            "value": "haxx"
+          },
+          "type": "compare"
+        },
+        "name": "arpeggio",
+        "path": null,
+        "specifier": null,
+        "url": null
+      }
+    ]
+  },
+  "name": "optional-deps",
+  "optional-dependencies": {
+    "haxx": [
+      {
+        "marker": null,
+        "name": "arpeggio"
+      }
+    ]
+  },
+  "resolution-markers": [],
+  "sdist": {},
+  "source": {
+    "editable": "."
+  },
+  "version": "0.1.0",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      0,
+      1,
+      0
+    ]
+  },
+  "wheels": []
+}

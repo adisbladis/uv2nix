@@ -1,0 +1,64 @@
+{
+  "manifest": {
+    "members": []
+  },
+  "options": {
+    "exclude-newer": null,
+    "prerelease-mode": null,
+    "resolution-mode": null
+  },
+  "requires-python": [],
+  "resolution-markers": [
+    {
+      "lhs": {
+        "type": "variable",
+        "value": "sys_platform"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "darwin"
+      },
+      "type": "compare"
+    },
+    {
+      "lhs": {
+        "type": "variable",
+        "value": "sys_platform"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "linux"
+      },
+      "type": "compare"
+    }
+  ],
+  "supported-markers": [
+    {
+      "lhs": {
+        "type": "variable",
+        "value": "sys_platform"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "darwin"
+      },
+      "type": "compare"
+    },
+    {
+      "lhs": {
+        "type": "variable",
+        "value": "sys_platform"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "linux"
+      },
+      "type": "compare"
+    }
+  ],
+  "version": 1
+}

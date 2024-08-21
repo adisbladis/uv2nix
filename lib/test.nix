@@ -1,4 +1,9 @@
-{ uv2nix, lib }:
+{
+  pyproject-nix,
+  uv2nix,
+  lib,
+  pkgs,
+}:
 
 let
   inherit (lib)
@@ -14,9 +19,12 @@ let
 
   capitalise = s: toUpper (substring 0 1 s) + (substring 1 (stringLength s) s);
 
+  callTest = path: import path (uv2nix // { inherit pkgs lib pyproject-nix; });
+
 in
 
 fix (self: {
+  lock1 = callTest ./test_lock1.nix;
 
   # Yo dawg, I heard you like tests...
   #
