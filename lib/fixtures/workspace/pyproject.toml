@@ -1,0 +1,15 @@
+[project]
+name = "workspace"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["workspace-package"]
+
+[tool.uv.sources]
+workspace-package = { workspace = true }
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
