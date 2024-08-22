@@ -2,7 +2,10 @@
   "dependencies": [
     {
       "marker": null,
-      "name": "certifi"
+      "name": "certifi",
+      "source": {},
+      "version": null,
+      "version'": null
     }
   ],
   "dev-dependencies": {},

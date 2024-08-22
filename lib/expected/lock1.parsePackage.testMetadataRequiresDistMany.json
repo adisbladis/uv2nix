@@ -2,31 +2,52 @@
   "dependencies": [
     {
       "marker": null,
-      "name": "arpeggio"
+      "name": "arpeggio",
+      "source": {},
+      "version": null,
+      "version'": null
     },
     {
       "marker": null,
-      "name": "attrs"
+      "name": "attrs",
+      "source": {},
+      "version": null,
+      "version'": null
     },
     {
       "marker": null,
-      "name": "b"
+      "name": "b",
+      "source": {},
+      "version": null,
+      "version'": null
     },
     {
       "marker": null,
-      "name": "blinker"
+      "name": "blinker",
+      "source": {},
+      "version": null,
+      "version'": null
     },
     {
       "marker": null,
-      "name": "c-editable"
+      "name": "c-editable",
+      "source": {},
+      "version": null,
+      "version'": null
     },
     {
       "marker": null,
-      "name": "pip"
+      "name": "pip",
+      "source": {},
+      "version": null,
+      "version'": null
     },
     {
       "marker": null,
-      "name": "requests"
+      "name": "requests",
+      "source": {},
+      "version": null,
+      "version'": null
     }
   ],
   "dev-dependencies": {},

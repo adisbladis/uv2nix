@@ -1,7 +1,11 @@
-{ lock1, lib, ... }:
+{ lock1, lib, pkgs, pyproject-nix, ... }:
 
 let
   inherit (lib) findFirst mapAttrs mapAttrs' importTOML nameValuePair toUpper substring stringLength;
+
+  environs = {
+    cpython312 = pyproject-nix.lib.pep508.mkEnviron pkgs.python312;
+  };
 
   locks = mapAttrs (_: dir: importTOML (dir + "/uv.lock")) {
     workspace = ./fixtures/workspace;
@@ -47,70 +51,38 @@ in
     let
       parsePkg = name: fixture: lock1.parsePackage (findFirstPkg name fixture.package);
     in
-      mapAttrs (name: case: case // {
+      mapAttrs (name: expr: {
         expected = lib.importJSON ./expected/lock1.parsePackage.${name}.json;
+        inherit expr;
       }) {
       # Trivial "smoke test"
-      testTrivial = {
-        expr = parsePkg "arpeggio" locks.trivial;
-        expected = null;
-      };
-
+      testTrivial = parsePkg "arpeggio" locks.trivial;
       # A test for a package with many metadata.requires-dist types
-      testMetadataRequiresDistMany = {
-        expr = parsePkg "a" locks.kitchenSinkA;
-        expected = null;
-      };
-
-      testWheelURL = {
-        expr = parsePkg "arpeggio" locks.kitchenSinkA;
-        expected = null;
-      };
-
-      testSdistURL = {
-        expr = parsePkg "blinker" locks.kitchenSinkA;
-        expected = null;
-      };
-
-      testGitURL = {
-        expr = parsePkg "pip" locks.kitchenSinkA;
-        expected = null;
-      };
-
-      testLocal = {
-        expr = parsePkg "b" locks.kitchenSinkA;
-        expected = null;
-      };
-
-      testLocalSdist = {
-        expr = parsePkg "attrs" locks.kitchenSinkA;
-        expected = null;
-      };
-
-      testLocalEditable = {
-        expr = parsePkg "c-editable" locks.kitchenSinkA;
-        expected = null;
-      };
-
-      testWithResolutionMarkers = {
-        expr = parsePkg "arpeggio" locks.multiChoicePackage;
-        expected = null;
-      };
-
-      testOptionalDeps = {
-        expr = parsePkg "optional-deps" locks.optionalDeps;
-        expected = null;
-      };
-
-      testMetadataRequiresDev = {
-        expr = parsePkg "with-tool-uv-devdeps" locks.withToolUvDevDeps;
-        expected = null;
-      };
-
-      testWithResolverOptions = {
-        expr = parsePkg "arpeggio" locks.withResolverOptions;
-        expected = null;
-      };
+      testMetadataRequiresDistMany = parsePkg "a" locks.kitchenSinkA;
+      testWheelURL = parsePkg "arpeggio" locks.kitchenSinkA;
+      testSdistURL = parsePkg "blinker" locks.kitchenSinkA;
+      testGitURL = parsePkg "pip" locks.kitchenSinkA;
+      testLocal = parsePkg "b" locks.kitchenSinkA;
+      testLocalSdist = parsePkg "attrs" locks.kitchenSinkA;
+      testLocalEditable = parsePkg "c-editable" locks.kitchenSinkA;
+      testWithResolutionMarkers = parsePkg "arpeggio" locks.multiChoicePackage;
+      testOptionalDeps = parsePkg "optional-deps" locks.optionalDeps;
+      testMetadataRequiresDev = parsePkg "with-tool-uv-devdeps" locks.withToolUvDevDeps;
+      testWithResolverOptions = parsePkg "arpeggio" locks.withResolverOptions;
     };
 
+  filterPackage = let
+    filterPkg = name: fixture: environ: let
+      parsed = lock1.parsePackage (findFirstPkg name fixture.package);
+    in lock1.filterPackage environ parsed;
+
+    in mapAttrs (name: expr: {
+      inherit expr;
+      expected = lib.importJSON ./expected/lock1.filterPackage.${name}.json;
+    }) {
+      testMultiChoicePackage = filterPkg "multi-choice-package" locks.multiChoicePackage environs.cpython312;
+      testOptionalDeps = filterPkg "optional-deps" locks.optionalDeps environs.cpython312;
+      testDevDeps = filterPkg "with-tool-uv-devdeps" locks.withToolUvDevDeps environs.cpython312;
+
+    };
 }
