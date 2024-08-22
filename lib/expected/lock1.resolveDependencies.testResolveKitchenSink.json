@@ -1,0 +1,13 @@
+{
+  "arpeggio": "arpeggio-2.0.2",
+  "attrs": "attrs-23.1.0",
+  "b": "b-0.1.0",
+  "blinker": "blinker-1.6.2",
+  "c-editable": "c-editable-0.1.0",
+  "certifi": "certifi-2024.7.4",
+  "charset-normalizer": "charset-normalizer-3.3.2",
+  "idna": "idna-3.7",
+  "pip": "pip-20.3.1",
+  "requests": "requests-2.32.3",
+  "urllib3": "urllib3-2.2.2"
+}

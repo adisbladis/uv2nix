@@ -24,6 +24,7 @@ dependencies = [
     { name = "workspace-package" },
 ]
 
+
 [package.metadata]
 requires-dist = [{ name = "workspace-package", editable = "packages/workspace-package" }]
 

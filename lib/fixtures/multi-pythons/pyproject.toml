@@ -1,0 +1,17 @@
+[project]
+name = "multi-pythons"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["multi-depends"]
+
+[tool.uv.sources]
+multi-depends = { workspace = true }
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

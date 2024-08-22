@@ -6,17 +6,37 @@ let
   inherit (pyproject-nix.lib.pypa) parseWheelFileName;
   inherit (pyproject-nix.lib) pep440;
   inherit (builtins) baseNameOf;
-  inherit (lib) mapAttrs fix filter;
+  inherit (lib)
+    mapAttrs
+    fix
+    filter
+    length
+    all
+    groupBy
+    concatMap
+    attrValues
+    concatLists
+    genericClosure
+    isAttrs
+    isList
+    attrNames
+    typeOf
+    elem
+    head
+    ;
 
   # TODO: Consider caching resolution-markers from top-level
 
 in
 
 fix (self: {
+
+  /*
+    Resolve dependencies from uv.lock
+    .
+  */
   resolveDependencies =
     {
-      # Project as loaded by pyproject-nix.lib.project.loadUVPyproject
-      project,
       # Lock file as parsed by parseLock
       lock,
       # PEP-508 environment as returned by pyproject-nix.lib.pep508.mkEnviron
@@ -27,27 +47,131 @@ fix (self: {
       dependencies,
     }:
     let
-      # Get full Python version from environment for filtering
-      pythonVersion = environ.python_full_version.value;
+      # Filter dependencies of packages
+      packages = map (self.filterPackage environ) (
+        # Filter packages based on resolution-markers
+        filter (
+          pkg: length pkg.resolution-markers == 0 || all (evalMarkers environ) pkg.resolution-markers
+        ) lock.package
+      );
 
-      # Project top-level dependencies
-      topLevelDependencies = dependencies.dependencies;
+      # Group list of package candidates by package name (pname)
+      candidates = groupBy (pkg: pkg.name) packages;
+
+      # Group list of package candidates by qualified package name (pname + version)
+      allCandidates = groupBy (pkg: "${pkg.name}-${pkg.version}") packages;
+
+      # Make key return for genericClosure
+      mkKey = package: {
+        key = "${package.name}-${package.version}";
+        inherit package;
+      };
+
+      # Filter top-level deps for genericClosure startSet
+      filterTopLevelDeps =
+        deps:
+        map mkKey (
+          concatMap (
+            dep:
+            filter (
+              pkg: all (spec: pep440.comparators.${spec.op} pkg.version' spec.version) dep.conditions
+            ) candidates.${dep.name}
+          ) deps
+        );
+
+      depNames = attrNames allDependencies;
+
+      # Resolve dependencies recursively
+      allDependencies = groupBy (dep: dep.package.name) (genericClosure {
+        # Recurse into top-level dependencies.
+        startSet =
+          filterTopLevelDeps dependencies.dependencies
+          ++ filterTopLevelDeps (concatLists (attrValues dependencies.extras));
+
+        operator =
+          { key, ... }:
+          # Note: Markers are already filtered.
+          # Consider: Is it more efficient to only do marker filtration at resolve time, no pre-filtering?
+          concatMap (
+            candidate:
+            map mkKey (
+              concatMap (
+                dep: filter (package: dep.version == null || dep.version == package.version) candidates.${dep.name}
+              ) (candidate.dependencies ++ (concatLists (attrValues candidate.optional-dependencies)))
+            )
+          ) allCandidates.${key};
+      });
+
+      # Reduce dependency candidates down to the one resolved dependency.
+      reduceDependencies =
+        attrs:
+        let
+          result = mapAttrs (
+            name: candidates:
+            if isAttrs candidates then
+              candidates # Already reduced
+            else if length candidates == 1 then
+              (head candidates).package
+            # Ambigious, filter further
+            else
+              let
+                # Get version declarations for this package from all other packages
+                versions = concatMap (
+                  n:
+                  let
+                    package = attrs.${n};
+                  in
+                  if isList package then
+                    map (pkg: pkg.version) (
+                      concatMap (pkg: filter (x: x.name == name) pkg.package.dependencies) package
+                    )
+                  else if isAttrs package then
+                    map (pkg: pkg.version) (filter (x: x.name == name) package.dependencies)
+                  else
+                    throw "Unhandled type: ${typeOf package}"
+                ) depNames;
+                # Filter candidates by possible versions
+                filtered =
+                  if length versions > 0 then
+                    filter (candidate: elem candidate.package.version versions) candidates
+                  else
+                    candidates;
+              in
+              filtered
+          ) attrs;
+        in
+        result;
 
     in
-    null;
+    reduceDependencies allDependencies;
 
+  /*
+    Filter dependencies/optional-dependencies/dev-dependencies from a uv.lock package entry
+    .
+  */
   filterPackage =
     environ:
     let
-      filterDeps = filter (dep:  dep.marker == null || evalMarkers environ dep.marker);
+      filterDeps = filter (dep: dep.marker == null || evalMarkers environ dep.marker);
     in
     package:
-    package // {
+    package
+    // {
       dependencies = filterDeps package.dependencies;
       optional-dependencies = mapAttrs (_: filterDeps) package.optional-dependencies;
       dev-dependencies = mapAttrs (_: filterDeps) package.optional-dependencies;
     };
 
+  /*
+    Create a function calling buildPythonPackage based on parsed uv.lock package metadata
+    .
+  */
+  mkPackage = _package: null;
+
+  /*
+    Parse unmarshaled uv.lock
+    .
+  */
   parseLock =
     let
       parseOptions =
@@ -87,6 +211,10 @@ fix (self: {
       inherit members;
     };
 
+  /*
+    Parse a package entry from uv.lock
+    .
+  */
   parsePackage =
     let
       parseWheel =

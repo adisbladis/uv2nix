@@ -18,9 +18,13 @@
 
     pyproject-nix.url = "github:adisbladis/pyproject.nix";
     pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
+    pyproject-nix.inputs.nix-github-actions.follows = "nix-github-actions";
+    pyproject-nix.inputs.mdbook-nixdoc.follows = "mdbook-nixdoc";
+    pyproject-nix.inputs.treefmt-nix.follows = "treefmt-nix";
 
     mdbook-nixdoc.url = "github:adisbladis/mdbook-nixdoc";
     mdbook-nixdoc.inputs.nixpkgs.follows = "nixpkgs";
+    mdbook-nixdoc.inputs.nix-github-actions.follows = "nix-github-actions";
   };
 
   outputs =
