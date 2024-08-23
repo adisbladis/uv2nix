@@ -200,7 +200,11 @@ fix (self: {
 
     in
     # Local pyproject.nix top-level projects (attrset)
-    { environ, projects }:
+    {
+      environ,
+      projects,
+      workspaceRoot,
+    }:
     # Parsed uv.lock package
     package:
     # Callpackage function
@@ -218,7 +222,13 @@ fix (self: {
     in
     if isProject then
       buildPythonPackage (
-        projects.${package.name}.renderers.buildPythonPackage { inherit python environ; }
+        (
+          if projects ? package.name then
+            projects.${package.name}
+          else
+            pyproject-nix.lib.project.loadUVPyproject { projectRoot = workspaceRoot + "/${source.editable}"; }
+        ).renderers.buildPythonPackage
+          { inherit python environ; }
       )
     else
       buildPythonPackage {
@@ -254,7 +264,7 @@ fix (self: {
             # TODO: Select a wheel
             fetchurl { inherit (package.sdist) url hash; }
           else
-            throw "Unhandled state: could not derive src";
+            throw "Unhandled state: could not derive src from: ${builtins.toJSON source}";
       };
 
   /*

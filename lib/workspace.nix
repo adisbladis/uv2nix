@@ -98,7 +98,7 @@ fix (self: {
 
           mkPackage = lock1.mkPackage {
             projects = workspaceProjects;
-            inherit environ;
+            inherit environ workspaceRoot;
           };
 
           resolved = lock1.resolveDependencies {
