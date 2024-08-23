@@ -1,4 +1,9 @@
-{ lib, ... }:
+{
+  lib,
+  pyproject-nix,
+  lock1,
+  ...
+}:
 
 let
   inherit (lib)
@@ -13,8 +18,17 @@ let
     concatMap
     optional
     any
+    fix
+    groupBy
+    mapAttrs
+    optionalAttrs
+    head
+    attrNames
     ;
   inherit (builtins) readDir;
+  inherit (pyproject-nix.lib.project) loadUVPyproject; # Note: Maybe we want a loader that will just "remap-all-the-things" into standard attributes?
+  inherit (pyproject-nix.lib) pep508;
+  inherit (pyproject-nix.lib) pypa;
 
   # Match str against a glob pattern
   globMatches =
@@ -31,7 +45,67 @@ let
 
 in
 
-{
+fix (self: {
+  loadWorkspace =
+    { workspaceRoot }:
+    let
+      pyproject = importTOML (workspaceRoot + "/pyproject.toml");
+      uvLock = lock1.parseLock (importTOML (workspaceRoot + "/uv.lock"));
+
+      members = self.discoverWorkspace { inherit workspaceRoot pyproject; };
+
+      # Map package names to pyproject.nix projects
+      workspaceProjects =
+        mapAttrs
+          (
+            _: project:
+            assert length project == 1;
+            head project
+          )
+          (
+            groupBy (project: pypa.normalizePackageName project.pyproject.project.name) (
+              map (
+                relPath:
+                loadUVPyproject { projectRoot = workspaceRoot + "${relPath}"; }
+                # We've already loaded this file for workspace discovery, just bung it in.
+                // optionalAttrs (relPath == "/") { inherit pyproject; }
+              ) members
+            )
+          );
+
+      # Bootstrap resolver from top-level workspace projects
+      topLevelDependencies = map pep508.parseString (attrNames workspaceProjects);
+
+    in
+    {
+      # Consider: Expose as overlay instead of function wrapping mkOverlay. Not sure what is best.
+      # mkOverlay could support environment customisation without weird internal overlay attributes.
+      mkOverlay =
+        _:
+        final: _prev:
+        let
+          inherit (final) python callPackage;
+
+          # TODO: Environment customisation
+          environ = pep508.mkEnviron python;
+
+          resolved = lock1.resolveDependencies {
+            # Note: Attrset in the shape of pep621.parseDependencies
+            dependencies = {
+              dependencies = topLevelDependencies;
+              extras = { };
+              build-systems = [ ];
+            };
+            lock = uvLock;
+            inherit environ;
+          };
+
+        in
+        mapAttrs (_: pkg: callPackage (lock1.mkPackage pkg) { }) resolved;
+
+      inherit topLevelDependencies;
+    };
+
   discoverWorkspace =
     {
       # Workspace root directory
@@ -69,4 +143,4 @@ in
     # If the package is a virtual root we don't add the workspace root to project discovery
     ++ optional (pyproject ? project) "/";
 
-}
+})

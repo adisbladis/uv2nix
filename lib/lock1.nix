@@ -166,7 +166,22 @@ fix (self: {
     Create a function calling buildPythonPackage based on parsed uv.lock package metadata
     .
   */
-  mkPackage = _package: null;
+  mkPackage =
+    # Parsed uv.lock package
+    package:
+    { buildPythonPackage, pythonPackages }:
+    buildPythonPackage {
+      pname = package.name;
+      inherit (package) version;
+
+      dependencies = map (dep: pythonPackages.${dep.name}) package.dependencies;
+      optional-dependencies = mapAttrs (
+        _: map (dep: pythonPackages.${dep.name})
+      ) package.optional-dependencies;
+
+      # TODO: Source selection
+      src = null;
+    };
 
   /*
     Parse unmarshaled uv.lock
