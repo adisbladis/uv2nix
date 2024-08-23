@@ -102,9 +102,15 @@ fix (self: {
           concatMap (
             candidate:
             map mkKey (
-              concatMap (
-                dep: filter (package: dep.version == null || dep.version == package.version) candidates.${dep.name}
-              ) (candidate.dependencies ++ (concatLists (attrValues candidate.optional-dependencies)))
+              concatMap
+                (
+                  dep: filter (package: dep.version == null || dep.version == package.version) candidates.${dep.name}
+                )
+                (
+                  candidate.dependencies
+                  ++ (concatLists (attrValues candidate.optional-dependencies))
+                  ++ (concatLists (attrValues candidate.dev-dependencies))
+                )
             )
           ) allCandidates.${key};
       });
