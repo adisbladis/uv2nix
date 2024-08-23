@@ -1,0 +1,18 @@
+version = 1
+requires-python = ">=3.12"
+
+[manifest]
+members = [
+    "excluded-package",
+    "included-package",
+]
+
+[[package]]
+name = "excluded-package"
+version = "0.1.0"
+source = { editable = "packages/excluded-package" }
+
+[[package]]
+name = "included-package"
+version = "0.1.0"
+source = { editable = "packages/included-package" }

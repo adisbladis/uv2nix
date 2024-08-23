@@ -25,6 +25,7 @@ in
 
 fix (self: {
   lock1 = callTest ./test_lock1.nix;
+  workspace = callTest ./test_workspace.nix;
 
   # Yo dawg, I heard you like tests...
   #
