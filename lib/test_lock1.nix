@@ -77,6 +77,14 @@ in
     };
   };
 
+  # Dummy, mkPackage is tested by integration tests.
+  mkPackage = {
+    testDummy = {
+      expr = null;
+      expected = null;
+    };
+  };
+
   parsePackage =
     let
       parsePkg = name: fixture: lock1.parsePackage (findFirstPkg name fixture.package);
