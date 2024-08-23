@@ -46,6 +46,14 @@ let
 in
 
 fix (self: {
+  /*
+    Load a workspace from a workspace root.
+
+    Returns an attribute set where you can call:
+    mkOverlay { }
+
+    to create a Nixpkgs Python packageOverrides overlay
+  */
   loadWorkspace =
     { workspaceRoot }:
     let
@@ -110,6 +118,10 @@ fix (self: {
       inherit topLevelDependencies;
     };
 
+  /*
+    Discover workspace member directories from a workspace root.
+    Returns a list of strings relative to the workspace root.
+  */
   discoverWorkspace =
     {
       # Workspace root directory

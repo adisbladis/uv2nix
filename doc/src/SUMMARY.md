@@ -12,9 +12,8 @@
 
 # Reference
 
-- [Metadata2](./lib/metadata2.nix)
-- [Sources](./lib/sources.nix)
-- [Overlay](./lib/overlay.nix)
+- [workspace](./lib/workspace.nix)
+- [lock1](./lib/lock1.nix)
 
 # Contributing
 
