@@ -146,8 +146,9 @@ fix (self: {
               in
               filtered
           ) attrs;
+          done = all isAttrs (attrValues result);
         in
-        result;
+        if done then result else reduceDependencies result;
 
     in
     reduceDependencies allDependencies;
