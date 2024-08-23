@@ -5,7 +5,7 @@ let
   inherit (pyproject-nix.lib.pep508) parseMarkers evalMarkers;
   inherit (pyproject-nix.lib.pypa) parseWheelFileName;
   inherit (pyproject-nix.lib) pep440;
-  inherit (builtins) baseNameOf;
+  inherit (builtins) baseNameOf nixVersion;
   inherit (lib)
     mapAttrs
     fix
@@ -23,6 +23,13 @@ let
     typeOf
     elem
     head
+    elemAt
+    listToAttrs
+    splitString
+    nameValuePair
+    optionalAttrs
+    versionAtLeast
+    match
     ;
 
   # TODO: Consider caching resolution-markers from top-level
@@ -167,21 +174,87 @@ fix (self: {
     .
   */
   mkPackage =
+    let
+
+      parseGitURL =
+        url:
+        let
+          m = match "([^?]+)\\?([^#]+)#?(.*)" url;
+        in
+        assert m != null;
+        {
+          url = elemAt m 0;
+          query = listToAttrs (
+            map (
+              s:
+              let
+                parts = splitString "=" s;
+              in
+              assert length parts == 2;
+              nameValuePair (elemAt parts 0) (elemAt parts 1)
+            ) (splitString "&" (elemAt m 1))
+          );
+          fragment = elemAt m 2;
+        };
+
+    in
+    # Local pyproject.nix top-level projects (attrset)
+    { environ, projects }:
     # Parsed uv.lock package
     package:
-    { buildPythonPackage, pythonPackages }:
-    buildPythonPackage {
-      pname = package.name;
-      inherit (package) version;
+    # Callpackage function
+    {
+      buildPythonPackage,
+      pythonPackages,
+      python,
+      fetchurl,
+    }:
+    let
+      inherit (package) source;
+      isGit = source ? git;
+      isProject = source ? editable;
+      isPypi = source ? registry;
+    in
+    if isProject then
+      buildPythonPackage (
+        projects.${package.name}.renderers.buildPythonPackage { inherit python environ; }
+      )
+    else
+      buildPythonPackage {
+        pname = package.name;
+        inherit (package) version;
 
-      dependencies = map (dep: pythonPackages.${dep.name}) package.dependencies;
-      optional-dependencies = mapAttrs (
-        _: map (dep: pythonPackages.${dep.name})
-      ) package.optional-dependencies;
+        pyproject = true;
 
-      # TODO: Source selection
-      src = null;
-    };
+        dependencies = map (dep: pythonPackages.${dep.name}) package.dependencies;
+        optional-dependencies = mapAttrs (
+          _: map (dep: pythonPackages.${dep.name})
+        ) package.optional-dependencies;
+
+        src =
+          if isGit then
+            (
+              let
+                parsed = parseGitURL source.git;
+              in
+              builtins.fetchGit (
+                {
+                  inherit (parsed) url;
+                  rev = parsed.fragment;
+                }
+                // optionalAttrs (parsed ? query.tag) { ref = "refs/tags/${parsed.query.tag}"; }
+                // optionalAttrs (versionAtLeast nixVersion "2.4") {
+                  allRefs = true;
+                  submodules = true;
+                }
+              )
+            )
+          else if isPypi then
+            # TODO: Select a wheel
+            fetchurl { inherit (package.sdist) url hash; }
+          else
+            throw "Unhandled state: could not derive src";
+      };
 
   /*
     Parse unmarshaled uv.lock

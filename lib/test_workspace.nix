@@ -56,17 +56,36 @@ in
         };
       };
 
+      testKitchenSink = {
+        expr = mkTest ./fixtures/kitchen-sink/a { packages = [ "pip" ]; };
+        expected = {
+          pip = "20.3.1";
+        };
+      };
+
       testWorkspace = {
-        expr = mkTest ./fixtures/workspace { packages = [ "arpeggio" ]; };
+        expr = mkTest ./fixtures/workspace {
+          packages = [
+            "arpeggio"
+            "workspace-package"
+          ];
+        };
         expected = {
           arpeggio = "2.0.2";
+          workspace-package = "0.1.0";
         };
       };
 
       testWorkspaceFlat = {
-        expr = mkTest ./fixtures/workspace-flat { packages = [ "arpeggio" ]; };
+        expr = mkTest ./fixtures/workspace-flat {
+          packages = [
+            "pkg-a"
+            "pkg-b"
+          ];
+        };
         expected = {
-          arpeggio = "2.0.2";
+          pkg-a = "0.1.0";
+          pkg-b = "0.1.0";
         };
       };
     };

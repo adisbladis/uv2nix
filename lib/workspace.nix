@@ -81,13 +81,17 @@ fix (self: {
       # Consider: Expose as overlay instead of function wrapping mkOverlay. Not sure what is best.
       # mkOverlay could support environment customisation without weird internal overlay attributes.
       mkOverlay =
-        _:
-        final: _prev:
+        _: final: _prev:
         let
           inherit (final) python callPackage;
 
           # TODO: Environment customisation
           environ = pep508.mkEnviron python;
+
+          mkPackage = lock1.mkPackage {
+            projects = workspaceProjects;
+            inherit environ;
+          };
 
           resolved = lock1.resolveDependencies {
             # Note: Attrset in the shape of pep621.parseDependencies
@@ -101,7 +105,7 @@ fix (self: {
           };
 
         in
-        mapAttrs (_: pkg: callPackage (lock1.mkPackage pkg) { }) resolved;
+        mapAttrs (_: pkg: callPackage (mkPackage pkg) { }) resolved;
 
       inherit topLevelDependencies;
     };

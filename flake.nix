@@ -94,7 +94,12 @@
         {
           treefmt.imports = [ ./dev/treefmt.nix ];
 
-          checks = builtins.removeAttrs self.packages.${system} [ "default" ];
+          checks =
+            builtins.removeAttrs self.packages.${system} [ "default" ]
+            // import ./dev/checks.nix {
+              inherit pkgs lib;
+              uv2nix = self.lib;
+            };
           # // (import ./tests {
           #   inherit lib pyproject-nix pkgs;
           #   uv2nix = self;
@@ -108,7 +113,7 @@
               pkgs.nix-unit
               inputs.mdbook-nixdoc.packages.${system}.default
               pkgs.uv
-            ]; # ++ self.packages.${system}.doc.nativeBuildInputs;
+            ] ++ self.packages.${system}.doc.nativeBuildInputs;
           };
 
           packages.doc = pkgs.callPackage ./doc {
