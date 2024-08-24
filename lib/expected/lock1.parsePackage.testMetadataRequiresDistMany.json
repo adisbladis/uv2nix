@@ -1,6 +1,7 @@
 {
   "dependencies": [
     {
+      "extra": [],
       "marker": null,
       "name": "arpeggio",
       "source": {},
@@ -8,6 +9,7 @@
       "version'": null
     },
     {
+      "extra": [],
       "marker": null,
       "name": "attrs",
       "source": {},
@@ -15,6 +17,7 @@
       "version'": null
     },
     {
+      "extra": [],
       "marker": null,
       "name": "b",
       "source": {},
@@ -22,6 +25,7 @@
       "version'": null
     },
     {
+      "extra": [],
       "marker": null,
       "name": "blinker",
       "source": {},
@@ -29,6 +33,7 @@
       "version'": null
     },
     {
+      "extra": [],
       "marker": null,
       "name": "c-editable",
       "source": {},
@@ -36,6 +41,7 @@
       "version'": null
     },
     {
+      "extra": [],
       "marker": null,
       "name": "pip",
       "source": {},
@@ -43,6 +49,7 @@
       "version'": null
     },
     {
+      "extra": [],
       "marker": null,
       "name": "requests",
       "source": {},

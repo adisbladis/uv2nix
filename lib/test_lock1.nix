@@ -109,6 +109,7 @@ in
         testOptionalDeps = parsePkg "optional-deps" locks.optionalDeps;
         testMetadataRequiresDev = parsePkg "with-tool-uv-devdeps" locks.withToolUvDevDeps;
         testWithResolverOptions = parsePkg "arpeggio" locks.withResolverOptions;
+        testWithExtra = parsePkg "with-extra" locks.withExtra;
       };
 
   filterPackage =

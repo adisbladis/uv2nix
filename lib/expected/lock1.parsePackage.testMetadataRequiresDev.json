@@ -3,6 +3,7 @@
   "dev-dependencies": {
     "dev": [
       {
+        "extra": [],
         "marker": null,
         "name": "coverage",
         "source": {},
@@ -10,6 +11,7 @@
         "version'": null
       },
       {
+        "extra": [],
         "marker": null,
         "name": "coverage",
         "source": {},

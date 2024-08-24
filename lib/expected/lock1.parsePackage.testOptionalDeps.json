@@ -32,6 +32,7 @@
   "optional-dependencies": {
     "haxx": [
       {
+        "extra": [],
         "marker": null,
         "name": "arpeggio",
         "source": {},

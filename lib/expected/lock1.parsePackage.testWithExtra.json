@@ -1,9 +1,11 @@
 {
   "dependencies": [
     {
-      "extra": [],
+      "extra": [
+        "socks"
+      ],
       "marker": null,
-      "name": "certifi",
+      "name": "requests",
       "source": {},
       "version": null,
       "version'": null
@@ -16,36 +18,24 @@
       {
         "directory": null,
         "editable": null,
-        "extras": null,
+        "extras": [
+          "socks"
+        ],
         "git": null,
         "marker": null,
-        "name": "certifi",
+        "name": "requests",
         "path": null,
-        "specifier": {
-          "op": ">=",
-          "version": {
-            "dev": null,
-            "epoch": 0,
-            "local": null,
-            "post": null,
-            "pre": null,
-            "release": [
-              2024,
-              7,
-              4
-            ]
-          }
-        },
+        "specifier": null,
         "url": null
       }
     ]
   },
-  "name": "b",
+  "name": "with-extra",
   "optional-dependencies": {},
   "resolution-markers": [],
   "sdist": {},
   "source": {
-    "directory": "../b"
+    "editable": "."
   },
   "version": "0.1.0",
   "version'": {

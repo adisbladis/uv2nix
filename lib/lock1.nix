@@ -256,6 +256,14 @@ fix (self: {
       selectedWheel' = head compatibleWheels;
       selectedWheel = wheels.${selectedWheel'.filename};
 
+      getDependencies = concatMap (
+        dep:
+        let
+          pkg = pythonPackages.${dep.name};
+        in
+        [ pkg ] ++ concatMap (extra: pkg.optional-dependencies.${extra}) dep.extra
+      );
+
       format =
         if isURL then
           (
@@ -292,10 +300,8 @@ fix (self: {
           pname = package.name;
           inherit (package) version;
 
-          dependencies = map (dep: pythonPackages.${dep.name}) package.dependencies;
-          optional-dependencies = mapAttrs (
-            _: map (dep: pythonPackages.${dep.name})
-          ) package.optional-dependencies;
+          dependencies = getDependencies package.dependencies;
+          optional-dependencies = mapAttrs (_: getDependencies) package.optional-dependencies;
 
           src =
             if isGit then
@@ -472,12 +478,17 @@ fix (self: {
           marker ? null,
           version ? null,
           source ? { },
+          extra ? [ ],
         }:
         {
-          inherit name source version;
+          inherit
+            name
+            source
+            version
+            extra
+            ;
           version' = if version != null then pep440.parseVersion version else null;
           marker = if marker != null then parseMarkers marker else null;
-
         };
 
     in

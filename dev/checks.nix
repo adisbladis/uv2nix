@@ -97,6 +97,6 @@ in
 
   withExtra = mkCheck {
     root = ../lib/fixtures/with-extra;
-    packages = ps: [ ps."with-build-requires" ];
+    packages = ps: [ ps."with-extra" ];
   };
 }
