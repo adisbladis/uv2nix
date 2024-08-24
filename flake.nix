@@ -2,7 +2,7 @@
   description = "Uv2nix";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/master";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
@@ -100,10 +100,6 @@
               inherit pkgs lib;
               uv2nix = self.lib;
             };
-          # // (import ./tests {
-          #   inherit lib pyproject-nix pkgs;
-          #   uv2nix = self;
-          # });
 
           devShells.default = pkgs.mkShell {
             packages = [
