@@ -5,6 +5,7 @@
 }:
 
 let
+  inherit (pkgs) runCommand;
   inherit (lib) toList;
 
   # Just enough overrides to make tests pass.
@@ -40,6 +41,8 @@ let
       interpreter ? pkgs.python312,
       packages ? [ ],
       testOverrides ? _: _: { },
+      check ? null,
+      name ? throw "No name provided",
     }:
     let
       ws = uv2nix.workspace.loadWorkspace { workspaceRoot = root; };
@@ -52,8 +55,25 @@ let
           testOverrides
         ];
       };
+
+      pythonEnv = python.withPackages packages;
+
     in
-    python.withPackages packages;
+    if check != null then
+      runCommand "check-${name}"
+        {
+          nativeBuildInputs = [ pythonEnv ];
+          passthru = {
+            inherit (python) pkgs;
+            inherit python;
+          };
+        }
+        ''
+          ${check}
+          touch $out
+        ''
+    else
+      pythonEnv;
 
 in
 
@@ -96,7 +116,12 @@ in
   };
 
   withExtra = mkCheck {
+    name = "with-extra";
     root = ../lib/fixtures/with-extra;
     packages = ps: [ ps."with-extra" ];
+    # Check that socks extra is available
+    check = ''
+      python -c "import socks"
+    '';
   };
 }
