@@ -49,7 +49,7 @@ requires-dist = [
 [[package]]
 name = "attrs"
 version = "23.1.0"
-source = { path = "/home/adisbladis/sauce/github.com/adisbladis/uv2nix/lib/fixtures/kitchen-sink/attrs-23.1.0.tar.gz" }
+source = { path = "../attrs-23.1.0.tar.gz" }
 
 [package.metadata]
 requires-dist = [

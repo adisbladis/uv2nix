@@ -1486,7 +1486,7 @@
   "resolution-markers": [],
   "sdist": {},
   "source": {
-    "path": "/home/adisbladis/sauce/github.com/adisbladis/uv2nix/lib/fixtures/kitchen-sink/attrs-23.1.0.tar.gz"
+    "path": "../attrs-23.1.0.tar.gz"
   },
   "version": "23.1.0",
   "version'": {

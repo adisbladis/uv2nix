@@ -4,8 +4,8 @@ let
   inherit (pyproject-nix.lib.pep621) parseRequiresPython;
   inherit (pyproject-nix.lib.pep508) parseMarkers evalMarkers;
   inherit (pyproject-nix.lib.pypa) parseWheelFileName;
-  inherit (pyproject-nix.lib) pep440;
-  inherit (builtins) baseNameOf nixVersion;
+  inherit (pyproject-nix.lib) pep440 pypa;
+  inherit (builtins) baseNameOf nixVersion toJSON;
   inherit (lib)
     mapAttrs
     fix
@@ -30,6 +30,10 @@ let
     optionalAttrs
     versionAtLeast
     match
+    findFirst
+    optionals
+    unique
+    hasPrefix
     ;
 
   # TODO: Consider caching resolution-markers from top-level
@@ -213,65 +217,157 @@ fix (self: {
     }:
     # Parsed uv.lock package
     package:
+    let
+      inherit (package) source;
+      isGit = source ? git;
+      isProject = source ? editable;
+      isPypi = source ? registry; # From pypi registry
+      isURL = source ? url;
+      isDirectory = source ? directory; # Path to non-uv project
+      isPath = source ? path; # Path to sdist
+
+      # Wheels grouped by filename
+      wheels = mapAttrs (
+        _: whl:
+        assert length whl == 1;
+        head whl
+      ) (groupBy (whl: whl.file'.filename) package.wheels);
+      # List of parsed wheels
+      wheelFiles = map (whl: whl.file') package.wheels;
+
+    in
     # Callpackage function
     {
       buildPythonPackage,
       pythonPackages,
       python,
       fetchurl,
+      wheelUnpackHook,
+      pypaInstallHook,
+      stdenv,
+      autoPatchelfHook,
+      pythonManylinuxPackages,
     }:
     let
-      inherit (package) source;
-      isGit = source ? git;
-      isProject = source ? editable;
-      isPypi = source ? registry;
+      # TODO: Make configurable
+      preferWheel = true;
+
+      compatibleWheels = pypa.selectWheels python.stdenv.targetPlatform python wheelFiles;
+      selectedWheel' = head compatibleWheels;
+      selectedWheel = wheels.${selectedWheel'.filename};
+
+      format =
+        if isURL then
+          (
+            # Package is sdist if the source file is present in the sdist attrset
+            if (source.url == package.sdist.url or null) then "pyproject" else "wheel"
+          )
+        else if isPypi then
+          (if preferWheel && length compatibleWheels > 0 then "wheel" else "pyproject")
+        else
+          "pyproject";
+
     in
-    if isProject then
+    if (isProject || isDirectory) then
       buildPythonPackage (
         (
           if projects ? package.name then
             projects.${package.name}
           else
-            pyproject-nix.lib.project.loadUVPyproject { projectRoot = workspaceRoot + "/${source.editable}"; }
+            pyproject-nix.lib.project.loadUVPyproject {
+              projectRoot =
+                if isProject then
+                  workspaceRoot + "/${source.editable}"
+                else if isDirectory then
+                  workspaceRoot + "/${source.directory}"
+                else
+                  throw "Not a project path: ${builtins.toJSON source}";
+            }
         ).renderers.buildPythonPackage
           { inherit python environ; }
       )
     else
-      buildPythonPackage {
-        pname = package.name;
-        inherit (package) version;
+      buildPythonPackage (
+        {
+          pname = package.name;
+          inherit (package) version;
 
-        pyproject = true;
+          dependencies = map (dep: pythonPackages.${dep.name}) package.dependencies;
+          optional-dependencies = mapAttrs (
+            _: map (dep: pythonPackages.${dep.name})
+          ) package.optional-dependencies;
 
-        dependencies = map (dep: pythonPackages.${dep.name}) package.dependencies;
-        optional-dependencies = mapAttrs (
-          _: map (dep: pythonPackages.${dep.name})
-        ) package.optional-dependencies;
-
-        src =
-          if isGit then
-            (
-              let
-                parsed = parseGitURL source.git;
-              in
-              builtins.fetchGit (
-                {
-                  inherit (parsed) url;
-                  rev = parsed.fragment;
-                }
-                // optionalAttrs (parsed ? query.tag) { ref = "refs/tags/${parsed.query.tag}"; }
-                // optionalAttrs (versionAtLeast nixVersion "2.4") {
-                  allRefs = true;
-                  submodules = true;
-                }
+          src =
+            if isGit then
+              (
+                let
+                  parsed = parseGitURL source.git;
+                in
+                builtins.fetchGit (
+                  {
+                    inherit (parsed) url;
+                    rev = parsed.fragment;
+                  }
+                  // optionalAttrs (parsed ? query.tag) { ref = "refs/tags/${parsed.query.tag}"; }
+                  // optionalAttrs (versionAtLeast nixVersion "2.4") {
+                    allRefs = true;
+                    submodules = true;
+                  }
+                )
               )
-            )
-          else if isPypi then
-            # TODO: Select a wheel
-            fetchurl { inherit (package.sdist) url hash; }
-          else
-            throw "Unhandled state: could not derive src from: ${builtins.toJSON source}";
-      };
+            else if isPath then
+              workspaceRoot + "/${source.path}"
+            else if (isPypi || isURL) && format == "pyproject" then
+              fetchurl { inherit (package.sdist) url hash; }
+            else if isURL && format == "wheel" then
+              fetchurl {
+                inherit
+                  (findFirst (
+                    whl: whl.url == source.url
+                  ) (throw "Wheel URL ${source.url} not found in list of wheels: ${package.wheels}") package.wheels)
+                  url
+                  hash
+                  ;
+              }
+            else if format == "wheel" then
+              fetchurl { inherit (selectedWheel) url hash; }
+            else
+              throw "Unhandled state: could not derive src for package '${package.name}' from: ${toJSON source}";
+        }
+        // optionalAttrs (format == "pyproject") { pyproject = true; }
+        // optionalAttrs (format != "pyproject") { inherit format; }
+        // optionalAttrs (format == "wheel") {
+          # Don't strip prebuilt wheels
+          dontStrip = true;
+
+          # Add wheel utils
+          nativeBuildInputs = [
+            wheelUnpackHook
+            pypaInstallHook
+          ] ++ lib.optional stdenv.isLinux autoPatchelfHook;
+          buildInputs =
+            # Add manylinux platform dependencies.
+            optionals (stdenv.isLinux && stdenv.hostPlatform.libc == "glibc") (
+              unique (
+                concatMap (
+                  tag:
+                  (
+                    if hasPrefix "manylinux1" tag then
+                      pythonManylinuxPackages.manylinux1
+                    else if hasPrefix "manylinux2010" tag then
+                      pythonManylinuxPackages.manylinux2010
+                    else if hasPrefix "manylinux2014" tag then
+                      pythonManylinuxPackages.manylinux2014
+                    else if hasPrefix "manylinux_" tag then
+                      pythonManylinuxPackages.manylinux2014
+                    else
+                      [ ] # Any other type of wheel don't need manylinux inputs
+                  )
+                ) selectedWheel'.platformTags
+              )
+            );
+        }
+      );
 
   /*
     Parse unmarshaled uv.lock
