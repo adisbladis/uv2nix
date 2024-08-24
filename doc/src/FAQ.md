@@ -21,7 +21,7 @@ wheels = [
 ```
 
 And contrast it with a minimal Nix `buildPythonPackage` example to build the same package:
-```
+``` nix
 buildPythonPackage rec {
   pname = "pyzmq";
   version = "26.2.0";
