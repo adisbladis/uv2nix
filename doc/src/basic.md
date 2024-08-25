@@ -1,3 +1,6 @@
 # Basic usage
 
-TODO
+## flake.nix
+```nix
+{{#include ../../templates/app/flake.nix}}
+```
