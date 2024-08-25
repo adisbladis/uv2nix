@@ -19,12 +19,17 @@
       # Manage overlays
       overlay =
         let
-          # Create overlay using pdm2nix
+          # Create overlay from workspace.
+
           overlay' = workspace.mkOverlay {
             # Prefer prebuilt binary wheels as a package source.
             # Sdists are less likely to "just work" because of the metadata missing from uv.lock.
             # Binary wheels are more likely to, but may still require overrides for library dependencies.
             sourcePreference = "wheel"; # or sourcePreference = "sdist";
+            # Optionally customise PEP 508 environment
+            # environ = {
+            #   platform_release = "5.10.65";
+            # };
           };
 
           # Uv2nix can only work with what it has, and uv.lock is missing essential metadata to perform some builds.
