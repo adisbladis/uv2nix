@@ -141,10 +141,16 @@ let
         check = ''
           ! python -c "import arpeggio"
         '';
+        # Work around python-runtime-deps-check-hook bug where it can fail depending on uname
+        testOverrides = _pyfinal: pyprev: {
+          multi-choice-package = pyprev.multi-choice-package.overridePythonAttrs (_old: {
+            dontCheckRuntimeDeps = true;
+          });
+        };
       };
 
       testMultiChoicePackageWithMarker = mkCheck {
-        name = "multi-choice-no-marker";
+        name = "multi-choice-with-marker";
         root = ../lib/fixtures/multi-choice-package;
         packages = ps: [ ps."multi-choice-package" ];
         # Check that arpeggio _is_ available
@@ -153,6 +159,12 @@ let
         '';
         environ = {
           platform_release = "5.10.65";
+        };
+        # Work around python-runtime-deps-check-hook bug where it can fail depending on uname
+        testOverrides = _pyfinal: pyprev: {
+          multi-choice-package = pyprev.multi-choice-package.overridePythonAttrs (_old: {
+            dontCheckRuntimeDeps = true;
+          });
         };
       };
 
