@@ -30,7 +30,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "cov"
             },
             "type": "compare"
@@ -68,7 +68,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "dev"
             },
             "type": "compare"
@@ -106,7 +106,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "tests"
             },
             "type": "compare"
@@ -144,7 +144,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "tests-no-zope"
             },
             "type": "compare"
@@ -170,7 +170,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "cov"
           },
           "type": "compare"
@@ -205,7 +205,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -227,7 +227,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "docs"
           },
           "type": "compare"
@@ -249,7 +249,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "cov"
           },
           "type": "compare"
@@ -271,7 +271,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -293,7 +293,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "tests"
           },
           "type": "compare"
@@ -315,7 +315,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "tests-no-zope"
           },
           "type": "compare"
@@ -383,7 +383,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "cov"
             },
             "type": "compare"
@@ -435,7 +435,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "dev"
             },
             "type": "compare"
@@ -487,7 +487,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "tests"
             },
             "type": "compare"
@@ -539,7 +539,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "tests-no-zope"
             },
             "type": "compare"
@@ -577,7 +577,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -599,7 +599,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "docs"
           },
           "type": "compare"
@@ -621,7 +621,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -643,7 +643,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "cov"
           },
           "type": "compare"
@@ -665,7 +665,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -687,7 +687,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "tests"
           },
           "type": "compare"
@@ -709,7 +709,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "tests-no-zope"
           },
           "type": "compare"
@@ -731,7 +731,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "cov"
           },
           "type": "compare"
@@ -767,7 +767,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -803,7 +803,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "tests"
           },
           "type": "compare"
@@ -839,7 +839,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "tests-no-zope"
           },
           "type": "compare"
@@ -915,7 +915,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "cov"
             },
             "type": "compare"
@@ -979,7 +979,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "dev"
             },
             "type": "compare"
@@ -1043,7 +1043,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "tests"
             },
             "type": "compare"
@@ -1107,7 +1107,7 @@
             },
             "op": "==",
             "rhs": {
-              "type": "string",
+              "type": "extra",
               "value": "tests-no-zope"
             },
             "type": "compare"
@@ -1133,7 +1133,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "cov"
           },
           "type": "compare"
@@ -1157,7 +1157,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -1181,7 +1181,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "tests"
           },
           "type": "compare"
@@ -1205,7 +1205,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "tests-no-zope"
           },
           "type": "compare"
@@ -1227,7 +1227,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -1249,7 +1249,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "docs"
           },
           "type": "compare"
@@ -1271,7 +1271,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -1293,7 +1293,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "docs"
           },
           "type": "compare"
@@ -1315,7 +1315,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -1337,7 +1337,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "docs"
           },
           "type": "compare"
@@ -1359,7 +1359,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -1381,7 +1381,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "docs"
           },
           "type": "compare"
@@ -1403,7 +1403,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "cov"
           },
           "type": "compare"
@@ -1425,7 +1425,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -1447,7 +1447,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "docs"
           },
           "type": "compare"
@@ -1469,7 +1469,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "tests"
           },
           "type": "compare"

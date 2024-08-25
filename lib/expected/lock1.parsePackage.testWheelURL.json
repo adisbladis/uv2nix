@@ -16,7 +16,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "test"
           },
           "type": "compare"
@@ -38,7 +38,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "test"
           },
           "type": "compare"
@@ -60,7 +60,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "test"
           },
           "type": "compare"
@@ -82,7 +82,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -104,7 +104,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -126,7 +126,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "test"
           },
           "type": "compare"
@@ -148,7 +148,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"
@@ -170,7 +170,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "dev"
           },
           "type": "compare"

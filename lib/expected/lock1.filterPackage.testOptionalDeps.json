@@ -27,7 +27,7 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
+            "type": "extra",
             "value": "haxx"
           },
           "type": "compare"
