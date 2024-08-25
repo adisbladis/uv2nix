@@ -251,7 +251,6 @@ fix (self: {
       sourcePreference ? wsargs.sourcePreference,
     }:
     let
-      # TODO: Make configurable
       preferWheel =
         if sourcePreference == "sdist" then
           false

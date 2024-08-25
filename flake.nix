@@ -61,26 +61,24 @@
         inherit lib;
       };
 
-      # flake.templates =
-      #   let
-      #     root = ./templates;
-      #     dirs = lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir root));
-      #   in
-      #   lib.listToAttrs (
-      #     map
-      #       (
-      #         dir:
-      #         let
-      #           path = root + "/${dir}";
-      #           template = import (path + "/flake.nix");
-      #         in
-      #         lib.nameValuePair dir {
-      #           inherit path;
-      #           inherit (template) description;
-      #         }
-      #       )
-      #       dirs
-      #   );
+      flake.templates =
+        let
+          root = ./templates;
+          dirs = lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir root));
+        in
+        lib.listToAttrs (
+          map (
+            dir:
+            let
+              path = root + "/${dir}";
+              template = import (path + "/flake.nix");
+            in
+            lib.nameValuePair dir {
+              inherit path;
+              inherit (template) description;
+            }
+          ) dirs
+        );
 
       # Expose unit tests for external discovery
       flake.libTests = import ./lib/test.nix {
