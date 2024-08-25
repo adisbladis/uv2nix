@@ -87,24 +87,37 @@ fix (self: {
 
     in
     {
-      # Consider: Expose as overlay instead of function wrapping mkOverlay. Not sure what is best.
-      # mkOverlay could support environment customisation without weird internal overlay attributes.
+      /*
+        Generate a Nixpkgs Python overlay from uv workspace.
+
+        See https://nixos.org/manual/nixpkgs/stable/#overriding-python-packages
+      */
       mkOverlay =
-        { sourcePreference }:
+        {
+          # Whether to prefer sources from either:
+          # - wheel
+          # - sdist
+          #
+          # See FAQ for more information.
+          sourcePreference,
+          # PEP-508 environment customisations.
+          # Example: { platform_release = "5.10.65"; }
+          environ ? { },
+        }:
         final: prev:
         let
           inherit (final) callPackage;
 
-          # TODO: Environment customisation
           # Note: Using Python from final here causes infinite recursion.
           # There is no correct way to override the python interpreter from within the set anyway,
           # so all facts that we get from the interpreter derivation are still the same.
-          environ = pep508.mkEnviron prev.python;
-          pythonVersion = environ.python_full_version.value;
+          environ' = pep508.setEnviron (pep508.mkEnviron prev.python) environ;
+          pythonVersion = environ'.python_full_version.value;
 
           mkPackage = lock1.mkPackage {
             projects = workspaceProjects;
-            inherit environ workspaceRoot sourcePreference;
+            environ = environ';
+            inherit workspaceRoot sourcePreference;
           };
 
           resolved = lock1.resolveDependencies {
@@ -115,7 +128,7 @@ fix (self: {
               build-systems = [ ];
             };
             lock = uvLock;
-            inherit environ;
+            environ = environ';
           };
 
         in

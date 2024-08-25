@@ -20,7 +20,9 @@ let
         });
     in
     {
-      arpeggio = addBuildSystem prev.arpeggio final.setuptools;
+      arpeggio = (addBuildSystem prev.arpeggio final.setuptools).overrideAttrs (old: {
+        propagatedBuildInputs = old.propagatedBuildInputs ++ [ final.pytest-runner ];
+      });
       attrs = addBuildSystem prev.attrs [
         final.hatchling
         final.hatch-vcs
@@ -45,10 +47,11 @@ let
       testOverrides ? _: _: { },
       check ? null,
       name ? throw "No name provided",
+      environ ? { },
     }:
     let
       ws = uv2nix.workspace.loadWorkspace { workspaceRoot = root; };
-      overlay = ws.mkOverlay { inherit sourcePreference; };
+      overlay = ws.mkOverlay { inherit sourcePreference environ; };
       python = interpreter.override {
         self = python;
         packageOverrides = lib.composeManyExtensions [
@@ -129,6 +132,30 @@ let
           python -c "import socks"
         '';
       };
+
+      testMultiChoicePackageNoMarker = mkCheck {
+        name = "multi-choice-no-marker";
+        root = ../lib/fixtures/multi-choice-package;
+        packages = ps: [ ps."multi-choice-package" ];
+        # Check that arpeggio _isn't_ available
+        check = ''
+          ! python -c "import arpeggio"
+        '';
+      };
+
+      testMultiChoicePackageWithMarker = mkCheck {
+        name = "multi-choice-no-marker";
+        root = ../lib/fixtures/multi-choice-package;
+        packages = ps: [ ps."multi-choice-package" ];
+        # Check that arpeggio _is_ available
+        check = ''
+          python -c "import arpeggio"
+        '';
+        environ = {
+          platform_release = "5.10.65";
+        };
+      };
+
     };
 
 in
