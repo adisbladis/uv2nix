@@ -24,10 +24,11 @@ let
     optionalAttrs
     head
     attrNames
+    all
     ;
   inherit (builtins) readDir;
   inherit (pyproject-nix.lib.project) loadUVPyproject; # Note: Maybe we want a loader that will just "remap-all-the-things" into standard attributes?
-  inherit (pyproject-nix.lib) pep508;
+  inherit (pyproject-nix.lib) pep440 pep508;
   inherit (pyproject-nix.lib) pypa;
 
   # Match str against a glob pattern
@@ -89,12 +90,16 @@ fix (self: {
       # Consider: Expose as overlay instead of function wrapping mkOverlay. Not sure what is best.
       # mkOverlay could support environment customisation without weird internal overlay attributes.
       mkOverlay =
-        _: final: _prev:
+        _: final: prev:
         let
-          inherit (final) python callPackage;
+          inherit (final) callPackage;
 
           # TODO: Environment customisation
-          environ = pep508.mkEnviron python;
+          # Note: Using Python from final here causes infinite recursion.
+          # There is no correct way to override the python interpreter from within the set anyway,
+          # so all facts that we get from the interpreter derivation are still the same.
+          environ = pep508.mkEnviron prev.python;
+          pythonVersion = environ.python_full_version.value;
 
           mkPackage = lock1.mkPackage {
             projects = workspaceProjects;
@@ -113,6 +118,8 @@ fix (self: {
           };
 
         in
+        # Assert that requires-python from uv.lock is compatible with this interpreter
+        assert all (spec: pep440.comparators.${spec.op} pythonVersion spec.version) uvLock.requires-python;
         mapAttrs (_: pkg: callPackage (mkPackage pkg) { }) resolved;
 
       inherit topLevelDependencies;

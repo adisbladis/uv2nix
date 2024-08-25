@@ -1,7 +1,6 @@
 { pyproject-nix, lib, ... }:
 
 let
-  inherit (pyproject-nix.lib.pep621) parseRequiresPython;
   inherit (pyproject-nix.lib.pep508) parseMarkers evalMarkers;
   inherit (pyproject-nix.lib.pypa) parseWheelFileName;
   inherit (pyproject-nix.lib) pep440 pypa;
@@ -400,9 +399,10 @@ fix (self: {
       supported-markers ? [ ],
       options ? { },
     }:
+    assert version == 1;
     {
       inherit version;
-      requires-python = parseRequiresPython requires-python;
+      requires-python = pep440.parseVersionConds requires-python;
       manifest = self.parseManifest manifest;
       package = map self.parsePackage package;
       resolution-markers = map parseMarkers resolution-markers;

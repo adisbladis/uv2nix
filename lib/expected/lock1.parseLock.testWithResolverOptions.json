@@ -7,7 +7,22 @@
     "prerelease-mode": null,
     "resolution-mode": null
   },
-  "requires-python": [],
+  "requires-python": [
+    {
+      "op": ">=",
+      "version": {
+        "dev": null,
+        "epoch": 0,
+        "local": null,
+        "post": null,
+        "pre": null,
+        "release": [
+          3,
+          12
+        ]
+      }
+    }
+  ],
   "resolution-markers": [],
   "supported-markers": [],
   "version": 1
