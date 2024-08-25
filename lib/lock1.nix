@@ -213,7 +213,9 @@ fix (self: {
       environ,
       projects,
       workspaceRoot,
-    }:
+      # deadnix: skip
+      sourcePreference,
+    }@wsargs:
     # Parsed uv.lock package
     package:
     let
@@ -246,10 +248,17 @@ fix (self: {
       stdenv,
       autoPatchelfHook,
       pythonManylinuxPackages,
+      sourcePreference ? wsargs.sourcePreference,
     }:
     let
       # TODO: Make configurable
-      preferWheel = true;
+      preferWheel =
+        if sourcePreference == "sdist" then
+          false
+        else if sourcePreference == "wheel" then
+          true
+        else
+          throw "Unknown sourcePreference: ${sourcePreference}";
 
       compatibleWheels = pypa.selectWheels python.stdenv.targetPlatform python wheelFiles;
       selectedWheel' = head compatibleWheels;

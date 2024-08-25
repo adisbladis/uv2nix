@@ -51,7 +51,7 @@ fix (self: {
     Load a workspace from a workspace root.
 
     Returns an attribute set where you can call:
-    mkOverlay { }
+    mkOverlay { sourcePreference = "wheel"; } # wheel or sdist
 
     to create a Nixpkgs Python packageOverrides overlay
   */
@@ -90,7 +90,8 @@ fix (self: {
       # Consider: Expose as overlay instead of function wrapping mkOverlay. Not sure what is best.
       # mkOverlay could support environment customisation without weird internal overlay attributes.
       mkOverlay =
-        _: final: prev:
+        { sourcePreference }:
+        final: prev:
         let
           inherit (final) callPackage;
 
@@ -103,7 +104,7 @@ fix (self: {
 
           mkPackage = lock1.mkPackage {
             projects = workspaceProjects;
-            inherit environ workspaceRoot;
+            inherit environ workspaceRoot sourcePreference;
           };
 
           resolved = lock1.resolveDependencies {

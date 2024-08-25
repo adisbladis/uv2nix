@@ -6,7 +6,7 @@
 
 let
   inherit (pkgs) runCommand;
-  inherit (lib) toList;
+  inherit (lib) toList mapAttrs' nameValuePair;
 
   # Just enough overrides to make tests pass.
   # This is not, and will not, become an overrides stdlib.
@@ -33,9 +33,11 @@ let
       urllib3 = addBuildSystem prev.urllib3 final.hatchling;
       pip = addBuildSystem prev.pip final.setuptools;
       requests = addBuildSystem prev.requests final.setuptools;
+      pysocks = addBuildSystem prev.pysocks final.setuptools;
     };
 
-  mkCheck =
+  mkCheck' =
+    sourcePreference:
     {
       root,
       interpreter ? pkgs.python312,
@@ -46,7 +48,7 @@ let
     }:
     let
       ws = uv2nix.workspace.loadWorkspace { workspaceRoot = root; };
-      overlay = ws.mkOverlay { };
+      overlay = ws.mkOverlay { inherit sourcePreference; };
       python = interpreter.override {
         self = python;
         packageOverrides = lib.composeManyExtensions [
@@ -60,7 +62,7 @@ let
 
     in
     if check != null then
-      runCommand "check-${name}"
+      runCommand "check-${name}-pref-${sourcePreference}"
         {
           nativeBuildInputs = [ pythonEnv ];
           passthru = {
@@ -75,53 +77,60 @@ let
     else
       pythonEnv;
 
+  mkChecks =
+    sourcePreference:
+    let
+      mkCheck = mkCheck' sourcePreference;
+    in
+    mapAttrs' (name: v: nameValuePair "${name}-pref-${sourcePreference}" v) {
+      trivial = mkCheck {
+        root = ../lib/fixtures/trivial;
+        packages = ps: [ ps."trivial" ];
+      };
+
+      workspace = mkCheck {
+        root = ../lib/fixtures/workspace;
+        packages = ps: [
+          ps."workspace"
+          ps."workspace-package"
+        ];
+      };
+
+      workspace-flat = mkCheck {
+        root = ../lib/fixtures/workspace-flat;
+        packages = ps: [
+          ps."pkg-a"
+          ps."pkg-b"
+        ];
+      };
+
+      # Note: Kitchen sink example can't be fully tested until
+      kitchenSinkA = mkCheck {
+        root = ../lib/fixtures/kitchen-sink/a;
+        packages = ps: [ ps.a ];
+      };
+
+      noDeps = mkCheck {
+        root = ../lib/fixtures/no-deps;
+        packages = ps: [ ps."no-deps" ];
+      };
+
+      optionalDeps = mkCheck {
+        root = ../lib/fixtures/optional-deps;
+        packages = ps: [ ps."optional-deps" ];
+      };
+
+      withExtra = mkCheck {
+        name = "with-extra";
+        root = ../lib/fixtures/with-extra;
+        packages = ps: [ ps."with-extra" ];
+        # Check that socks extra is available
+        check = ''
+          python -c "import socks"
+        '';
+      };
+    };
+
 in
-
-{
-  trivial = mkCheck {
-    root = ../lib/fixtures/trivial;
-    packages = ps: [ ps."trivial" ];
-  };
-
-  workspace = mkCheck {
-    root = ../lib/fixtures/workspace;
-    packages = ps: [
-      ps."workspace"
-      ps."workspace-package"
-    ];
-  };
-
-  workspace-flat = mkCheck {
-    root = ../lib/fixtures/workspace-flat;
-    packages = ps: [
-      ps."pkg-a"
-      ps."pkg-b"
-    ];
-  };
-
-  # Note: Kitchen sink example can't be fully tested until
-  kitchenSinkA = mkCheck {
-    root = ../lib/fixtures/kitchen-sink/a;
-    packages = ps: [ ps.a ];
-  };
-
-  noDeps = mkCheck {
-    root = ../lib/fixtures/no-deps;
-    packages = ps: [ ps."no-deps" ];
-  };
-
-  optionalDeps = mkCheck {
-    root = ../lib/fixtures/optional-deps;
-    packages = ps: [ ps."optional-deps" ];
-  };
-
-  withExtra = mkCheck {
-    name = "with-extra";
-    root = ../lib/fixtures/with-extra;
-    packages = ps: [ ps."with-extra" ];
-    # Check that socks extra is available
-    check = ''
-      python -c "import socks"
-    '';
-  };
-}
+# Generate test set twice: Once with wheel sourcePreference and once with sdist sourcePreference
+mkChecks "wheel" // mkChecks "sdist"

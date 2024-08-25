@@ -37,7 +37,7 @@ in
         let
           ws = workspace.loadWorkspace { inherit workspaceRoot; };
 
-          overlay = ws.mkOverlay { };
+          overlay = ws.mkOverlay { sourcePreference = "wheel"; };
 
           python = pkgs.python312.override {
             self = python;
