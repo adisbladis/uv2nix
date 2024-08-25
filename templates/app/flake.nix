@@ -55,11 +55,13 @@
         packageOverrides = overlay;
       };
 
-      # Create a Python environment using withPackages
-      pythonEnv = python.withPackages (_ps: [ ]);
-
     in
     {
-      devShells.x86_64-linux.default = pkgs.mkShell { packages = [ pythonEnv ]; };
+      packages.x86_64-linux.default = python.pkgs.app;
+      # TODO: A better mkShell withPackages example.
+      devShells.x86_64-linux.default = pkgs.mkShell {
+        inputsFrom = [ python.pkgs.app ];
+        packages = [ pkgs.uv ];
+      };
     };
 }
