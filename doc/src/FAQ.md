@@ -4,7 +4,7 @@
 
 `uv2nix` can only work with what it has, and `uv.lock` metadata is notably absent of important metadata.
 
-Take a lock file entry for `requests` as an example:
+Take a lock file entry for `pyzmq` as an example:
 ``` toml
 [[package]]
 name = "pyzmq"
