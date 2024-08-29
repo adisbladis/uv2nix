@@ -871,29 +871,29 @@
         "marker": {
           "lhs": {
             "lhs": {
-              "lhs": {
-                "type": "variable",
-                "value": "python_full_version"
-              },
-              "op": "<",
-              "rhs": {
-                "type": "version",
-                "value": {
-                  "dev": null,
-                  "epoch": 0,
-                  "local": null,
-                  "post": null,
-                  "pre": null,
-                  "release": [
-                    3,
-                    11
-                  ]
-                }
-              },
-              "type": "compare"
+              "type": "variable",
+              "value": "python_full_version"
             },
-            "op": "and",
+            "op": "<",
             "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  11
+                ]
+              }
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
               "lhs": {
                 "type": "variable",
                 "value": "platform_python_implementation"
@@ -905,20 +905,20 @@
               },
               "type": "compare"
             },
-            "type": "boolOp"
-          },
-          "op": "and",
-          "rhs": {
-            "lhs": {
-              "type": "variable",
-              "value": "extra"
-            },
-            "op": "==",
+            "op": "and",
             "rhs": {
-              "type": "extra",
-              "value": "cov"
+              "lhs": {
+                "type": "variable",
+                "value": "extra"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "extra",
+                "value": "cov"
+              },
+              "type": "compare"
             },
-            "type": "compare"
+            "type": "boolOp"
           },
           "type": "boolOp"
         },
@@ -935,29 +935,29 @@
         "marker": {
           "lhs": {
             "lhs": {
-              "lhs": {
-                "type": "variable",
-                "value": "python_full_version"
-              },
-              "op": "<",
-              "rhs": {
-                "type": "version",
-                "value": {
-                  "dev": null,
-                  "epoch": 0,
-                  "local": null,
-                  "post": null,
-                  "pre": null,
-                  "release": [
-                    3,
-                    11
-                  ]
-                }
-              },
-              "type": "compare"
+              "type": "variable",
+              "value": "python_full_version"
             },
-            "op": "and",
+            "op": "<",
             "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  11
+                ]
+              }
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
               "lhs": {
                 "type": "variable",
                 "value": "platform_python_implementation"
@@ -969,20 +969,20 @@
               },
               "type": "compare"
             },
-            "type": "boolOp"
-          },
-          "op": "and",
-          "rhs": {
-            "lhs": {
-              "type": "variable",
-              "value": "extra"
-            },
-            "op": "==",
+            "op": "and",
             "rhs": {
-              "type": "extra",
-              "value": "dev"
+              "lhs": {
+                "type": "variable",
+                "value": "extra"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "extra",
+                "value": "dev"
+              },
+              "type": "compare"
             },
-            "type": "compare"
+            "type": "boolOp"
           },
           "type": "boolOp"
         },
@@ -999,29 +999,29 @@
         "marker": {
           "lhs": {
             "lhs": {
-              "lhs": {
-                "type": "variable",
-                "value": "python_full_version"
-              },
-              "op": "<",
-              "rhs": {
-                "type": "version",
-                "value": {
-                  "dev": null,
-                  "epoch": 0,
-                  "local": null,
-                  "post": null,
-                  "pre": null,
-                  "release": [
-                    3,
-                    11
-                  ]
-                }
-              },
-              "type": "compare"
+              "type": "variable",
+              "value": "python_full_version"
             },
-            "op": "and",
+            "op": "<",
             "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  11
+                ]
+              }
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
               "lhs": {
                 "type": "variable",
                 "value": "platform_python_implementation"
@@ -1033,20 +1033,20 @@
               },
               "type": "compare"
             },
-            "type": "boolOp"
-          },
-          "op": "and",
-          "rhs": {
-            "lhs": {
-              "type": "variable",
-              "value": "extra"
-            },
-            "op": "==",
+            "op": "and",
             "rhs": {
-              "type": "extra",
-              "value": "tests"
+              "lhs": {
+                "type": "variable",
+                "value": "extra"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "extra",
+                "value": "tests"
+              },
+              "type": "compare"
             },
-            "type": "compare"
+            "type": "boolOp"
           },
           "type": "boolOp"
         },
@@ -1063,29 +1063,29 @@
         "marker": {
           "lhs": {
             "lhs": {
-              "lhs": {
-                "type": "variable",
-                "value": "python_full_version"
-              },
-              "op": "<",
-              "rhs": {
-                "type": "version",
-                "value": {
-                  "dev": null,
-                  "epoch": 0,
-                  "local": null,
-                  "post": null,
-                  "pre": null,
-                  "release": [
-                    3,
-                    11
-                  ]
-                }
-              },
-              "type": "compare"
+              "type": "variable",
+              "value": "python_full_version"
             },
-            "op": "and",
+            "op": "<",
             "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  11
+                ]
+              }
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
               "lhs": {
                 "type": "variable",
                 "value": "platform_python_implementation"
@@ -1097,20 +1097,20 @@
               },
               "type": "compare"
             },
-            "type": "boolOp"
-          },
-          "op": "and",
-          "rhs": {
-            "lhs": {
-              "type": "variable",
-              "value": "extra"
-            },
-            "op": "==",
+            "op": "and",
             "rhs": {
-              "type": "extra",
-              "value": "tests-no-zope"
+              "lhs": {
+                "type": "variable",
+                "value": "extra"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "extra",
+                "value": "tests-no-zope"
+              },
+              "type": "compare"
             },
-            "type": "compare"
+            "type": "boolOp"
           },
           "type": "boolOp"
         },
