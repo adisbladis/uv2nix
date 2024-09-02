@@ -229,6 +229,7 @@ fix (self: {
       isURL = source ? url;
       isDirectory = source ? directory; # Path to non-uv project
       isPath = source ? path; # Path to sdist
+      isVirtual = source ? virtual;
 
       # Wheels grouped by filename
       wheels = mapAttrs (
@@ -286,7 +287,7 @@ fix (self: {
           "pyproject";
 
     in
-    if (isProject || isDirectory) then
+    if (isProject || isDirectory || isVirtual) then
       buildPythonPackage (
         (
           if projects ? package.name then
@@ -298,6 +299,8 @@ fix (self: {
                   workspaceRoot + "/${source.editable}"
                 else if isDirectory then
                   workspaceRoot + "/${source.directory}"
+                else if isVirtual then
+                  workspaceRoot + "/${source.virtual}"
                 else
                   throw "Not a project path: ${builtins.toJSON source}";
             }
