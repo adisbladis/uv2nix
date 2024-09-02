@@ -57,6 +57,9 @@
 
     in
     {
+      # 'app' is the name in pyproject.toml after name normalization.
+      # See https://packaging.python.org/en/latest/specifications/name-normalization/#normalization
+
       packages.x86_64-linux.default = python.pkgs.app;
       # TODO: A better mkShell withPackages example.
       devShells.x86_64-linux.default = pkgs.mkShell {
