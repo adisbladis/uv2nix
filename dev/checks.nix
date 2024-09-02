@@ -91,6 +91,11 @@ let
         packages = ps: [ ps."trivial" ];
       };
 
+      virtual = mkCheck {
+        root = ../lib/fixtures/virtual;
+        packages = ps: [ ps."virtual" ];
+      };
+
       workspace = mkCheck {
         root = ../lib/fixtures/workspace;
         packages = ps: [
