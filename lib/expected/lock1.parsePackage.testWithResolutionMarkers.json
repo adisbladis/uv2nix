@@ -8,18 +8,7 @@
   "name": "arpeggio",
   "optional-dependencies": {},
   "resolution-markers": [
-    {
-      "lhs": {
-        "type": "variable",
-        "value": "platform_release"
-      },
-      "op": "==",
-      "rhs": {
-        "type": "string",
-        "value": "5.10.65"
-      },
-      "type": "compare"
-    }
+    "platform_release == '5.10.65'"
   ],
   "sdist": {
     "hash": "sha256:8dfee59d546e0192e3c47f630f08f12ba7cf542caf157c58d516a193e3bfb854",

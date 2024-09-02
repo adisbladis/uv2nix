@@ -35,8 +35,6 @@ let
     hasPrefix
     ;
 
-  # TODO: Consider caching resolution-markers from top-level
-
 in
 
 fix (self: {
@@ -57,11 +55,16 @@ fix (self: {
       dependencies,
     }:
     let
+      # Evaluate top-level resolution-markers
+      resolution-markers = mapAttrs (_: evalMarkers environ) lock.resolution-markers;
+
       # Filter dependencies of packages
       packages = map (self.filterPackage environ) (
         # Filter packages based on resolution-markers
         filter (
-          pkg: length pkg.resolution-markers == 0 || all (evalMarkers environ) pkg.resolution-markers
+          pkg:
+          length pkg.resolution-markers == 0
+          || all (markers: resolution-markers.${markers}) pkg.resolution-markers
         ) lock.package
       );
 
@@ -413,7 +416,9 @@ fix (self: {
       requires-python = pep440.parseVersionConds requires-python;
       manifest = self.parseManifest manifest;
       package = map self.parsePackage package;
-      resolution-markers = map parseMarkers resolution-markers;
+      resolution-markers = listToAttrs (
+        map (markers: lib.nameValuePair markers (parseMarkers markers)) resolution-markers
+      );
       supported-markers = map parseMarkers supported-markers;
       options = parseOptions options;
     };
@@ -522,7 +527,9 @@ fix (self: {
       version' = pep440.parseVersion version;
       wheels = map parseWheel wheels;
       metadata = parseMetadata metadata;
-      resolution-markers = map parseMarkers resolution-markers;
+      # Don't parse resolution-markers.
+      # All resolution-markers are also in the toplevel, meaning the string can be used as a lookup key from the top-level marker.
+      inherit resolution-markers;
       dependencies = map parseDependency dependencies;
       optional-dependencies = mapAttrs (_: map parseDependency) optional-dependencies;
       dev-dependencies = mapAttrs (_: map parseDependency) dev-dependencies;

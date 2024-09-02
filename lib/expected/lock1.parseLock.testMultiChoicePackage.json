@@ -23,32 +23,8 @@
       }
     }
   ],
-  "resolution-markers": [
-    {
-      "lhs": {
-        "type": "variable",
-        "value": "platform_release"
-      },
-      "op": "==",
-      "rhs": {
-        "type": "string",
-        "value": "5.10.65"
-      },
-      "type": "compare"
-    },
-    {
-      "lhs": {
-        "type": "variable",
-        "value": "platform_release"
-      },
-      "op": "==",
-      "rhs": {
-        "type": "string",
-        "value": "5.10.104"
-      },
-      "type": "compare"
-    },
-    {
+  "resolution-markers": {
+    "platform_release != '5.10.104' and platform_release != '5.10.65'": {
       "lhs": {
         "lhs": {
           "type": "variable",
@@ -75,8 +51,32 @@
         "type": "compare"
       },
       "type": "boolOp"
+    },
+    "platform_release == '5.10.104'": {
+      "lhs": {
+        "type": "variable",
+        "value": "platform_release"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "5.10.104"
+      },
+      "type": "compare"
+    },
+    "platform_release == '5.10.65'": {
+      "lhs": {
+        "type": "variable",
+        "value": "platform_release"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "5.10.65"
+      },
+      "type": "compare"
     }
-  ],
+  },
   "supported-markers": [],
   "version": 1
 }

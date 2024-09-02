@@ -23,8 +23,8 @@
       }
     }
   ],
-  "resolution-markers": [
-    {
+  "resolution-markers": {
+    "sys_platform == 'darwin'": {
       "lhs": {
         "type": "variable",
         "value": "sys_platform"
@@ -36,7 +36,7 @@
       },
       "type": "compare"
     },
-    {
+    "sys_platform == 'linux'": {
       "lhs": {
         "type": "variable",
         "value": "sys_platform"
@@ -48,7 +48,7 @@
       },
       "type": "compare"
     }
-  ],
+  },
   "supported-markers": [
     {
       "lhs": {
