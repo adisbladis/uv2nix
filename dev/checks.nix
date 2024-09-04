@@ -138,6 +138,11 @@ let
         '';
       };
 
+      onlyWheels = mkCheck {
+        root = ../lib/fixtures/only-wheels;
+        packages = ps: [ ps."hgtk" ];
+      };
+
       testMultiChoicePackageNoMarker = mkCheck {
         name = "multi-choice-no-marker";
         root = ../lib/fixtures/multi-choice-package;
