@@ -256,7 +256,29 @@ fix (self: {
     }:
     let
       preferWheel =
-        if sourcePreference == "sdist" then
+        # implement https://docs.astral.sh/uv/reference/settings/#no-binary-package
+        # and no-build
+        # merging of multiple projects in a workspace is set addition
+        let
+          no_binary_packages = builtins.concatMap (
+            project: project.pyproject.tool.uv.no-binary-package or [ ]
+          ) (lib.attrsets.attrValues projects);
+          no_build_packages = builtins.concatMap (
+            project: project.pyproject.tool.uv.no-build-package or [ ]
+          ) (lib.attrsets.attrValues projects);
+        in
+        # make sure there is no intersection between no_binary_packages and no_build_packages
+        assert lib.asserts.assertMsg
+          ((builtins.length (lib.lists.intersectLists no_binary_packages no_build_packages)) == 0)
+          (
+            "There is an overlap between packages specified as no-build and no-binary-package in the workspace. That leaves no way to build these packages: "
+            + (toString (lib.lists.intersectLists no_binary_packages no_build_packages))
+          );
+        if builtins.elem package.name no_binary_packages then
+          false
+        else if builtins.elem package.name no_build_packages then
+          true
+        else if sourcePreference == "sdist" then
           false
         else if sourcePreference == "wheel" then
           true
