@@ -20,7 +20,7 @@ def get_file_creation(path: str) -> str:
     proc = subprocess.run([
         "git", "log", "--follow", "--format=%ad", "--date", "iso-strict", path
     ], check=True, stdout=subprocess.PIPE)
-    return proc.stdout.decode().split("\n")[0]
+    return [line for line in proc.stdout.decode().split("\n") if line][-1]
 
 
 def lock(root: str, exclude_newer: str):

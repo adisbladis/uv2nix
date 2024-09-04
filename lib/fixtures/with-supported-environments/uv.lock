@@ -10,7 +10,7 @@ supported-markers = [
 ]
 
 [options]
-exclude-newer = "2024-08-21T13:41:16Z"
+exclude-newer = "2024-08-21T10:06:00Z"
 
 [[package]]
 name = "arpeggio"

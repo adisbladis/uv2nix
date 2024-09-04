@@ -2,7 +2,7 @@ version = 1
 requires-python = ">=3.12"
 
 [options]
-exclude-newer = "2024-09-02T14:10:18Z"
+exclude-newer = "2024-08-21T10:06:00Z"
 
 [[package]]
 name = "arpeggio"
