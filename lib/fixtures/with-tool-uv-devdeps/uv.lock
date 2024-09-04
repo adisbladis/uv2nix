@@ -1,6 +1,9 @@
 version = 1
 requires-python = ">=3.12"
 
+[options]
+exclude-newer = "2024-08-21T13:41:16Z"
+
 [[package]]
 name = "coverage"
 version = "7.6.1"
@@ -46,7 +49,6 @@ source = { editable = "." }
 
 [package.dev-dependencies]
 dev = [
-    { name = "coverage" },
     { name = "coverage" },
 ]
 

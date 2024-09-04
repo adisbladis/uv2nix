@@ -25,7 +25,21 @@
         "marker": null,
         "name": "requests",
         "path": null,
-        "specifier": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              2,
+              32,
+              3
+            ]
+          }
+        },
         "url": null
       }
     ]

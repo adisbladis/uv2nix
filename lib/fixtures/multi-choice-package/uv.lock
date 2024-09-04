@@ -6,6 +6,9 @@ resolution-markers = [
     "platform_release != '5.10.104' and platform_release != '5.10.65'",
 ]
 
+[options]
+exclude-newer = "2024-08-21T10:06:00Z"
+
 [[package]]
 name = "arpeggio"
 version = "2.0.1"

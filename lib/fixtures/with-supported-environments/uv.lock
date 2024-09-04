@@ -9,6 +9,9 @@ supported-markers = [
     "sys_platform == 'linux'",
 ]
 
+[options]
+exclude-newer = "2024-08-21T13:41:16Z"
+
 [[package]]
 name = "arpeggio"
 version = "2.0.2"

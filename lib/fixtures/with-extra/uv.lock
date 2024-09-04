@@ -1,6 +1,9 @@
 version = 1
 requires-python = ">=3.12"
 
+[options]
+exclude-newer = "2024-08-21T10:06:00Z"
+
 [[package]]
 name = "certifi"
 version = "2024.7.4"
@@ -90,4 +93,4 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "requests", extras = ["socks"] }]
+requires-dist = [{ name = "requests", extras = ["socks"], specifier = ">=2.32.3" }]

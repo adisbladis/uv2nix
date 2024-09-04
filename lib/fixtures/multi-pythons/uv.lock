@@ -5,6 +5,9 @@ resolution-markers = [
     "python_full_version >= '3.12'",
 ]
 
+[options]
+exclude-newer = "2024-08-22T04:09:47Z"
+
 [manifest]
 members = [
     "multi-depends",

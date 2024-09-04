@@ -1,6 +1,9 @@
 version = 1
 requires-python = ">=3.12"
 
+[options]
+exclude-newer = "2024-08-22T04:09:47Z"
+
 [manifest]
 members = [
     "workspace",
@@ -23,7 +26,6 @@ source = { editable = "." }
 dependencies = [
     { name = "workspace-package" },
 ]
-
 
 [package.metadata]
 requires-dist = [{ name = "workspace-package", editable = "packages/workspace-package" }]
