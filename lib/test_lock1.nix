@@ -38,6 +38,7 @@ let
     withResolverOptions = ./fixtures/with-resolver-options;
     withSupportedEnvironments = ./fixtures/with-supported-environments;
     multiPythons = ./fixtures/multi-pythons;
+    no-build-no-binary-packages = ./fixtures/no-build-no-binary-packages;
   };
 
   projects = mapAttrs (
