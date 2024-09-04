@@ -282,7 +282,16 @@ fix (self: {
             if (source.url == package.sdist.url or null) then "pyproject" else "wheel"
           )
         else if isPypi then
-          (if preferWheel && length compatibleWheels > 0 then "wheel" else "pyproject")
+          (
+            if preferWheel && compatibleWheels != [ ] then
+              "wheel"
+            else if package.sdist == { } then
+              assert compatibleWheels != [ ];
+              "wheel"
+            else
+              assert package.sdist != { };
+              "pyproject"
+          )
         else
           "pyproject";
 
