@@ -326,8 +326,10 @@ fix (self: {
       "There is an overlap between packages specified as no-build and no-binary-package in the workspace. That leaves no way to build these packages: "
       + (toString unbuildable-packages)
     );
-    assert assertMsg (format == "pyproject" -> !elem package.name no-build-packages) "Package source for '${package.name}' was derived as sdist, but was present in tool.uv.no-build-package";
-    assert assertMsg (format == "wheel" -> !elem package.name no-binary-packages) "Package source for '${package.name}' was derived as wheel, but was present in tool.uv.no-binary-package";
+    assert assertMsg (format == "pyproject" -> !elem package.name no-build-packages)
+      "Package source for '${package.name}' was derived as sdist, but was present in tool.uv.no-build-package";
+    assert assertMsg (format == "wheel" -> !elem package.name no-binary-packages)
+      "Package source for '${package.name}' was derived as wheel, but was present in tool.uv.no-binary-package";
     if (isProject || isDirectory || isVirtual) then
       buildPythonPackage (
         (
