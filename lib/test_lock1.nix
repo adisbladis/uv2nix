@@ -40,6 +40,9 @@ let
     withSupportedEnvironments = ./fixtures/with-supported-environments;
     multiPythons = ./fixtures/multi-pythons;
     no-build-no-binary-packages = ./fixtures/no-build-no-binary-packages;
+    no-build = ./fixtures/no-build;
+    no-binary = ./fixtures/no-binary;
+    no-binary-no-build = ./fixtures/no-binary-no-build;
   };
 
   projects = mapAttrs (
@@ -105,7 +108,7 @@ in
 
     in
     {
-      testBuildNoBinaryPackagesPrefWheel = {
+      testNoBinaryPackagesPrefWheel = {
         expr =
           let
             mkTest = mkPackageTest {
@@ -124,7 +127,7 @@ in
         };
       };
 
-      testBuildNoBinaryPackagesPrefSdist = {
+      testNoBinaryPackagesPrefSdist = {
         expr =
           let
             mkTest = mkPackageTest {
@@ -141,6 +144,56 @@ in
           arpeggio = "Arpeggio-2.0.2-py2.py3-none-any.whl";
           urllib3 = "urllib3-2.2.2.tar.gz";
         };
+      };
+
+      testNoBuildPrefWheel = {
+        expr = baseNameOf ((mkPackageTest {
+          projectName = "no-build";
+          sourcePreference = "wheel";
+        }) "arpeggio").src.url;
+        expected = "Arpeggio-2.0.2-py2.py3-none-any.whl";
+      };
+
+      testNoBuildPrefSdist = {
+        expr = baseNameOf ((mkPackageTest {
+          projectName = "no-build";
+          sourcePreference = "sdist";
+        }) "arpeggio").src.url;
+        expected = "Arpeggio-2.0.2-py2.py3-none-any.whl";
+      };
+
+      testNoBinaryPrefWheel = {
+        expr = baseNameOf ((mkPackageTest {
+          projectName = "no-binary";
+          sourcePreference = "wheel" ;
+        }) "arpeggio").src.url;
+        expected = "Arpeggio-2.0.2.tar.gz";
+      };
+
+      testNoBinaryPrefSdist = {
+        expr = baseNameOf ((mkPackageTest {
+          projectName = "no-binary";
+          sourcePreference = "sdist";
+        }) "arpeggio").src.url;
+        expected = "Arpeggio-2.0.2.tar.gz";
+      };
+
+      testNoBuildNoBinaryPrefWheel = {
+        expr = baseNameOf ((mkPackageTest {
+          projectName = "no-binary-no-build";
+          sourcePreference = "wheel" ;
+        }) "arpeggio").src.url;
+        expectedError.type = "ThrownError";
+        expectedError.msg = "Package source for 'arpeggio' was derived as sdist, in tool.uv.no-binary is set to true";
+      };
+
+      testNoBuildNoBinaryPrefSdist = {
+        expr = baseNameOf ((mkPackageTest {
+          projectName = "no-binary-no-build";
+          sourcePreference = "wheel" ;
+        }) "arpeggio").src.url;
+        expectedError.type = "ThrownError";
+        expectedError.msg = "Package source for 'arpeggio' was derived as sdist, in tool.uv.no-binary is set to true";
       };
     };
 

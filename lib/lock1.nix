@@ -35,6 +35,7 @@ let
     hasPrefix
     intersectLists
     assertMsg
+    foldl'
     ;
 
 in
@@ -239,6 +240,22 @@ fix (self: {
       );
       unbuildable-packages = intersectLists no-binary-packages no-build-packages;
 
+      no-build = foldl' (acc: pyproject: (
+        if pyproject ? tool.uv.no-build then (
+          if acc != null && pyproject.tool.uv.no-build != acc then (
+            throw "Got conflicting values for tool.uv.no-build"
+          ) else pyproject.tool.uv.no-build
+        ) else acc
+      )) null pyprojects';
+
+      no-binary = foldl' (acc: pyproject: (
+        if pyproject ? tool.uv.no-binary then (
+          if acc != null && pyproject.tool.uv.no-binary != acc then (
+            throw "Got conflicting values for tool.uv.no-binary"
+          ) else pyproject.tool.uv.no-binary
+        ) else acc
+      )) null pyprojects';
+
     in
     # Parsed uv.lock package
     package:
@@ -277,7 +294,9 @@ fix (self: {
     }:
     let
       preferWheel =
-        if elem package.name no-binary-packages then
+        if no-build != null && no-build then true
+        else if no-binary != null && no-binary then false
+        else if elem package.name no-binary-packages then
           false
         else if elem package.name no-build-packages then
           true
@@ -321,10 +340,16 @@ fix (self: {
           "pyproject";
 
     in
-    # make sure there is no intersection between no-binary-packages and no-build-packages for current package
+      # make sure there is no intersection between no-binary-packages and no-build-packages for current package
     assert assertMsg (!elem package.name unbuildable-packages) (
       "There is an overlap between packages specified as no-build and no-binary-package in the workspace. That leaves no way to build these packages: "
       + (toString unbuildable-packages)
+    );
+    assert assertMsg (format == "wheel" -> no-binary != null -> ! no-binary) (
+      "Package source for '${package.name}' was derived as sdist, in tool.uv.no-binary is set to true"
+    );
+    assert assertMsg (format == "sdist" -> no-build != null -> ! no-build) (
+      "Package source for '${package.name}' was derived as sdist, in tool.uv.no-build is set to true"
     );
     assert assertMsg (format == "pyproject" -> !elem package.name no-build-packages)
       "Package source for '${package.name}' was derived as sdist, but was present in tool.uv.no-build-package";

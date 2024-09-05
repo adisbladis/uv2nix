@@ -1,0 +1,20 @@
+[project]
+name = "no-binary-no-build"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "arpeggio>=2.0.2",
+]
+
+[project.scripts]
+hello = "no_binary_no_build:hello"
+
+[tool.uv]
+no-binary = true
+no-build = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
