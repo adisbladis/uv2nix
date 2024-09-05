@@ -33,6 +33,8 @@ let
     optionals
     unique
     hasPrefix
+    intersectLists
+    assertMsg
     ;
 
 in
@@ -219,6 +221,19 @@ fix (self: {
       # deadnix: skip
       sourcePreference,
     }@wsargs:
+    let
+      # implement https://docs.astral.sh/uv/reference/settings/#no-binary-package and no-build merging of multiple projects in a workspace is set addition
+      no_binary_packages = concatMap (project: project.pyproject.tool.uv.no-binary-package or [ ]) (
+        attrValues projects
+      );
+
+      no_build_packages = concatMap (project: project.pyproject.tool.uv.no-build-package or [ ]) (
+        attrValues projects
+      );
+
+      unbuildable_packages = intersectLists no_binary_packages no_build_packages;
+
+    in
     # Parsed uv.lock package
     package:
     let
@@ -256,27 +271,9 @@ fix (self: {
     }:
     let
       preferWheel =
-        # implement https://docs.astral.sh/uv/reference/settings/#no-binary-package
-        # and no-build
-        # merging of multiple projects in a workspace is set addition
-        let
-          no_binary_packages = builtins.concatMap (
-            project: project.pyproject.tool.uv.no-binary-package or [ ]
-          ) (lib.attrsets.attrValues projects);
-          no_build_packages = builtins.concatMap (
-            project: project.pyproject.tool.uv.no-build-package or [ ]
-          ) (lib.attrsets.attrValues projects);
-        in
-        # make sure there is no intersection between no_binary_packages and no_build_packages
-        assert lib.asserts.assertMsg
-          ((builtins.length (lib.lists.intersectLists no_binary_packages no_build_packages)) == 0)
-          (
-            "There is an overlap between packages specified as no-build and no-binary-package in the workspace. That leaves no way to build these packages: "
-            + (toString (lib.lists.intersectLists no_binary_packages no_build_packages))
-          );
-        if builtins.elem package.name no_binary_packages then
+        if elem package.name no_binary_packages then
           false
-        else if builtins.elem package.name no_build_packages then
+        else if elem package.name no_build_packages then
           true
         else if sourcePreference == "sdist" then
           false
@@ -318,6 +315,11 @@ fix (self: {
           "pyproject";
 
     in
+    # make sure there is no intersection between no_binary_packages and no_build_packages for current package
+    assert assertMsg (!elem package.name unbuildable_packages) (
+      "There is an overlap between packages specified as no-build and no-binary-package in the workspace. That leaves no way to build these packages: "
+      + (toString unbuildable_packages)
+    );
     if (isProject || isDirectory || isVirtual) then
       buildPythonPackage (
         (
@@ -333,7 +335,7 @@ fix (self: {
                 else if isVirtual then
                   workspaceRoot + "/${source.virtual}"
                 else
-                  throw "Not a project path: ${builtins.toJSON source}";
+                  throw "Not a project path: ${toJSON source}";
             }
         ).renderers.buildPythonPackage
           { inherit python environ; }
@@ -353,7 +355,7 @@ fix (self: {
                 let
                   parsed = parseGitURL source.git;
                 in
-                builtins.fetchGit (
+                fetchGit (
                   {
                     inherit (parsed) url;
                     rev = parsed.fragment;
