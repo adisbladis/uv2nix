@@ -95,6 +95,7 @@ in
           mkPackage = lock1.mkPackage {
             inherit workspaceRoot environ sourcePreference;
             projects = lib.filterAttrs (n: _: n == projectName) projects;
+            inherit (projects.${projectName}) pyproject;
           };
         in
         depName:

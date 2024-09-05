@@ -213,25 +213,31 @@ fix (self: {
         };
 
     in
-    # Local pyproject.nix top-level projects (attrset)
+
     {
+      # Workspace root pyproject.toml
+      pyproject,
+      # PEP-508 environment
       environ,
+      # Local pyproject.nix top-level projects (attrset)
       projects,
+      # Workspace root directory
       workspaceRoot,
       # deadnix: skip
       sourcePreference,
     }@wsargs:
     let
+      # All workspace pyproject.toml files (including a virtual workspace root) as a list
+      pyprojects' = map (project: project.pyproject) (attrValues projects) ++ [ pyproject ];
+
       # implement https://docs.astral.sh/uv/reference/settings/#no-binary-package and no-build merging of multiple projects in a workspace is set addition
-      no_binary_packages = concatMap (project: project.pyproject.tool.uv.no-binary-package or [ ]) (
-        attrValues projects
+      no-binary-packages = unique (
+        concatMap (pyproject: pyproject.tool.uv.no-binary-package or [ ]) pyprojects'
       );
-
-      no_build_packages = concatMap (project: project.pyproject.tool.uv.no-build-package or [ ]) (
-        attrValues projects
+      no-build-packages = unique (
+        concatMap (pyproject: pyproject.tool.uv.no-build-package or [ ]) pyprojects'
       );
-
-      unbuildable_packages = intersectLists no_binary_packages no_build_packages;
+      unbuildable-packages = intersectLists no-binary-packages no-build-packages;
 
     in
     # Parsed uv.lock package
@@ -271,9 +277,9 @@ fix (self: {
     }:
     let
       preferWheel =
-        if elem package.name no_binary_packages then
+        if elem package.name no-binary-packages then
           false
-        else if elem package.name no_build_packages then
+        else if elem package.name no-build-packages then
           true
         else if sourcePreference == "sdist" then
           false
@@ -315,10 +321,10 @@ fix (self: {
           "pyproject";
 
     in
-    # make sure there is no intersection between no_binary_packages and no_build_packages for current package
-    assert assertMsg (!elem package.name unbuildable_packages) (
+    # make sure there is no intersection between no-binary-packages and no-build-packages for current package
+    assert assertMsg (!elem package.name unbuildable-packages) (
       "There is an overlap between packages specified as no-build and no-binary-package in the workspace. That leaves no way to build these packages: "
-      + (toString unbuildable_packages)
+      + (toString unbuildable-packages)
     );
     if (isProject || isDirectory || isVirtual) then
       buildPythonPackage (
