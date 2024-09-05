@@ -117,7 +117,7 @@ fix (self: {
           mkPackage = lock1.mkPackage {
             projects = workspaceProjects;
             environ = environ';
-            inherit workspaceRoot sourcePreference;
+            inherit workspaceRoot sourcePreference pyproject;
           };
 
           resolved = lock1.resolveDependencies {
