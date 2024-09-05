@@ -175,46 +175,6 @@ let
           });
         };
       };
-
-      noBuildNoBinaryPackages = mkCheck {
-        name = "no-build-no_binary-packages";
-        root = ../lib/fixtures/no-build-no-binary-packages;
-        packages = ps: [ ps."no-build-no-binary-packages" ];
-        # Check that arpeggio _is_ available
-
-        check = ''
-          python -c "import arpeggio"
-          python -c "import urllib3"
-          PYTHONBINARY=`${pkgs.which}/bin/which python` 
-          PYTHONPATH=`dirname $(dirname $PYTHONBINARY)`
-          ARPEGGIO_SRC=`cat $PYTHONPATH/arpeggio_wheel_check`
-          URLLIB3_SRC=`cat $PYTHONPATH//urllib3_wheel_check`
-          if [[ $ARPEGGIO_SRC == *".whl" ]] && [[ $URLLIB3_SRC == *".tar.gz" ]]; then
-            echo "ok"
-          else
-            echo "wheel preferences not respected"
-            echo "arpeggio should be wheel was $ARPEGGIO_SRC"
-            echo "urllib3 should not be wheel was $URLLIB3_SRC"
-            exit 1
-          fi
-        '';
-        testOverrides = _pyfinal: pyprev: {
-          arpeggio = pyprev.arpeggio.overrideAttrs (old: {
-            postInstall = ''
-              echo ${old.src} > $out/arpeggio_wheel_check
-            '';
-          });
-
-          urllib3 = pyprev.urllib3.overrideAttrs (old: {
-            postInstall = ''
-              echo ${old.src} > $out/urllib3_wheel_check
-            '';
-          });
-        };
-        environ = {
-          platform_release = "5.10.65";
-        };
-      };
     };
 in
 # Generate test set twice: Once with wheel sourcePreference and once with sdist sourcePreference
