@@ -98,7 +98,7 @@ jobs:
       - name: Run build
         run: nix build -L .#doc
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./result
