@@ -1,5 +1,6 @@
 {
   lock1,
+  workspace,
   lib,
   pkgs,
   pyproject-nix,
@@ -13,9 +14,6 @@ let
     mapAttrs'
     importTOML
     nameValuePair
-    toUpper
-    substring
-    stringLength
     ;
   inherit (pyproject-nix.lib) pep508 pep621;
   inherit (builtins) baseNameOf;
@@ -53,7 +51,7 @@ let
 
   findFirstPkg = name: findFirst (package: package.name == name) (throw "Not found: ${name}");
 
-  capitalise = s: toUpper (substring 0 1 s) + (substring 1 (stringLength s) s);
+  inherit (import ./testutil.nix { inherit lib; }) capitalise;
 
 in
 
@@ -99,6 +97,10 @@ in
             inherit workspaceRoot environ sourcePreference;
             projects = lib.filterAttrs (n: _: n == projectName) projects;
             inherit (projects.${projectName}) pyproject;
+            # Note: This doesn't support workspaces properly because we simply call loadConfig with the one workspace
+            # It's sufficient for mkPackage tests regardless.
+            config = workspace.loadConfig [ projects.${projectName}.pyproject ];
+            # config = workspace.loadConfig
           };
         in
         depName:

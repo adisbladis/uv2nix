@@ -10,14 +10,10 @@ let
     fix
     mapAttrs
     mapAttrs'
-    toUpper
-    substring
-    stringLength
     length
     attrNames
     ;
-
-  capitalise = s: toUpper (substring 0 1 s) + (substring 1 (stringLength s) s);
+  inherit (import ./testutil.nix { inherit lib; }) capitalise;
 
   callTest = path: import path (uv2nix // { inherit pkgs lib pyproject-nix; });
 

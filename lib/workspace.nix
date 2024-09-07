@@ -25,6 +25,12 @@ let
     head
     attrNames
     all
+    unique
+    foldl'
+    isPath
+    isAttrs
+    attrValues
+    assertMsg
     ;
   inherit (builtins) readDir;
   inherit (pyproject-nix.lib.project) loadUVPyproject; # Note: Maybe we want a loader that will just "remap-all-the-things" into standard attributes?
@@ -56,7 +62,14 @@ fix (self: {
     to create a Nixpkgs Python packageOverrides overlay
   */
   loadWorkspace =
-    { workspaceRoot }:
+    {
+      # Workspace root as a path
+      workspaceRoot,
+      # Config overrides for settings automatically inferred by loadConfig
+      config ? { },
+    }:
+    assert isPath workspaceRoot;
+    assert isAttrs config;
     let
       pyproject = importTOML (workspaceRoot + "/pyproject.toml");
       uvLock = lock1.parseLock (importTOML (workspaceRoot + "/uv.lock"));
@@ -85,8 +98,30 @@ fix (self: {
       # Bootstrap resolver from top-level workspace projects
       topLevelDependencies = map pep508.parseString (attrNames workspaceProjects);
 
+      config' =
+        # Load supported tool.uv settings
+        (self.loadConfig (
+          # Extract pyproject.toml from loaded projects
+          (map (project: project.pyproject) (attrValues workspaceProjects))
+          # If workspace root is a virtual root it wasn't discovered as a member directory
+          # but config should also be loaded from a virtual root
+          ++ optional (!(pyproject ? project)) pyproject
+        ))
+        //
+          # Merge with overriden config
+          config;
+
     in
+    assert assertMsg (
+      !(config'.no-binary && config'.no-build)
+    ) "Both tool.uv.no-build and tool.uv.no-binary are set to true, making the workspace unbuildable";
     {
+      /*
+        Workspace config as loaded by loadConfig
+        .
+      */
+      config = config';
+
       /*
         Generate a Nixpkgs Python overlay from uv workspace.
 
@@ -99,7 +134,13 @@ fix (self: {
           # - sdist
           #
           # See FAQ for more information.
-          sourcePreference,
+          sourcePreference ?
+            if config'.no-binary then
+              "sdist"
+            else if config'.no-build then
+              "wheel"
+            else
+              throw "No sourcePreference was passed, and could not be automatically inferred from workspace config",
           # PEP-508 environment customisations.
           # Example: { platform_release = "5.10.65"; }
           environ ? { },
@@ -117,6 +158,7 @@ fix (self: {
           mkPackage = lock1.mkPackage {
             projects = workspaceProjects;
             environ = environ';
+            config = config';
             inherit workspaceRoot sourcePreference pyproject;
           };
 
@@ -137,6 +179,60 @@ fix (self: {
         mapAttrs (_: pkg: callPackage (mkPackage pkg) { }) resolved;
 
       inherit topLevelDependencies;
+    };
+
+  /*
+    Load supported configuration from workspace
+
+    Supports:
+    - tool.uv.no-binary
+    - tool.uv.no-build
+    - tool.uv.no-binary-packages
+    - tool.uv.no-build-packages
+  */
+  loadConfig =
+    # List of imported (lib.importTOML) pyproject.toml files from workspace from which to load config
+    pyprojects:
+    let
+      no-build' = foldl' (
+        acc: pyproject:
+        (
+          if pyproject ? tool.uv.no-build then
+            (
+              if acc != null && pyproject.tool.uv.no-build != acc then
+                (throw "Got conflicting values for tool.uv.no-build")
+              else
+                pyproject.tool.uv.no-build
+            )
+          else
+            acc
+        )
+      ) null pyprojects;
+
+      no-binary' = foldl' (
+        acc: pyproject:
+        (
+          if pyproject ? tool.uv.no-binary then
+            (
+              if acc != null && pyproject.tool.uv.no-binary != acc then
+                (throw "Got conflicting values for tool.uv.no-binary")
+              else
+                pyproject.tool.uv.no-binary
+            )
+          else
+            acc
+        )
+      ) null pyprojects;
+    in
+    {
+      no-build = if no-build' != null then no-build' else false;
+      no-binary = if no-binary' != null then no-binary' else false;
+      no-binary-package = unique (
+        concatMap (pyproject: pyproject.tool.uv.no-binary-package or [ ]) pyprojects
+      );
+      no-build-package = unique (
+        concatMap (pyproject: pyproject.tool.uv.no-build-package or [ ]) pyprojects
+      );
     };
 
   /*

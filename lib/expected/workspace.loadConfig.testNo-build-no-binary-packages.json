@@ -1,0 +1,10 @@
+{
+  "no-binary": false,
+  "no-binary-package": [
+    "urllib3"
+  ],
+  "no-build": false,
+  "no-build-package": [
+    "arpeggio"
+  ]
+}

@@ -35,7 +35,6 @@ let
     hasPrefix
     intersectLists
     assertMsg
-    foldl'
     ;
 
 in
@@ -226,50 +225,17 @@ fix (self: {
       workspaceRoot,
       # deadnix: skip
       sourcePreference,
+      # tool.uv settings
+      config,
     }@wsargs:
     let
-      # All workspace pyproject.toml files (including a virtual workspace root) as a list
-      pyprojects' = map (project: project.pyproject) (attrValues projects) ++ [ pyproject ];
-
-      # implement https://docs.astral.sh/uv/reference/settings/#no-binary-package and no-build merging of multiple projects in a workspace is set addition
-      no-binary-packages = unique (
-        concatMap (pyproject: pyproject.tool.uv.no-binary-package or [ ]) pyprojects'
-      );
-      no-build-packages = unique (
-        concatMap (pyproject: pyproject.tool.uv.no-build-package or [ ]) pyprojects'
-      );
-      unbuildable-packages = intersectLists no-binary-packages no-build-packages;
-
-      no-build = foldl' (
-        acc: pyproject:
-        (
-          if pyproject ? tool.uv.no-build then
-            (
-              if acc != null && pyproject.tool.uv.no-build != acc then
-                (throw "Got conflicting values for tool.uv.no-build")
-              else
-                pyproject.tool.uv.no-build
-            )
-          else
-            acc
-        )
-      ) null pyprojects';
-
-      no-binary = foldl' (
-        acc: pyproject:
-        (
-          if pyproject ? tool.uv.no-binary then
-            (
-              if acc != null && pyproject.tool.uv.no-binary != acc then
-                (throw "Got conflicting values for tool.uv.no-binary")
-              else
-                pyproject.tool.uv.no-binary
-            )
-          else
-            acc
-        )
-      ) null pyprojects';
-
+      inherit (config)
+        no-binary
+        no-build
+        no-binary-package
+        no-build-package
+        ;
+      unbuildable-packages = intersectLists no-binary-package no-build-package;
     in
     # Parsed uv.lock package
     package:
@@ -292,7 +258,8 @@ fix (self: {
       # List of parsed wheels
       wheelFiles = map (whl: whl.file') package.wheels;
 
-      localProject = if projects ? package.name then
+      localProject =
+        if projects ? package.name then
           projects.${package.name}
         else
           pyproject-nix.lib.project.loadUVPyproject {
@@ -327,9 +294,9 @@ fix (self: {
           true
         else if no-binary != null && no-binary then
           false
-        else if elem package.name no-binary-packages then
+        else if elem package.name no-binary-package then
           false
-        else if elem package.name no-build-packages then
+        else if elem package.name no-build-package then
           true
         else if sourcePreference == "sdist" then
           false
@@ -382,9 +349,9 @@ fix (self: {
     assert assertMsg (
       format == "sdist" -> no-build != null -> !no-build
     ) "Package source for '${package.name}' was derived as sdist, in tool.uv.no-build is set to true";
-    assert assertMsg (format == "pyproject" -> !elem package.name no-build-packages)
+    assert assertMsg (format == "pyproject" -> !elem package.name no-build-package)
       "Package source for '${package.name}' was derived as sdist, but was present in tool.uv.no-build-package";
-    assert assertMsg (format == "wheel" -> !elem package.name no-binary-packages)
+    assert assertMsg (format == "wheel" -> !elem package.name no-binary-package)
       "Package source for '${package.name}' was derived as wheel, but was present in tool.uv.no-binary-package";
     if (isProject || isDirectory || isVirtual) then
       buildPythonPackage (localProject.renderers.buildPythonPackage { inherit python environ; })
