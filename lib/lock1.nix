@@ -292,6 +292,21 @@ fix (self: {
       # List of parsed wheels
       wheelFiles = map (whl: whl.file') package.wheels;
 
+      localProject = if projects ? package.name then
+          projects.${package.name}
+        else
+          pyproject-nix.lib.project.loadUVPyproject {
+            projectRoot =
+              if isProject then
+                workspaceRoot + "/${source.editable}"
+              else if isDirectory then
+                workspaceRoot + "/${source.directory}"
+              else if isVirtual then
+                workspaceRoot + "/${source.virtual}"
+              else
+                throw "Not a project path: ${toJSON source}";
+          };
+
     in
     # Callpackage function
     {
@@ -372,25 +387,7 @@ fix (self: {
     assert assertMsg (format == "wheel" -> !elem package.name no-binary-packages)
       "Package source for '${package.name}' was derived as wheel, but was present in tool.uv.no-binary-package";
     if (isProject || isDirectory || isVirtual) then
-      buildPythonPackage (
-        (
-          if projects ? package.name then
-            projects.${package.name}
-          else
-            pyproject-nix.lib.project.loadUVPyproject {
-              projectRoot =
-                if isProject then
-                  workspaceRoot + "/${source.editable}"
-                else if isDirectory then
-                  workspaceRoot + "/${source.directory}"
-                else if isVirtual then
-                  workspaceRoot + "/${source.virtual}"
-                else
-                  throw "Not a project path: ${toJSON source}";
-            }
-        ).renderers.buildPythonPackage
-          { inherit python environ; }
-      )
+      buildPythonPackage (localProject.renderers.buildPythonPackage { inherit python environ; })
     else
       buildPythonPackage (
         {
