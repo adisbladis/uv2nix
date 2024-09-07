@@ -20,7 +20,6 @@
       overlay =
         let
           # Create overlay from workspace.
-
           overlay' = workspace.mkOverlay {
             # Prefer prebuilt binary wheels as a package source.
             # Sdists are less likely to "just work" because of the metadata missing from uv.lock.
@@ -46,25 +45,46 @@
       # This example is only using x86_64-linux
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
-      # Create an overriden interpreter
-      python = pkgs.python3.override {
-        # Note the self argument.
-        # It's important so the interpreter/set is internally consistent.
-        self = python;
-        # Pass composed Python overlay to the interpreter
-        packageOverrides = overlay;
-      };
-
     in
     {
       # 'app' is the name in pyproject.toml after name normalization.
       # See https://packaging.python.org/en/latest/specifications/name-normalization/#normalization
 
-      packages.x86_64-linux.default = python.pkgs.app;
-      # TODO: A better mkShell withPackages example.
-      devShells.x86_64-linux.default = pkgs.mkShell {
-        inputsFrom = [ python.pkgs.app ];
-        packages = [ pkgs.uv ];
-      };
+      packages.x86_64-linux.default =
+        let
+          # Create an overriden interpreter
+          python = pkgs.python3.override {
+            # Note the self argument.
+            # It's important so the interpreter/set is internally consistent.
+            self = python;
+            # Pass composed Python overlay to the interpreter
+            packageOverrides = overlay;
+          };
+        in
+        python.pkgs.app;
+
+      devShells.x86_64-linux.default =
+        let
+          # Create an overriden interpreter with editable support enable for local development
+          python = pkgs.python3.override {
+            self = python;
+            # Compose an editable overlay with the initial overlay.
+            # This enables editable mode installs for all local packages.
+            packageOverrides = lib.composeExtensions overlay (
+              workspace.mkEditableOverlay {
+                # Needs to be a string, see nixpkgs documentation for mkPythonEditablePackage for more information.
+                root = "$REPO_ROOT";
+              }
+            );
+          };
+
+          pythonEnv = python.withPackages (ps: [ ps.app ]);
+        in
+        pkgs.mkShell {
+          packages = [
+            pkgs.uv
+            pythonEnv
+          ];
+        };
     };
 }

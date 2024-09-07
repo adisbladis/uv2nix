@@ -121,16 +121,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1725103162,
-        "narHash": "sha256-Ym04C5+qovuQDYL/rKWSR+WESseQBbNAe5DsXNx5trY=",
-        "owner": "nixos",
+        "lastModified": 1725401364,
+        "narHash": "sha256-J5jaUCMWdJjtu7v6k1EalUFQuDvAu0/HJ5/o1mAxuk8=",
+        "owner": "adisbladis",
         "repo": "nixpkgs",
-        "rev": "12228ff1752d7b7624a54e9c1af4b222b3c1073b",
+        "rev": "41611f8ee5c040cc4f0910669075340507f0b6ed",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
+        "owner": "adisbladis",
+        "ref": "python-editable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -151,15 +151,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1725356581,
-        "narHash": "sha256-mCYjrOn8Mv0HgIY9tQx+NZA8xK2TQic76VNpSo8EPrY=",
-        "owner": "adisbladis",
+        "lastModified": 1725410671,
+        "narHash": "sha256-s4t5ZR/YgzXA/TNv8qayM7Hez9ASStEeii5ySyZ+uyw=",
+        "owner": "nix-community",
         "repo": "pyproject.nix",
-        "rev": "424e96048451c58c36471c9b78860ed1c4d539dd",
+        "rev": "f70611faf95f683e50da2ce4ac1257f9256a3d5f",
         "type": "github"
       },
       "original": {
-        "owner": "adisbladis",
+        "owner": "nix-community",
+        "ref": "editable",
         "repo": "pyproject.nix",
         "type": "github"
       }

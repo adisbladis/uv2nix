@@ -80,6 +80,17 @@ in
     };
   };
 
+  isLocalPackage = {
+    testLocal = {
+      expr = lock1.isLocalPackage { source.directory = "foo"; };
+      expected = true;
+    };
+    testNonLocal = {
+      expr = lock1.isLocalPackage { source.url = "http://foo"; };
+      expected = false;
+    };
+  };
+
   mkPackage =
     let
 

@@ -71,7 +71,7 @@ jobs:
           name: adisbladis
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
       - name: Flake show
-        run: nix flake show --no-update-lock-file --override-input uv2nix .  --reference-lock-file ./flake.lock ./templates/app
+        run: nix flake show --no-update-lock-file --inputs-from . --override-input uv2nix .  --reference-lock-file ./flake.lock ./templates/app
 
   collect:
     runs-on: ubuntu-latest

@@ -31,6 +31,7 @@ let
     isAttrs
     attrValues
     assertMsg
+    nameValuePair
     ;
   inherit (builtins) readDir;
   inherit (pyproject-nix.lib.project) loadUVPyproject; # Note: Maybe we want a loader that will just "remap-all-the-things" into standard attributes?
@@ -177,6 +178,43 @@ fix (self: {
         # Assert that requires-python from uv.lock is compatible with this interpreter
         assert all (spec: pep440.comparators.${spec.op} pythonVersion spec.version) uvLock.requires-python;
         mapAttrs (_: pkg: callPackage (mkPackage pkg) { }) resolved;
+
+      /*
+        Generate a Nixpkgs Python overlay installing workspace packages in editable mode
+        .
+      */
+      mkEditableOverlay =
+        let
+          workspaceProjects' = attrNames workspaceProjects;
+          localProjects = map (package: package.name) (filter lock1.isLocalPackage uvLock.package);
+          allLocal = unique (workspaceProjects' ++ localProjects);
+        in
+        {
+          # Editable root as a string.
+          root ? (toString workspaceRoot),
+          # Workspace members to make editable as a list of strings. Defaults to all local projects.
+          members ? allLocal,
+        }:
+        assert assertMsg (!lib.hasPrefix builtins.storeDir root) ''
+          Editable root was passed as a Nix store path.
+          ${
+            lib.optionalString (toString workspaceRoot) == root
+            && lib.inPureEvalMode ''
+              This is most likely because you are using Flakes, and are automatically inferring the editable root from workspaceRoot.
+              Flakes are copied to the Nix store on evaluation. This can temporarily be worked around using --impure.
+            ''
+          }
+
+          Pass editable root either as a string pointing to an absolute path non-store path, or use environment variables for relative paths.
+        '';
+        _final: prev:
+        let
+          # Filter any local packages that might be deactivated by markers or other filtration mechanisms.
+          activeMembers = filter (name: !prev ? name) members;
+        in
+        lib.listToAttrs (
+          map (name: nameValuePair name (prev.${name}.override { editableRoot = root; })) activeMembers
+        );
 
       inherit topLevelDependencies;
     };

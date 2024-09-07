@@ -35,6 +35,7 @@ let
     hasPrefix
     intersectLists
     assertMsg
+    isString
     ;
 
 in
@@ -168,6 +169,13 @@ fix (self: {
     reduceDependencies allDependencies;
 
   /*
+    Returns whether a package is a locally developed package
+    .
+  */
+  isLocalPackage =
+    package: package.source ? editable || package.source ? directory || package.source ? virtual;
+
+  /*
     Filter dependencies/optional-dependencies/dev-dependencies from a uv.lock package entry
     .
   */
@@ -242,12 +250,9 @@ fix (self: {
     let
       inherit (package) source;
       isGit = source ? git;
-      isProject = source ? editable;
       isPypi = source ? registry; # From pypi registry
-      isURL = source ? url;
-      isDirectory = source ? directory; # Path to non-uv project
+      isURL = source ? url; # Path to non-uv project
       isPath = source ? path; # Path to sdist
-      isVirtual = source ? virtual;
 
       # Wheels grouped by filename
       wheels = mapAttrs (
@@ -258,20 +263,17 @@ fix (self: {
       # List of parsed wheels
       wheelFiles = map (whl: whl.file') package.wheels;
 
+      # Local projects
+      localPath =
+        "/"
+        + source.editable or source.directory or source.virtual
+          or (throw "Not a project path: ${toJSON source}");
       localProject =
         if projects ? package.name then
           projects.${package.name}
         else
           pyproject-nix.lib.project.loadUVPyproject {
-            projectRoot =
-              if isProject then
-                workspaceRoot + "/${source.editable}"
-              else if isDirectory then
-                workspaceRoot + "/${source.directory}"
-              else if isVirtual then
-                workspaceRoot + "/${source.virtual}"
-              else
-                throw "Not a project path: ${toJSON source}";
+            projectRoot = workspaceRoot + localPath;
           };
 
     in
@@ -286,7 +288,11 @@ fix (self: {
       stdenv,
       autoPatchelfHook,
       pythonManylinuxPackages,
+      mkPythonEditablePackage,
+      # Source preference (sdist or wheel)
       sourcePreference ? wsargs.sourcePreference,
+      # Editable root as a string
+      editableRoot ? null,
     }:
     let
       preferWheel =
@@ -353,8 +359,24 @@ fix (self: {
       "Package source for '${package.name}' was derived as sdist, but was present in tool.uv.no-build-package";
     assert assertMsg (format == "wheel" -> !elem package.name no-binary-package)
       "Package source for '${package.name}' was derived as wheel, but was present in tool.uv.no-binary-package";
-    if (isProject || isDirectory || isVirtual) then
-      buildPythonPackage (localProject.renderers.buildPythonPackage { inherit python environ; })
+    if (self.isLocalPackage package) then
+      # Package is not editable, render buildPythonPackage
+      if editableRoot == null then
+        buildPythonPackage (localProject.renderers.buildPythonPackage { inherit python environ; })
+      # Package is editable, render mkPythonEditablePackage
+      else
+        assert isString editableRoot;
+        mkPythonEditablePackage (
+          localProject.renderers.mkPythonEditablePackage {
+            inherit python environ;
+            # Prefer src style layout if available, otherwise use project root as editable root.
+            root =
+              if lib.pathExists (workspaceRoot + localPath + "/src") then
+                editableRoot + localPath + "/src"
+              else
+                editableRoot + localPath;
+          }
+        )
     else
       buildPythonPackage (
         {

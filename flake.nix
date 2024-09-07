@@ -2,7 +2,7 @@
   description = "Uv2nix";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:adisbladis/nixpkgs/python-editable";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
@@ -16,7 +16,7 @@
     nixdoc.url = "github:nix-community/nixdoc";
     nixdoc.inputs.nixpkgs.follows = "nixpkgs";
 
-    pyproject-nix.url = "github:adisbladis/pyproject.nix";
+    pyproject-nix.url = "github:nix-community/pyproject.nix/editable";
     pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
     pyproject-nix.inputs.nix-github-actions.follows = "nix-github-actions";
     pyproject-nix.inputs.mdbook-nixdoc.follows = "mdbook-nixdoc";

@@ -83,7 +83,41 @@ let
     let
       mkCheck = mkCheck' sourcePreference;
     in
-    mapAttrs' (name: v: nameValuePair "${name}-pref-${sourcePreference}" v) {
+    {
+      editable-workspace =
+        let
+          workspaceRoot = ../lib/fixtures/workspace;
+          ws = uv2nix.workspace.loadWorkspace { inherit workspaceRoot; };
+          overlay = ws.mkOverlay {
+            sourcePreference = "wheel"; # We're testing editable support, wheels are fine.
+          };
+          editableOverlay = ws.mkEditableOverlay {
+            root = "$NIX_BUILD_TOP";
+          };
+
+          python = pkgs.python312.override {
+            self = python;
+            packageOverrides = lib.composeExtensions overlay editableOverlay;
+          };
+
+          pythonEnv = python.withPackages (ps: [ ps.workspace ]);
+
+        in
+        pkgs.runCommand "editable-workspace-test"
+          {
+            nativeBuildInputs = [ pythonEnv ];
+          }
+          ''
+            cp -r ${workspaceRoot}/* .
+            chmod +w .*
+            test "$(python -c 'import workspace_package; print(workspace_package.hello())')" = "Hello from workspace-package!"
+            substituteInPlace ./packages/workspace-package/src/workspace_package/__init__.py --replace-fail workspace-package mutable-package
+            test "$(python -c 'import workspace_package; print(workspace_package.hello())')" = "Hello from mutable-package!"
+            touch $out
+          '';
+
+    }
+    // mapAttrs' (name: v: nameValuePair "${name}-pref-${sourcePreference}" v) {
       trivial = mkCheck {
         root = ../lib/fixtures/trivial;
         packages = ps: [ ps."trivial" ];
