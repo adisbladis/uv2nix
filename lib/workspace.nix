@@ -31,6 +31,7 @@ let
     isAttrs
     attrValues
     assertMsg
+    isFunction
     ;
   inherit (builtins) readDir;
   inherit (pyproject-nix.lib.project) loadUVPyproject; # Note: Maybe we want a loader that will just "remap-all-the-things" into standard attributes?
@@ -66,10 +67,13 @@ fix (self: {
       # Workspace root as a path
       workspaceRoot,
       # Config overrides for settings automatically inferred by loadConfig
+      # Can be passed as either:
+      # - An attribute set
+      # - A function taking the generated config as an argument, and returning the augmented config
       config ? { },
     }:
     assert isPath workspaceRoot;
-    assert isAttrs config;
+    assert isAttrs config || isFunction config;
     let
       pyproject = importTOML (workspaceRoot + "/pyproject.toml");
       uvLock = lock1.parseLock (importTOML (workspaceRoot + "/uv.lock"));
@@ -98,18 +102,17 @@ fix (self: {
       # Bootstrap resolver from top-level workspace projects
       topLevelDependencies = map pep508.parseString (attrNames workspaceProjects);
 
-      config' =
-        # Load supported tool.uv settings
-        (self.loadConfig (
-          # Extract pyproject.toml from loaded projects
-          (map (project: project.pyproject) (attrValues workspaceProjects))
-          # If workspace root is a virtual root it wasn't discovered as a member directory
-          # but config should also be loaded from a virtual root
-          ++ optional (!(pyproject ? project)) pyproject
-        ))
-        //
-          # Merge with overriden config
-          config;
+      # Load supported tool.uv settings
+      loadedConfig = self.loadConfig (
+        # Extract pyproject.toml from loaded projects
+        (map (project: project.pyproject) (attrValues workspaceProjects))
+        # If workspace root is a virtual root it wasn't discovered as a member directory
+        # but config should also be loaded from a virtual root
+        ++ optional (!(pyproject ? project)) pyproject
+      );
+
+      # Merge with overriden config
+      config' = loadedConfig // (if isFunction config then config loadedConfig else config);
 
     in
     assert assertMsg (
