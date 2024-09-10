@@ -16,8 +16,20 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
-            "value": "5.10.104"
+            "type": "platform_release",
+            "value": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                5,
+                10,
+                104
+              ],
+              "str": "5.10.104"
+            }
           },
           "type": "compare"
         },
@@ -35,7 +47,8 @@
               2,
               0,
               2
-            ]
+            ],
+            "str": "2.0.2"
           }
         },
         "url": null
@@ -52,8 +65,20 @@
           },
           "op": "==",
           "rhs": {
-            "type": "string",
-            "value": "5.10.65"
+            "type": "platform_release",
+            "value": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                5,
+                10,
+                65
+              ],
+              "str": "5.10.65"
+            }
           },
           "type": "compare"
         },
@@ -71,7 +96,8 @@
               2,
               0,
               1
-            ]
+            ],
+            "str": "2.0.1"
           }
         },
         "url": null
@@ -96,7 +122,8 @@
       0,
       1,
       0
-    ]
+    ],
+    "str": "0.1.0"
   },
   "wheels": []
 }

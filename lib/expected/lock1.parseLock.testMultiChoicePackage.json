@@ -19,7 +19,8 @@
         "release": [
           3,
           12
-        ]
+        ],
+        "str": "3.12"
       }
     }
   ],
@@ -32,8 +33,20 @@
         },
         "op": "!=",
         "rhs": {
-          "type": "string",
-          "value": "5.10.104"
+          "type": "platform_release",
+          "value": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              5,
+              10,
+              104
+            ],
+            "str": "5.10.104"
+          }
         },
         "type": "compare"
       },
@@ -45,8 +58,20 @@
         },
         "op": "!=",
         "rhs": {
-          "type": "string",
-          "value": "5.10.65"
+          "type": "platform_release",
+          "value": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              5,
+              10,
+              65
+            ],
+            "str": "5.10.65"
+          }
         },
         "type": "compare"
       },
@@ -59,8 +84,20 @@
       },
       "op": "==",
       "rhs": {
-        "type": "string",
-        "value": "5.10.104"
+        "type": "platform_release",
+        "value": {
+          "dev": null,
+          "epoch": 0,
+          "local": null,
+          "post": null,
+          "pre": null,
+          "release": [
+            5,
+            10,
+            104
+          ],
+          "str": "5.10.104"
+        }
       },
       "type": "compare"
     },
@@ -71,8 +108,20 @@
       },
       "op": "==",
       "rhs": {
-        "type": "string",
-        "value": "5.10.65"
+        "type": "platform_release",
+        "value": {
+          "dev": null,
+          "epoch": 0,
+          "local": null,
+          "post": null,
+          "pre": null,
+          "release": [
+            5,
+            10,
+            65
+          ],
+          "str": "5.10.65"
+        }
       },
       "type": "compare"
     }
