@@ -35,6 +35,7 @@ let
     hasPrefix
     intersectLists
     assertMsg
+    any
     ;
 
 in
@@ -66,7 +67,7 @@ fix (self: {
         filter (
           pkg:
           length pkg.resolution-markers == 0
-          || all (markers: resolution-markers.${markers}) pkg.resolution-markers
+          || any (markers: resolution-markers.${markers}) pkg.resolution-markers
         ) lock.package
       );
 
