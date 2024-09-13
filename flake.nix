@@ -25,6 +25,15 @@
     mdbook-nixdoc.url = "github:adisbladis/mdbook-nixdoc";
     mdbook-nixdoc.inputs.nixpkgs.follows = "nixpkgs";
     mdbook-nixdoc.inputs.nix-github-actions.follows = "nix-github-actions";
+
+    lix-unit = {
+      url = "github:adisbladis/lix-unit";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.mdbook-nixdoc.follows = "mdbook-nixdoc";
+      inputs.nix-github-actions.follows = "nix-github-actions";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.treefmt-nix.follows = "treefmt-nix";
+    };
   };
 
   outputs =
@@ -35,6 +44,7 @@
       treefmt-nix,
       pyproject-nix,
       nix-github-actions,
+      lix-unit,
       ...
     }@inputs:
     let
@@ -89,6 +99,21 @@
 
       perSystem =
         { pkgs, system, ... }:
+        let
+          mkShell' =
+            { nix-unit }:
+            pkgs.mkShell {
+              packages = [
+                pkgs.hivemind
+                pkgs.mdbook
+                pkgs.reflex
+                nix-unit
+                inputs.mdbook-nixdoc.packages.${system}.default
+                pkgs.uv
+              ] ++ self.packages.${system}.doc.nativeBuildInputs;
+            };
+
+        in
         {
           treefmt.imports = [ ./dev/treefmt.nix ];
 
@@ -99,15 +124,10 @@
               uv2nix = self.lib;
             };
 
-          devShells.default = pkgs.mkShell {
-            packages = [
-              pkgs.hivemind
-              pkgs.mdbook
-              pkgs.reflex
-              pkgs.nix-unit
-              inputs.mdbook-nixdoc.packages.${system}.default
-              pkgs.uv
-            ] ++ self.packages.${system}.doc.nativeBuildInputs;
+          devShells = {
+            nix = mkShell' { inherit (pkgs) nix-unit; };
+            lix = mkShell' { nix-unit = lix-unit.packages.${system}.default; };
+            default = self.devShells.${system}.nix;
           };
 
           packages.doc = pkgs.callPackage ./doc {

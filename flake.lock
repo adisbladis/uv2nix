@@ -54,6 +54,38 @@
         "type": "github"
       }
     },
+    "lix-unit": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "mdbook-nixdoc": [
+          "mdbook-nixdoc"
+        ],
+        "nix-github-actions": [
+          "nix-github-actions"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "treefmt-nix": [
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1726134066,
+        "narHash": "sha256-BUe/BH85riYpZAN/VnOwHdUD8efhtG/tmqG7H8XpTLY=",
+        "owner": "adisbladis",
+        "repo": "lix-unit",
+        "rev": "c5d9a686394572e652d2bb296915ec59251809f6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "adisbladis",
+        "repo": "lix-unit",
+        "type": "github"
+      }
+    },
     "mdbook-nixdoc": {
       "inputs": {
         "nix-github-actions": [
@@ -167,6 +199,7 @@
     "root": {
       "inputs": {
         "flake-parts": "flake-parts",
+        "lix-unit": "lix-unit",
         "mdbook-nixdoc": "mdbook-nixdoc",
         "nix-github-actions": "nix-github-actions",
         "nixdoc": "nixdoc",
