@@ -19,15 +19,16 @@
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
+          "lix-unit",
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1726153070,
-        "narHash": "sha256-HO4zgY0ekfwO5bX0QH/3kJ/h4KvUDFZg8YpkNwIbg1U=",
+        "lastModified": 1719745305,
+        "narHash": "sha256-xwgjVUpqSviudEkpQnioeez1Uo2wzrsMaJKJClh+Bls=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "bcef6817a8b2aa20a5a6dbb19b43e63c5bf8619a",
+        "rev": "c3c5ecc05edc7dafba779c6c1a61cd08ac6583e9",
         "type": "github"
       },
       "original": {
@@ -56,9 +57,7 @@
     },
     "lix-unit": {
       "inputs": {
-        "flake-parts": [
-          "flake-parts"
-        ],
+        "flake-parts": "flake-parts",
         "mdbook-nixdoc": [
           "mdbook-nixdoc"
         ],
@@ -73,11 +72,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1726134066,
-        "narHash": "sha256-BUe/BH85riYpZAN/VnOwHdUD8efhtG/tmqG7H8XpTLY=",
+        "lastModified": 1726522583,
+        "narHash": "sha256-zRG0mHsdoJKXRxvuRcPTVEDQDg9tYDR8ozcyNWMoxhg=",
         "owner": "adisbladis",
         "repo": "lix-unit",
-        "rev": "c5d9a686394572e652d2bb296915ec59251809f6",
+        "rev": "90e475ec4e71466653a698e1da2a86502be05cfa",
         "type": "github"
       },
       "original": {
@@ -153,11 +152,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1726243404,
-        "narHash": "sha256-sjiGsMh+1cWXb53Tecsm4skyFNag33GPbVgCdfj3n9I=",
+        "lastModified": 1726755586,
+        "narHash": "sha256-PmUr/2GQGvFTIJ6/Tvsins7Q43KTMvMFhvG6oaYK+Wk=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "345c263f2f53a3710abe117f28a5cb86d0ba4059",
+        "rev": "c04d5652cfa9742b1d519688f65d1bbccea9eb7e",
         "type": "github"
       },
       "original": {
@@ -169,6 +168,9 @@
     },
     "pyproject-nix": {
       "inputs": {
+        "lix-unit": [
+          "lix-unit"
+        ],
         "mdbook-nixdoc": [
           "mdbook-nixdoc"
         ],
@@ -183,22 +185,22 @@
         ]
       },
       "locked": {
-        "lastModified": 1726093189,
-        "narHash": "sha256-aPzd6M1k1H0C2zoMlSfAdTg4Za+WfB8Qj+OAbQAVAMs=",
-        "owner": "adisbladis",
+        "lastModified": 1727068197,
+        "narHash": "sha256-nNeWo3TUvKnZkb3AJe0uGiyYB8j5NxAwLIbB7J3oVgo=",
+        "owner": "nix-community",
         "repo": "pyproject.nix",
-        "rev": "6c56846759ba16382bc2bdbee42c2f56c21654be",
+        "rev": "264d0ef533085ecd0622defe498c325a072d17cc",
         "type": "github"
       },
       "original": {
-        "owner": "adisbladis",
+        "owner": "nix-community",
+        "ref": "pyproject-build",
         "repo": "pyproject.nix",
         "type": "github"
       }
     },
     "root": {
       "inputs": {
-        "flake-parts": "flake-parts",
         "lix-unit": "lix-unit",
         "mdbook-nixdoc": "mdbook-nixdoc",
         "nix-github-actions": "nix-github-actions",
@@ -230,11 +232,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1725271838,
-        "narHash": "sha256-VcqxWT0O/gMaeWTTjf1r4MOyG49NaNxW4GHTO3xuThE=",
+        "lastModified": 1726734507,
+        "narHash": "sha256-VUH5O5AcOSxb0uL/m34dDkxFKP6WLQ6y4I1B4+N3L2w=",
         "owner": "numtide",
         "repo": "treefmt-nix",
-        "rev": "9fb342d14b69aefdf46187f6bb80a4a0d97007cd",
+        "rev": "ee41a466c2255a3abe6bc50fc6be927cdee57a9f",
         "type": "github"
       },
       "original": {

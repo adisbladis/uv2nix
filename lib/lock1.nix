@@ -1,10 +1,11 @@
 { pyproject-nix, lib, ... }:
 
 let
+  inherit (pyproject-nix.lib.project) loadUVPyproject;
   inherit (pyproject-nix.lib.pep508) parseMarkers evalMarkers;
   inherit (pyproject-nix.lib.pypa) parseWheelFileName;
   inherit (pyproject-nix.lib) pep440 pypa;
-  inherit (builtins) baseNameOf nixVersion toJSON;
+  inherit (builtins) baseNameOf toJSON;
   inherit (lib)
     mapAttrs
     fix
@@ -22,19 +23,8 @@ let
     typeOf
     elem
     head
-    elemAt
     listToAttrs
-    splitString
     nameValuePair
-    optionalAttrs
-    versionAtLeast
-    match
-    findFirst
-    optionals
-    unique
-    hasPrefix
-    intersectLists
-    assertMsg
     any
     ;
 
@@ -169,6 +159,55 @@ fix (self: {
     reduceDependencies allDependencies;
 
   /*
+    Load a package within a workspace
+    .
+  */
+  loadPackage =
+    {
+      # Local pyproject.nix top-level projects (attrset)
+      projects,
+      # Workspace root directory
+      workspaceRoot,
+    }:
+    # Parsed uv.lock package
+    package:
+    let
+      inherit (package) source;
+      isProject = source ? editable; # Path to local workspace project
+      isDirectory = source ? directory; # Path to non-uv project
+      isVirtual = source ? virtual; # Path to local project with no build-system defined
+    in
+    {
+      inherit package;
+      isLocalProject = isProject || isDirectory || isVirtual;
+
+      # Wheels grouped by filename
+      wheels = mapAttrs (
+        _: whl:
+        assert length whl == 1;
+        head whl
+      ) (groupBy (whl: whl.file'.filename) package.wheels);
+      # List of parsed wheels
+      wheelFiles = map (whl: whl.file') package.wheels;
+
+      localProject =
+        if projects ? package.name then
+          projects.${package.name}
+        else
+          loadUVPyproject {
+            projectRoot =
+              if isProject then
+                workspaceRoot + "/${source.editable}"
+              else if isDirectory then
+                workspaceRoot + "/${source.directory}"
+              else if isVirtual then
+                workspaceRoot + "/${source.virtual}"
+              else
+                throw "Not a project path: ${toJSON source}";
+          };
+    };
+
+  /*
     Filter dependencies/optional-dependencies/dev-dependencies from a uv.lock package entry
     .
   */
@@ -184,258 +223,6 @@ fix (self: {
       optional-dependencies = mapAttrs (_: filterDeps) package.optional-dependencies;
       dev-dependencies = mapAttrs (_: filterDeps) package.optional-dependencies;
     };
-
-  /*
-    Create a function calling buildPythonPackage based on parsed uv.lock package metadata
-    .
-  */
-  mkPackage =
-    let
-
-      parseGitURL =
-        url:
-        let
-          m = match "([^?]+)\\?([^#]+)#?(.*)" url;
-        in
-        assert m != null;
-        {
-          url = elemAt m 0;
-          query = listToAttrs (
-            map (
-              s:
-              let
-                parts = splitString "=" s;
-              in
-              assert length parts == 2;
-              nameValuePair (elemAt parts 0) (elemAt parts 1)
-            ) (splitString "&" (elemAt m 1))
-          );
-          fragment = elemAt m 2;
-        };
-
-    in
-
-    {
-      # Workspace root pyproject.toml
-      pyproject,
-      # PEP-508 environment
-      environ,
-      # Local pyproject.nix top-level projects (attrset)
-      projects,
-      # Workspace root directory
-      workspaceRoot,
-      # deadnix: skip
-      sourcePreference,
-      # tool.uv settings
-      config,
-    }@wsargs:
-    let
-      inherit (config)
-        no-binary
-        no-build
-        no-binary-package
-        no-build-package
-        ;
-      unbuildable-packages = intersectLists no-binary-package no-build-package;
-    in
-    # Parsed uv.lock package
-    package:
-    let
-      inherit (package) source;
-      isGit = source ? git;
-      isProject = source ? editable;
-      isPypi = source ? registry; # From pypi registry
-      isURL = source ? url;
-      isDirectory = source ? directory; # Path to non-uv project
-      isPath = source ? path; # Path to sdist
-      isVirtual = source ? virtual;
-
-      # Wheels grouped by filename
-      wheels = mapAttrs (
-        _: whl:
-        assert length whl == 1;
-        head whl
-      ) (groupBy (whl: whl.file'.filename) package.wheels);
-      # List of parsed wheels
-      wheelFiles = map (whl: whl.file') package.wheels;
-
-      localProject =
-        if projects ? package.name then
-          projects.${package.name}
-        else
-          pyproject-nix.lib.project.loadUVPyproject {
-            projectRoot =
-              if isProject then
-                workspaceRoot + "/${source.editable}"
-              else if isDirectory then
-                workspaceRoot + "/${source.directory}"
-              else if isVirtual then
-                workspaceRoot + "/${source.virtual}"
-              else
-                throw "Not a project path: ${toJSON source}";
-          };
-
-    in
-    # Callpackage function
-    {
-      buildPythonPackage,
-      pythonPackages,
-      python,
-      fetchurl,
-      wheelUnpackHook,
-      pypaInstallHook,
-      stdenv,
-      autoPatchelfHook,
-      pythonManylinuxPackages,
-      sourcePreference ? wsargs.sourcePreference,
-    }:
-    let
-      preferWheel =
-        if no-build != null && no-build then
-          true
-        else if no-binary != null && no-binary then
-          false
-        else if elem package.name no-binary-package then
-          false
-        else if elem package.name no-build-package then
-          true
-        else if sourcePreference == "sdist" then
-          false
-        else if sourcePreference == "wheel" then
-          true
-        else
-          throw "Unknown sourcePreference: ${sourcePreference}";
-
-      compatibleWheels = pypa.selectWheels python.stdenv.targetPlatform python wheelFiles;
-      selectedWheel' = head compatibleWheels;
-      selectedWheel = wheels.${selectedWheel'.filename};
-
-      getDependencies = concatMap (
-        dep:
-        let
-          pkg = pythonPackages.${dep.name};
-        in
-        [ pkg ] ++ concatMap (extra: pkg.optional-dependencies.${extra}) dep.extra
-      );
-
-      format =
-        if isURL then
-          (
-            # Package is sdist if the source file is present in the sdist attrset
-            if (source.url == package.sdist.url or null) then "pyproject" else "wheel"
-          )
-        else if isPypi then
-          (
-            if preferWheel && compatibleWheels != [ ] then
-              "wheel"
-            else if package.sdist == { } then
-              assert compatibleWheels != [ ];
-              "wheel"
-            else
-              assert package.sdist != { };
-              "pyproject"
-          )
-        else
-          "pyproject";
-
-    in
-    # make sure there is no intersection between no-binary-packages and no-build-packages for current package
-    assert assertMsg (!elem package.name unbuildable-packages) (
-      "There is an overlap between packages specified as no-build and no-binary-package in the workspace. That leaves no way to build these packages: "
-      + (toString unbuildable-packages)
-    );
-    assert assertMsg (
-      format == "wheel" -> no-binary != null -> !no-binary
-    ) "Package source for '${package.name}' was derived as sdist, in tool.uv.no-binary is set to true";
-    assert assertMsg (
-      format == "sdist" -> no-build != null -> !no-build
-    ) "Package source for '${package.name}' was derived as sdist, in tool.uv.no-build is set to true";
-    assert assertMsg (format == "pyproject" -> !elem package.name no-build-package)
-      "Package source for '${package.name}' was derived as sdist, but was present in tool.uv.no-build-package";
-    assert assertMsg (format == "wheel" -> !elem package.name no-binary-package)
-      "Package source for '${package.name}' was derived as wheel, but was present in tool.uv.no-binary-package";
-    if (isProject || isDirectory || isVirtual) then
-      buildPythonPackage (localProject.renderers.buildPythonPackage { inherit python environ; })
-    else
-      buildPythonPackage (
-        {
-          pname = package.name;
-          inherit (package) version;
-
-          dependencies = getDependencies package.dependencies;
-          optional-dependencies = mapAttrs (_: getDependencies) package.optional-dependencies;
-
-          src =
-            if isGit then
-              (
-                let
-                  parsed = parseGitURL source.git;
-                in
-                fetchGit (
-                  {
-                    inherit (parsed) url;
-                    rev = parsed.fragment;
-                  }
-                  // optionalAttrs (parsed ? query.tag) { ref = "refs/tags/${parsed.query.tag}"; }
-                  // optionalAttrs (versionAtLeast nixVersion "2.4") {
-                    allRefs = true;
-                    submodules = true;
-                  }
-                )
-              )
-            else if isPath then
-              workspaceRoot + "/${source.path}"
-            else if (isPypi || isURL) && format == "pyproject" then
-              fetchurl { inherit (package.sdist) url hash; }
-            else if isURL && format == "wheel" then
-              fetchurl {
-                inherit
-                  (findFirst (
-                    whl: whl.url == source.url
-                  ) (throw "Wheel URL ${source.url} not found in list of wheels: ${package.wheels}") package.wheels)
-                  url
-                  hash
-                  ;
-              }
-            else if format == "wheel" then
-              fetchurl { inherit (selectedWheel) url hash; }
-            else
-              throw "Unhandled state: could not derive src for package '${package.name}' from: ${toJSON source}";
-        }
-        // optionalAttrs (format == "pyproject") { pyproject = true; }
-        // optionalAttrs (format != "pyproject") { inherit format; }
-        // optionalAttrs (format == "wheel") {
-          # Don't strip prebuilt wheels
-          dontStrip = true;
-
-          # Add wheel utils
-          nativeBuildInputs = [
-            wheelUnpackHook
-            pypaInstallHook
-          ] ++ lib.optional stdenv.isLinux autoPatchelfHook;
-          buildInputs =
-            # Add manylinux platform dependencies.
-            optionals (stdenv.isLinux && stdenv.hostPlatform.libc == "glibc") (
-              unique (
-                concatMap (
-                  tag:
-                  (
-                    if hasPrefix "manylinux1" tag then
-                      pythonManylinuxPackages.manylinux1
-                    else if hasPrefix "manylinux2010" tag then
-                      pythonManylinuxPackages.manylinux2010
-                    else if hasPrefix "manylinux2014" tag then
-                      pythonManylinuxPackages.manylinux2014
-                    else if hasPrefix "manylinux_" tag then
-                      pythonManylinuxPackages.manylinux2014
-                    else
-                      [ ] # Any other type of wheel don't need manylinux inputs
-                  )
-                ) selectedWheel'.platformTags
-              )
-            );
-        }
-      );
 
   /*
     Parse unmarshaled uv.lock
