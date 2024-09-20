@@ -2,6 +2,8 @@
   lib,
   pyproject-nix,
   lock1,
+  renderers,
+  build,
   ...
 }:
 
@@ -114,6 +116,71 @@ fix (self: {
       # Merge with overriden config
       config' = loadedConfig // (if isFunction config then config loadedConfig else config);
 
+      # Set default sourcePreference
+      defaultSourcePreference =
+        if config'.no-binary then
+          "sdist"
+        else if config'.no-build then
+          "wheel"
+        else
+          throw "No sourcePreference was passed, and could not be automatically inferred from workspace config";
+
+      loadPackage = lock1.loadPackage {
+        projects = workspaceProjects;
+        inherit workspaceRoot;
+      };
+
+      renderIntermediate = renderers.mkRenderIntermediate {
+        inherit workspaceRoot;
+        config = config';
+      };
+
+      mkOverlay' =
+        builderImpl:
+        { sourcePreference, environ }:
+        final: prev:
+        let
+          inherit (final) callPackage;
+
+          # Instantiate builders
+          builders = builderImpl { defaultSourcePreference = sourcePreference; };
+
+          # Note: Using Python from final here causes infinite recursion.
+          # There is no correct way to override the python interpreter from within the set anyway,
+          # so all facts that we get from the interpreter derivation are still the same.
+          environ' = pep508.setEnviron (pep508.mkEnviron prev.python) environ;
+          pythonVersion = environ'.python_full_version.value;
+
+          resolved = lock1.resolveDependencies {
+            # Note: Attrset in the shape of pep621.parseDependencies
+            dependencies = {
+              dependencies = topLevelDependencies;
+              extras = { };
+              build-systems = [ ];
+            };
+            lock = uvLock;
+            environ = environ';
+          };
+
+        in
+        # Assert that requires-python from uv.lock is compatible with this interpreter
+        assert all (spec: pep440.comparators.${spec.op} pythonVersion spec.version) uvLock.requires-python;
+        mapAttrs (
+          _: pkg:
+          let
+            # If a package wasn't a workspace package, but is a local package pulled in by e.g. path load them up as local packages too.
+            loadedPackage = loadPackage pkg;
+          in
+          # Call different builder functions depending on if package is local or remote (pypi)
+          if loadedPackage.isLocalProject then
+            callPackage (builders.local {
+              environ = environ';
+              inherit (loadedPackage) localProject;
+            }) { }
+          else
+            callPackage (builders.remote (renderIntermediate loadedPackage)) { }
+        ) resolved;
+
     in
     assert assertMsg (
       !(config'.no-binary && config'.no-build)
@@ -137,49 +204,46 @@ fix (self: {
           # - sdist
           #
           # See FAQ for more information.
-          sourcePreference ?
-            if config'.no-binary then
-              "sdist"
-            else if config'.no-build then
-              "wheel"
-            else
-              throw "No sourcePreference was passed, and could not be automatically inferred from workspace config",
+          sourcePreference ? defaultSourcePreference,
           # PEP-508 environment customisations.
           # Example: { platform_release = "5.10.65"; }
           environ ? { },
         }:
+        mkOverlay' build.buildPythonPackage { inherit sourcePreference environ; };
+
+      /*
+        Generate an overlay to use with pyproject.nix's build infrastructure.
+
+        See https://nix-community.github.io/pyproject.nix/lib/build.html
+      */
+      mkPyprojectOverlay =
+        {
+          # Whether to prefer sources from either:
+          # - wheel
+          # - sdist
+          #
+          # See FAQ for more information.
+          sourcePreference ? defaultSourcePreference,
+          # PEP-508 environment customisations.
+          # Example: { platform_release = "5.10.65"; }
+          environ ? { },
+        }:
+        let
+          overlay' = mkOverlay' build.pyprojectBuild { inherit sourcePreference environ; };
+        in
         final: prev:
         let
-          inherit (final) callPackage;
-
-          # Note: Using Python from final here causes infinite recursion.
-          # There is no correct way to override the python interpreter from within the set anyway,
-          # so all facts that we get from the interpreter derivation are still the same.
-          environ' = pep508.setEnviron (pep508.mkEnviron prev.python) environ;
-          pythonVersion = environ'.python_full_version.value;
-
-          mkPackage = lock1.mkPackage {
-            projects = workspaceProjects;
-            environ = environ';
-            config = config';
-            inherit workspaceRoot sourcePreference pyproject;
-          };
-
-          resolved = lock1.resolveDependencies {
-            # Note: Attrset in the shape of pep621.parseDependencies
-            dependencies = {
-              dependencies = topLevelDependencies;
-              extras = { };
-              build-systems = [ ];
-            };
-            lock = uvLock;
-            environ = environ';
-          };
-
+          inherit (prev.pythonPackagesHostHost) stdenv;
         in
-        # Assert that requires-python from uv.lock is compatible with this interpreter
-        assert all (spec: pep440.comparators.${spec.op} pythonVersion spec.version) uvLock.requires-python;
-        mapAttrs (_: pkg: callPackage (mkPackage pkg) { }) resolved;
+        {
+          pythonPackagesBuildHost = prev.pythonPackagesBuildHost.overrideScope overlay';
+          # Don't overlay if we're not doing cross
+          pythonPackagesHostHost =
+            if stdenv.buildPlatform != stdenv.hostPlatform then
+              prev.pythonPackagesHostHost.overrideScope overlay'
+            else
+              final.pythonPackagesBuildHost;
+        };
 
       inherit topLevelDependencies;
     };

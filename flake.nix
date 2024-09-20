@@ -4,9 +4,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
-
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -16,11 +13,12 @@
     nixdoc.url = "github:nix-community/nixdoc";
     nixdoc.inputs.nixpkgs.follows = "nixpkgs";
 
-    pyproject-nix.url = "github:adisbladis/pyproject.nix";
+    pyproject-nix.url = "github:nix-community/pyproject.nix/pyproject-build";
     pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
     pyproject-nix.inputs.nix-github-actions.follows = "nix-github-actions";
     pyproject-nix.inputs.mdbook-nixdoc.follows = "mdbook-nixdoc";
     pyproject-nix.inputs.treefmt-nix.follows = "treefmt-nix";
+    pyproject-nix.inputs.lix-unit.follows = "lix-unit";
 
     mdbook-nixdoc.url = "github:adisbladis/mdbook-nixdoc";
     mdbook-nixdoc.inputs.nixpkgs.follows = "nixpkgs";
@@ -28,7 +26,6 @@
 
     lix-unit = {
       url = "github:adisbladis/lix-unit";
-      inputs.flake-parts.follows = "flake-parts";
       inputs.mdbook-nixdoc.follows = "mdbook-nixdoc";
       inputs.nix-github-actions.follows = "nix-github-actions";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -40,7 +37,7 @@
     {
       self,
       nixpkgs,
-      flake-parts,
+      # flake-parts,
       treefmt-nix,
       pyproject-nix,
       nix-github-actions,
@@ -48,30 +45,25 @@
       ...
     }@inputs:
     let
+      forAllSystems = lib.genAttrs lib.systems.flakeExposed;
       inherit (nixpkgs) lib;
     in
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
+    {
 
-      imports = [ treefmt-nix.flakeModule ];
+      # imports = [ treefmt-nix.flakeModule ];
 
-      flake.githubActions = nix-github-actions.lib.mkGithubMatrix {
+      githubActions = nix-github-actions.lib.mkGithubMatrix {
         checks = {
           inherit (self.checks) x86_64-linux;
         };
       };
 
-      flake.lib = import ./lib {
+      lib = import ./lib {
         inherit pyproject-nix;
         inherit lib;
       };
 
-      flake.templates =
+      templates =
         let
           root = ./templates;
           dirs = lib.attrNames (lib.filterAttrs (_: type: type == "directory") (builtins.readDir root));
@@ -91,15 +83,16 @@
         );
 
       # Expose unit tests for external discovery
-      flake.libTests = import ./lib/test.nix {
+      libTests = import ./lib/test.nix {
         inherit lib pyproject-nix;
         uv2nix = self.lib;
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
       };
 
-      perSystem =
-        { pkgs, system, ... }:
+      devShells = forAllSystems (
+        system:
         let
+          pkgs = nixpkgs.legacyPackages.${system};
           mkShell' =
             { nix-unit }:
             pkgs.mkShell {
@@ -112,28 +105,45 @@
                 pkgs.uv
               ] ++ self.packages.${system}.doc.nativeBuildInputs;
             };
-
         in
         {
-          treefmt.imports = [ ./dev/treefmt.nix ];
+          nix = mkShell' { inherit (pkgs) nix-unit; };
+          lix = mkShell' { nix-unit = lix-unit.packages.${system}.default; };
+          default = self.devShells.${system}.nix;
+        }
+      );
 
-          checks =
-            builtins.removeAttrs self.packages.${system} [ "default" ]
-            // import ./dev/checks.nix {
-              inherit pkgs lib;
-              uv2nix = self.lib;
-            };
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        builtins.removeAttrs self.packages.${system} [ "default" ]
+        // import ./dev/checks.nix {
+          inherit pyproject-nix pkgs lib;
+          uv2nix = self.lib;
+        }
+      );
 
-          devShells = {
-            nix = mkShell' { inherit (pkgs) nix-unit; };
-            lix = mkShell' { nix-unit = lix-unit.packages.${system}.default; };
-            default = self.devShells.${system}.nix;
-          };
-
-          packages.doc = pkgs.callPackage ./doc {
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          doc = pkgs.callPackage ./doc {
             inherit self;
             mdbook-nixdoc = inputs.mdbook-nixdoc.packages.${system}.default;
           };
-        };
+        }
+      );
+
+      formatter = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        (treefmt-nix.lib.evalModule pkgs ./dev/treefmt.nix).config.build.wrapper
+      );
     };
 }

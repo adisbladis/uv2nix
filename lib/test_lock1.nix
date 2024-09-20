@@ -16,7 +16,6 @@ let
     nameValuePair
     ;
   inherit (pyproject-nix.lib) pep508 pep621;
-  inherit (builtins) baseNameOf;
 
   environs = {
     cpython312 = pyproject-nix.lib.pep508.mkEnviron pkgs.python312;
@@ -80,154 +79,13 @@ in
     };
   };
 
-  mkPackage =
-    let
-
-      # Return a callPackage'd package.
-      mkPackageTest =
-        {
-          projectName,
-          workspaceRoot ? projectDirs.${projectName},
-          environ ? environs.cpython312,
-          python ? pkgs.python312,
-          sourcePreference,
-        }:
-        let
-          mkPackage = lock1.mkPackage {
-            inherit workspaceRoot environ sourcePreference;
-            projects = lib.filterAttrs (n: _: n == projectName) projects;
-            inherit (projects.${projectName}) pyproject;
-            # Note: This doesn't support workspaces properly because we simply call loadConfig with the one workspace
-            # It's sufficient for mkPackage tests regardless.
-            config = workspace.loadConfig [ projects.${projectName}.pyproject ];
-            # config = workspace.loadConfig
-          };
-        in
-        depName:
-        python.pkgs.callPackage (mkPackage (
-          lock1.parsePackage (findFirstPkg depName locks.${projectName}.package)
-        )) { };
-
-    in
-    {
-      testNoBinaryPackagesPrefWheel = {
-        expr =
-          let
-            mkTest = mkPackageTest {
-              projectName = "no-build-no-binary-packages";
-              sourcePreference = "wheel";
-            };
-          in
-          {
-            arpeggio = baseNameOf (mkTest "arpeggio").src.url;
-            urllib3 = baseNameOf (mkTest "urllib3").src.url;
-          };
-
-        expected = {
-          arpeggio = "Arpeggio-2.0.2-py2.py3-none-any.whl";
-          urllib3 = "urllib3-2.2.2.tar.gz";
-        };
-      };
-
-      testNoBinaryPackagesPrefSdist = {
-        expr =
-          let
-            mkTest = mkPackageTest {
-              projectName = "no-build-no-binary-packages";
-              sourcePreference = "sdist";
-            };
-          in
-          {
-            arpeggio = baseNameOf (mkTest "arpeggio").src.url;
-            urllib3 = baseNameOf (mkTest "urllib3").src.url;
-          };
-
-        expected = {
-          arpeggio = "Arpeggio-2.0.2-py2.py3-none-any.whl";
-          urllib3 = "urllib3-2.2.2.tar.gz";
-        };
-      };
-
-      testNoBuildPrefWheel = {
-        expr =
-          baseNameOf
-            (
-              (mkPackageTest {
-                projectName = "no-build";
-                sourcePreference = "wheel";
-              })
-              "arpeggio"
-            ).src.url;
-        expected = "Arpeggio-2.0.2-py2.py3-none-any.whl";
-      };
-
-      testNoBuildPrefSdist = {
-        expr =
-          baseNameOf
-            (
-              (mkPackageTest {
-                projectName = "no-build";
-                sourcePreference = "sdist";
-              })
-              "arpeggio"
-            ).src.url;
-        expected = "Arpeggio-2.0.2-py2.py3-none-any.whl";
-      };
-
-      testNoBinaryPrefWheel = {
-        expr =
-          baseNameOf
-            (
-              (mkPackageTest {
-                projectName = "no-binary";
-                sourcePreference = "wheel";
-              })
-              "arpeggio"
-            ).src.url;
-        expected = "Arpeggio-2.0.2.tar.gz";
-      };
-
-      testNoBinaryPrefSdist = {
-        expr =
-          baseNameOf
-            (
-              (mkPackageTest {
-                projectName = "no-binary";
-                sourcePreference = "sdist";
-              })
-              "arpeggio"
-            ).src.url;
-        expected = "Arpeggio-2.0.2.tar.gz";
-      };
-
-      testNoBuildNoBinaryPrefWheel = {
-        expr =
-          baseNameOf
-            (
-              (mkPackageTest {
-                projectName = "no-binary-no-build";
-                sourcePreference = "wheel";
-              })
-              "arpeggio"
-            ).src.url;
-        expectedError.type = "ThrownError";
-        expectedError.msg = "Package source for 'arpeggio' was derived as sdist, in tool.uv.no-binary is set to true";
-      };
-
-      testNoBuildNoBinaryPrefSdist = {
-        expr =
-          baseNameOf
-            (
-              (mkPackageTest {
-                projectName = "no-binary-no-build";
-                sourcePreference = "wheel";
-              })
-              "arpeggio"
-            ).src.url;
-        expectedError.type = "ThrownError";
-        expectedError.msg = "Package source for 'arpeggio' was derived as sdist, in tool.uv.no-binary is set to true";
-      };
+  # Tested by renderers
+  loadPackage = {
+    testDummy = {
+      expr = null;
+      expected = null;
     };
+  };
 
   parsePackage =
     let

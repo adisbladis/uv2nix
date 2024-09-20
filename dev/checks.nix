@@ -2,11 +2,19 @@
   pkgs,
   uv2nix,
   lib,
+  pyproject-nix,
 }:
 let
   inherit (pkgs) runCommand;
-  inherit (lib) toList mapAttrs' nameValuePair;
+  inherit (lib)
+    toList
+    mapAttrs'
+    nameValuePair
+    attrNames
+    ;
 
+  # Overrides for nixpkgs buildPythonPackage
+  #
   # Just enough overrides to make tests pass.
   # This is not, and will not, become an overrides stdlib.
   overrides =
@@ -35,41 +43,123 @@ let
       pip = addBuildSystem prev.pip final.setuptools;
       requests = addBuildSystem prev.requests final.setuptools;
       pysocks = addBuildSystem prev.pysocks final.setuptools;
+
+      # Nixpkgs removed pytest-runner and it's not really required..
+      pytest-runner = final.mkPythonMetaPackage {
+        pname = "pytest-runner";
+        version = "6.0.1";
+      };
+
+      # Work around python-runtime-deps-check-hook bug where it can fail depending on uname
+      multi-choice-package = prev.multi-choice-package.overridePythonAttrs (_old: {
+        dontCheckRuntimeDeps = true;
+      });
     };
 
+  buildSystemOverrides = {
+    arpeggio = {
+      setuptools = [ ];
+      pytest-runner = [ ];
+    };
+    attrs = {
+      hatchling = [ ];
+      hatch-vcs = [ ];
+      hatch-fancy-pypi-readme = [ ];
+    };
+    blinker.setuptools = [ ];
+    certifi.setuptools = [ ];
+    charset-normalizer.setuptools = [ ];
+    idna.flit-core = [ ];
+    urllib3.hatchling = [ ];
+    pip = {
+      setuptools = [ ];
+      wheel = [ ];
+    };
+    requests.setuptools = [ ];
+    pysocks.setuptools = [ ];
+  };
+
+  pyprojectOverrides =
+    final: prev:
+    let
+      inherit (final) resolveBuildSystem;
+      addBuildSystems =
+        pkg: spec:
+        pkg.overrideAttrs (old: {
+          nativeBuildInputs = old.nativeBuildInputs ++ resolveBuildSystem spec;
+        });
+    in
+    lib.mapAttrs (name: spec: addBuildSystems prev.${name} spec) buildSystemOverrides;
+
   mkCheck' =
-    sourcePreference:
+    buildImpl: sourcePreference:
     {
       root,
       interpreter ? pkgs.python312,
-      packages ? [ ],
-      testOverrides ? _: _: { },
+      spec ? { },
       check ? null,
       name ? throw "No name provided",
       environ ? { },
     }:
     let
       ws = uv2nix.workspace.loadWorkspace { workspaceRoot = root; };
-      overlay = ws.mkOverlay { inherit sourcePreference environ; };
-      python = interpreter.override {
-        self = python;
-        packageOverrides = lib.composeManyExtensions [
-          overlay
-          overrides
-          testOverrides
-        ];
-      };
 
-      pythonEnv = python.withPackages packages;
+      # Build Python environment based on builder implementation
+      pythonEnv =
+        if buildImpl == "buildPythonPackage" then
+          (
+            let
+              # Generate overlay
+              overlay = ws.mkOverlay { inherit sourcePreference environ; };
+
+              # Override interpreter with generated overlay
+              python = interpreter.override {
+                self = python;
+                packageOverrides = lib.composeManyExtensions [
+                  overlay
+                  overrides
+                ];
+              };
+
+            in
+            # Render venv-like
+            python.withPackages (
+              ps:
+              map (
+                name:
+                assert spec.${name} == [ ];
+                ps.${name}
+              ) (attrNames spec)
+            )
+          )
+        else if buildImpl == "pyprojectBuild" then
+          (
+            let
+              # Generate overlay
+              overlay = ws.mkPyprojectOverlay { inherit sourcePreference environ; };
+
+              # Construct package set
+              pythonSet' =
+                (pkgs.callPackage pyproject-nix.build.packages {
+                  python = interpreter;
+                }).overrideScope
+                  overlay;
+
+              # Override host packages with build fixups
+              pythonSet = pythonSet'.pythonPackagesHostHost.overrideScope pyprojectOverrides;
+
+            in
+            # Render venv
+            pythonSet.mkVirtualEnv "test-venv" spec
+          )
+        else
+          throw "Unsupported builder impl: ${buildImpl}";
+
     in
     if check != null then
       runCommand "check-${name}-pref-${sourcePreference}"
         {
           nativeBuildInputs = [ pythonEnv ];
-          passthru = {
-            inherit (python) pkgs;
-            inherit python;
-          };
         }
         ''
           ${check}
@@ -79,57 +169,69 @@ let
       pythonEnv;
 
   mkChecks =
-    sourcePreference:
+    buildImpl: sourcePreference:
     let
-      mkCheck = mkCheck' sourcePreference;
+      mkCheck = mkCheck' buildImpl sourcePreference;
     in
-    mapAttrs' (name: v: nameValuePair "${name}-pref-${sourcePreference}" v) {
+    mapAttrs' (name: v: nameValuePair "${buildImpl}-${name}-pref-${sourcePreference}" v) {
       trivial = mkCheck {
         root = ../lib/fixtures/trivial;
-        packages = ps: [ ps."trivial" ];
+        spec = {
+          trivial = [ ];
+        };
       };
 
       virtual = mkCheck {
         root = ../lib/fixtures/virtual;
-        packages = ps: [ ps."virtual" ];
+        spec = {
+          virtual = [ ];
+        };
       };
 
       workspace = mkCheck {
         root = ../lib/fixtures/workspace;
-        packages = ps: [
-          ps."workspace"
-          ps."workspace-package"
-        ];
+        spec = {
+          workspace = [ ];
+          workspace-package = [ ];
+        };
       };
 
       workspace-flat = mkCheck {
         root = ../lib/fixtures/workspace-flat;
-        packages = ps: [
-          ps."pkg-a"
-          ps."pkg-b"
-        ];
+        spec = {
+          pkg-a = [ ];
+          pkg-b = [ ];
+        };
       };
 
       # Note: Kitchen sink example can't be fully tested until
       kitchenSinkA = mkCheck {
         root = ../lib/fixtures/kitchen-sink/a;
-        packages = ps: [ ps.a ];
+        spec = {
+          a = [ ];
+        };
       };
 
       noDeps = mkCheck {
         root = ../lib/fixtures/no-deps;
-        packages = ps: [ ps."no-deps" ];
+        spec = {
+          no-deps = [ ];
+        };
       };
 
       optionalDeps = mkCheck {
         root = ../lib/fixtures/optional-deps;
-        packages = ps: [ ps."optional-deps" ];
+        spec = {
+          optional-deps = [ ];
+        };
       };
 
       withExtra = mkCheck {
         name = "with-extra";
         root = ../lib/fixtures/with-extra;
-        packages = ps: [ ps."with-extra" ];
+        spec = {
+          with-extra = [ ];
+        };
         # Check that socks extra is available
         check = ''
           python -c "import socks"
@@ -138,29 +240,30 @@ let
 
       onlyWheels = mkCheck {
         root = ../lib/fixtures/only-wheels;
-        packages = ps: [ ps."hgtk" ];
+        spec = {
+          hgtk = [ ];
+        };
       };
 
       testMultiChoicePackageNoMarker = mkCheck {
         name = "multi-choice-no-marker";
         root = ../lib/fixtures/multi-choice-package;
-        packages = ps: [ ps."multi-choice-package" ];
+        spec = {
+          multi-choice-package = [ ];
+        };
         # Check that arpeggio _isn't_ available
         check = ''
           ! python -c "import arpeggio"
         '';
-        # Work around python-runtime-deps-check-hook bug where it can fail depending on uname
-        testOverrides = _pyfinal: pyprev: {
-          multi-choice-package = pyprev.multi-choice-package.overridePythonAttrs (_old: {
-            dontCheckRuntimeDeps = true;
-          });
-        };
       };
 
       testMultiChoicePackageWithMarker = mkCheck {
         name = "multi-choice-with-marker";
         root = ../lib/fixtures/multi-choice-package;
-        packages = ps: [ ps."multi-choice-package" ];
+        spec = {
+          multi-choice-package = [ ];
+        };
+
         # Check that arpeggio _is_ available
         check = ''
           python -c "import arpeggio"
@@ -168,14 +271,12 @@ let
         environ = {
           platform_release = "5.10.65";
         };
-        # Work around python-runtime-deps-check-hook bug where it can fail depending on uname
-        testOverrides = _pyfinal: pyprev: {
-          multi-choice-package = pyprev.multi-choice-package.overridePythonAttrs (_old: {
-            dontCheckRuntimeDeps = true;
-          });
-        };
       };
     };
 in
-# Generate test set twice: Once with wheel sourcePreference and once with sdist sourcePreference
-mkChecks "wheel" // mkChecks "sdist"
+# Generate test matrix:
+# builder impl  -> sourcePreference
+mkChecks "buildPythonPackage" "wheel"
+// mkChecks "buildPythonPackage" "sdist"
+// mkChecks "pyprojectBuild" "wheel"
+// mkChecks "pyprojectBuild" "sdist"
