@@ -75,6 +75,7 @@ let
       setuptools = [ ];
       wheel = [ ];
     };
+    packaging.flit-core = [ ];
     requests.setuptools = [ ];
     pysocks.setuptools = [ ];
   };
@@ -272,6 +273,17 @@ let
           platform_release = "5.10.65";
         };
       };
+    }
+    // lib.optionalAttrs (buildImpl == "pyprojectBuild") {
+
+      # Nixpkgs buildPythonPackage explodes when bootstrap deps are overriden
+      bootstrapProjectDep = mkCheck {
+        root = ../lib/fixtures/bootstrap-project-dep;
+        spec = {
+          packaging = [ ];
+        };
+      };
+
     };
 in
 # Generate test matrix:

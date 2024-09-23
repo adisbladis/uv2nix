@@ -1,6 +1,7 @@
 { lib, pyproject-nix, ... }:
 
 let
+  inherit (pyproject-nix.build.lib) isBootstrapPackage;
   inherit (lib)
     optionalAttrs
     concatMap
@@ -122,6 +123,7 @@ in
           autoPatchelfHook,
           pythonManylinuxPackages,
           pyprojectHook,
+          pyprojectBootstrapHook,
           pyprojectWheelHook,
           sourcePreference ? defaultSourcePreference,
         }:
@@ -151,7 +153,9 @@ in
 
             nativeBuildInputs =
               (attrs.nativeBuildInputs or [ ])
-              ++ lib.optional (format == "pyproject") pyprojectHook
+              ++ lib.optional (format == "pyproject") (
+                if isBootstrapPackage attrs.pname then pyprojectBootstrapHook else pyprojectHook
+              )
               ++ lib.optional (format == "wheel") pyprojectWheelHook;
           }
         );
