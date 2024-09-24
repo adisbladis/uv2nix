@@ -147,7 +147,7 @@ let
                   overlay;
 
               # Override host packages with build fixups
-              pythonSet = pythonSet'.pythonPackagesHostHost.overrideScope pyprojectOverrides;
+              pythonSet = pythonSet'.pythonPkgsHostHost.overrideScope pyprojectOverrides;
 
             in
             # Render venv
