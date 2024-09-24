@@ -233,16 +233,16 @@ fix (self: {
         in
         final: prev:
         let
-          inherit (prev.pythonPackagesHostHost) stdenv;
+          inherit (prev.pythonPkgsHostHost) stdenv;
         in
         {
-          pythonPackagesBuildHost = prev.pythonPackagesBuildHost.overrideScope overlay';
+          pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
           # Don't overlay if we're not doing cross
-          pythonPackagesHostHost =
+          pythonPkgsHostHost =
             if stdenv.buildPlatform != stdenv.hostPlatform then
-              prev.pythonPackagesHostHost.overrideScope overlay'
+              prev.pythonPkgsHostHost.overrideScope overlay'
             else
-              final.pythonPackagesBuildHost;
+              final.pythonPkgsBuildHost;
         };
 
       inherit topLevelDependencies;
