@@ -1,6 +1,17 @@
 {
   "dependencies": [],
-  "dev-dependencies": {},
+  "dev-dependencies": {
+    "dev": [
+      {
+        "extra": [],
+        "marker": null,
+        "name": "coverage",
+        "source": {},
+        "version": null,
+        "version'": null
+      }
+    ]
+  },
   "metadata": {
     "requires-dev": {
       "dev": [

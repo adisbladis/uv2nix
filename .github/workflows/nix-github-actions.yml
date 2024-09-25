@@ -59,7 +59,7 @@ jobs:
       - name: Run tests
         run: nix develop -c nix-unit --flake .#libTests
 
-  nix-flake-show-templates:
+  nix-flake-templates:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,8 +70,10 @@ jobs:
         with:
           name: adisbladis
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-      - name: Flake show
+      - name: Flake show buildPythonPackage
         run: nix flake show --no-update-lock-file --override-input uv2nix .  --reference-lock-file ./flake.lock ./templates/app
+      - name: Flake show pyproject-build
+        run: nix flake show --no-update-lock-file --override-input uv2nix .  --reference-lock-file ./flake.lock ./templates/hello-world
 
   collect:
     runs-on: ubuntu-latest

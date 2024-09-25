@@ -21,10 +21,7 @@ let
     optional
     any
     fix
-    groupBy
     mapAttrs
-    optionalAttrs
-    head
     attrNames
     all
     unique
@@ -34,11 +31,14 @@ let
     attrValues
     assertMsg
     isFunction
+    nameValuePair
+    listToAttrs
+    pathExists
+    removePrefix
     ;
   inherit (builtins) readDir;
   inherit (pyproject-nix.lib.project) loadUVPyproject; # Note: Maybe we want a loader that will just "remap-all-the-things" into standard attributes?
   inherit (pyproject-nix.lib) pep440 pep508;
-  inherit (pyproject-nix.lib) pypa;
 
   # Match str against a glob pattern
   globMatches =
@@ -80,26 +80,15 @@ fix (self: {
       pyproject = importTOML (workspaceRoot + "/pyproject.toml");
       uvLock = lock1.parseLock (importTOML (workspaceRoot + "/uv.lock"));
 
-      members = self.discoverWorkspace { inherit workspaceRoot pyproject; };
-
-      # Map package names to pyproject.nix projects
-      workspaceProjects =
-        mapAttrs
-          (
-            _: project:
-            assert length project == 1;
-            head project
-          )
-          (
-            groupBy (project: pypa.normalizePackageName project.pyproject.project.name) (
-              map (
-                relPath:
-                loadUVPyproject { projectRoot = workspaceRoot + "${relPath}"; }
-                # We've already loaded this file for workspace discovery, just bung it in.
-                // optionalAttrs (relPath == "/") { inherit pyproject; }
-              ) members
-            )
-          );
+      localPackages = filter lock1.isLocalPackage uvLock.package;
+      workspaceProjects = listToAttrs (
+        map (
+          package:
+          nameValuePair package.name (loadUVPyproject {
+            projectRoot = workspaceRoot + "/${lock1.getLocalPath package}";
+          })
+        ) localPackages
+      );
 
       # Bootstrap resolver from top-level workspace projects
       topLevelDependencies = map pep508.parseString (attrNames workspaceProjects);
@@ -124,11 +113,6 @@ fix (self: {
           "wheel"
         else
           throw "No sourcePreference was passed, and could not be automatically inferred from workspace config";
-
-      loadPackage = lock1.loadPackage {
-        projects = workspaceProjects;
-        inherit workspaceRoot;
-      };
 
       renderIntermediate = renderers.mkRenderIntermediate {
         inherit workspaceRoot;
@@ -166,22 +150,19 @@ fix (self: {
         # Assert that requires-python from uv.lock is compatible with this interpreter
         assert all (spec: pep440.comparators.${spec.op} pythonVersion spec.version) uvLock.requires-python;
         mapAttrs (
-          _: pkg:
-          let
-            # If a package wasn't a workspace package, but is a local package pulled in by e.g. path load them up as local packages too.
-            loadedPackage = loadPackage pkg;
-          in
+          name: package:
           # Call different builder functions depending on if package is local or remote (pypi)
-          if loadedPackage.isLocalProject then
+          if workspaceProjects ? ${name} then
             callPackage (builders.local {
               environ = environ';
-              inherit (loadedPackage) localProject;
+              localProject = workspaceProjects.${name};
             }) { }
           else
-            callPackage (builders.remote (renderIntermediate loadedPackage)) { }
+            callPackage (builders.remote (renderIntermediate package)) { }
         ) resolved;
 
     in
+    #assert (builtins.trace localProjects' true);
     assert assertMsg (
       !(config'.no-binary && config'.no-build)
     ) "Both tool.uv.no-build and tool.uv.no-binary are set to true, making the workspace unbuildable";
@@ -237,12 +218,62 @@ fix (self: {
         in
         {
           pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
-          # Don't overlay if we're not doing cross
-          pythonPkgsHostHost =
-            if stdenv.buildPlatform != stdenv.hostPlatform then
-              prev.pythonPkgsHostHost.overrideScope overlay'
-            else
-              final.pythonPkgsBuildHost;
+          pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
+        };
+
+      /*
+        Generate an overlay to use with pyproject.nix's build infrastructure to install dependencies in editable mode.
+
+        See https://nix-community.github.io/pyproject.nix/lib/build.html
+      */
+      mkEditablePyprojectOverlay =
+        let
+          workspaceProjects' = attrNames workspaceProjects;
+          localProjects = map (package: package.name) (filter lock1.isLocalPackage uvLock.package);
+          allLocal = unique (workspaceProjects' ++ localProjects);
+        in
+        {
+          # Editable root as a string.
+          root ? (toString workspaceRoot),
+          # Workspace members to make editable as a list of strings. Defaults to all local projects.
+          members ? allLocal,
+        }:
+        assert assertMsg (!lib.hasPrefix builtins.storeDir root) ''
+          Editable root was passed as a Nix store path.
+
+          ${lib.optionalString lib.inPureEvalMode ''
+            This is most likely because you are using Flakes, and are automatically inferring the editable root from workspaceRoot.
+            Flakes are copied to the Nix store on evaluation. This can temporarily be worked around using --impure.
+          ''}
+          Pass editable root either as a string pointing to an absolute non-store path, or use environment variables for relative paths.
+        '';
+        _final: prev:
+        let
+          # Filter any local packages that might be deactivated by markers or other filtration mechanisms.
+          activeMembers = filter (name: !prev ? name) members;
+        in
+        {
+          pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope (
+            _pyfinal: pyprev:
+            listToAttrs (
+              map (
+                name:
+                nameValuePair name (
+                  pyprev.${name}.override {
+                    # Prefer src layout if available
+                    editableRoot =
+                      let
+                        inherit (workspaceProjects.${name}) projectRoot;
+                      in
+                      root
+                      + (removePrefix (toString workspaceRoot) (
+                        toString (if pathExists (projectRoot + "/src") then (projectRoot + "/src") else projectRoot)
+                      ));
+                  }
+                )
+              ) activeMembers
+            )
+          );
         };
 
       inherit topLevelDependencies;

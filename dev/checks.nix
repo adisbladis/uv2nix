@@ -56,6 +56,7 @@ let
       });
     };
 
+  # Build system overrides for pyproject.nix's build infra
   buildSystemOverrides = {
     arpeggio = {
       setuptools = [ ];
@@ -80,17 +81,26 @@ let
     pysocks.setuptools = [ ];
   };
 
+  # Assemble overlay from spec
   pyprojectOverrides =
-    final: prev:
     let
-      inherit (final) resolveBuildSystem;
-      addBuildSystems =
-        pkg: spec:
-        pkg.overrideAttrs (old: {
-          nativeBuildInputs = old.nativeBuildInputs ++ resolveBuildSystem spec;
-        });
+      overlay' =
+        final: prev:
+        let
+          inherit (final) resolveBuildSystem;
+          addBuildSystems =
+            pkg: spec:
+            pkg.overrideAttrs (old: {
+              nativeBuildInputs = old.nativeBuildInputs ++ resolveBuildSystem spec;
+            });
+        in
+        lib.mapAttrs (name: spec: addBuildSystems prev.${name} spec) buildSystemOverrides;
+
     in
-    lib.mapAttrs (name: spec: addBuildSystems prev.${name} spec) buildSystemOverrides;
+    _final: prev: {
+      pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
+      pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
+    };
 
   mkCheck' =
     buildImpl: sourcePreference:
@@ -140,18 +150,15 @@ let
               overlay = ws.mkPyprojectOverlay { inherit sourcePreference environ; };
 
               # Construct package set
-              pythonSet' =
+              pythonSet =
                 (pkgs.callPackage pyproject-nix.build.packages {
                   python = interpreter;
                 }).overrideScope
-                  overlay;
-
-              # Override host packages with build fixups
-              pythonSet = pythonSet'.pythonPkgsHostHost.overrideScope pyprojectOverrides;
+                  (lib.composeExtensions overlay pyprojectOverrides);
 
             in
             # Render venv
-            pythonSet.mkVirtualEnv "test-venv" spec
+            pythonSet.pythonPkgsHostHost.mkVirtualEnv "test-venv" spec
           )
         else
           throw "Unsupported builder impl: ${buildImpl}";
@@ -283,6 +290,54 @@ let
           packaging = [ ];
         };
       };
+
+      editable-workspace =
+        let
+          workspaceRoot = ../lib/fixtures/workspace;
+          ws = uv2nix.workspace.loadWorkspace { inherit workspaceRoot; };
+
+          interpreter = pkgs.python312;
+
+          # Generate overlays
+          overlay = ws.mkPyprojectOverlay {
+            inherit sourcePreference;
+            environ = { };
+          };
+          editableOverlay = ws.mkEditablePyprojectOverlay {
+            root = "$NIX_BUILD_TOP";
+          };
+
+          # Base package set
+          baseSet = pkgs.callPackage pyproject-nix.build.packages {
+            python = interpreter;
+          };
+
+          # Override package set with our overlays
+          pythonSet = baseSet.overrideScope (
+            lib.composeManyExtensions [
+              overlay
+              pyprojectOverrides
+              editableOverlay
+            ]
+          );
+
+          pythonEnv = pythonSet.pythonPkgsHostHost.mkVirtualEnv "editable-venv" {
+            workspace = [ ];
+          };
+
+        in
+        pkgs.runCommand "editable-workspace-test"
+          {
+            nativeBuildInputs = [ pythonEnv ];
+          }
+          ''
+            cp -r ${workspaceRoot}/* .
+            chmod +w .*
+            test "$(python -c 'import workspace_package; print(workspace_package.hello())')" = "Hello from workspace-package!"
+            substituteInPlace ./packages/workspace-package/src/workspace_package/__init__.py --replace-fail workspace-package mutable-package
+            test "$(python -c 'import workspace_package; print(workspace_package.hello())')" = "Hello from mutable-package!"
+            touch $out
+          '';
 
     };
 in

@@ -18,6 +18,8 @@ let
     optionals
     unique
     hasPrefix
+    mapAttrs
+    groupBy
     ;
   inherit (pyproject-nix.lib) pypa;
   inherit (builtins) toJSON nixVersion;
@@ -60,7 +62,19 @@ in
         ;
       unbuildable-packages = intersectLists no-binary-package no-build-package;
     in
-    loadedPackage:
+    package:
+    let
+
+      # Wheels grouped by filename
+      wheels = mapAttrs (
+        _: whl:
+        assert length whl == 1;
+        head whl
+      ) (groupBy (whl: whl.file'.filename) package.wheels);
+      # List of parsed wheels
+      wheelFiles = map (whl: whl.file') package.wheels;
+
+    in
     {
       stdenv,
       python,
@@ -70,7 +84,6 @@ in
       pythonManylinuxPackages,
     }:
     let
-      inherit (loadedPackage) package wheelFiles wheels;
       inherit (package) source;
       isGit = source ? git;
       isPypi = source ? registry; # From pypi registry

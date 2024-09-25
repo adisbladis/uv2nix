@@ -1,7 +1,6 @@
 { pyproject-nix, lib, ... }:
 
 let
-  inherit (pyproject-nix.lib.project) loadUVPyproject;
   inherit (pyproject-nix.lib.pep508) parseMarkers evalMarkers;
   inherit (pyproject-nix.lib.pypa) parseWheelFileName;
   inherit (pyproject-nix.lib) pep440 pypa;
@@ -159,53 +158,26 @@ fix (self: {
     reduceDependencies allDependencies;
 
   /*
-    Load a package within a workspace
+    Check if a package is a local package.
     .
   */
-  loadPackage =
-    {
-      # Local pyproject.nix top-level projects (attrset)
-      projects,
-      # Workspace root directory
-      workspaceRoot,
-    }:
-    # Parsed uv.lock package
+  isLocalPackage =
     package:
-    let
-      inherit (package) source;
-      isProject = source ? editable; # Path to local workspace project
-      isDirectory = source ? directory; # Path to non-uv project
-      isVirtual = source ? virtual; # Path to local project with no build-system defined
-    in
-    {
-      inherit package;
-      isLocalProject = isProject || isDirectory || isVirtual;
+    # Path to local workspace project
+    package.source ? editable
+    # Path to non-uv project
+    || package.source ? directory
+    # Path to local project with no build-system defined
+    || package.source ? virtual;
 
-      # Wheels grouped by filename
-      wheels = mapAttrs (
-        _: whl:
-        assert length whl == 1;
-        head whl
-      ) (groupBy (whl: whl.file'.filename) package.wheels);
-      # List of parsed wheels
-      wheelFiles = map (whl: whl.file') package.wheels;
-
-      localProject =
-        if projects ? package.name then
-          projects.${package.name}
-        else
-          loadUVPyproject {
-            projectRoot =
-              if isProject then
-                workspaceRoot + "/${source.editable}"
-              else if isDirectory then
-                workspaceRoot + "/${source.directory}"
-              else if isVirtual then
-                workspaceRoot + "/${source.virtual}"
-              else
-                throw "Not a project path: ${toJSON source}";
-          };
-    };
+  /*
+    Get relative path for a local package
+    .
+  */
+  getLocalPath =
+    package:
+    package.source.editable or package.source.directory or package.source.virtual
+      or (throw "Not a project path: ${toJSON package.source}");
 
   /*
     Filter dependencies/optional-dependencies/dev-dependencies from a uv.lock package entry
@@ -221,7 +193,7 @@ fix (self: {
     // {
       dependencies = filterDeps package.dependencies;
       optional-dependencies = mapAttrs (_: filterDeps) package.optional-dependencies;
-      dev-dependencies = mapAttrs (_: filterDeps) package.optional-dependencies;
+      dev-dependencies = mapAttrs (_: filterDeps) package.dev-dependencies;
     };
 
   /*
@@ -370,6 +342,7 @@ fix (self: {
       # All resolution-markers are also in the toplevel, meaning the string can be used as a lookup key from the top-level marker.
       inherit resolution-markers;
       dependencies = map parseDependency dependencies;
+
       optional-dependencies = mapAttrs (_: map parseDependency) optional-dependencies;
       dev-dependencies = mapAttrs (_: map parseDependency) dev-dependencies;
     };
