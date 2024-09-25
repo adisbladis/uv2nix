@@ -99,18 +99,39 @@ in
         { localProject, environ }:
         {
           stdenv,
+          python,
           pyprojectHook,
           resolveBuildSystem,
+          pythonPkgsBuildHost,
+          # Editable root as a string
+          editableRoot ? null,
         }:
         stdenv.mkDerivation (
-          renderers.mkDerivation
-            {
-              project = localProject;
-              inherit environ;
-            }
-            {
-              inherit pyprojectHook resolveBuildSystem;
-            }
+          if editableRoot == null then
+            renderers.mkDerivation
+              {
+                project = localProject;
+                inherit environ;
+              }
+              {
+                inherit pyprojectHook resolveBuildSystem;
+              }
+          else
+            renderers.mkDerivationEditable
+              {
+                project = localProject;
+                inherit environ;
+                root = editableRoot;
+              }
+              {
+                inherit
+                  python
+                  pyprojectHook
+                  pythonPkgsBuildHost
+                  resolveBuildSystem
+                  ;
+
+              }
         );
 
       # Build a remote (pypi/vcs) package

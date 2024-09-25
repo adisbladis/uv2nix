@@ -13,7 +13,7 @@
     nixdoc.url = "github:nix-community/nixdoc";
     nixdoc.inputs.nixpkgs.follows = "nixpkgs";
 
-    pyproject-nix.url = "github:nix-community/pyproject.nix/pyproject-build";
+    pyproject-nix.url = "github:nix-community/pyproject.nix";
     pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
     pyproject-nix.inputs.nix-github-actions.follows = "nix-github-actions";
     pyproject-nix.inputs.mdbook-nixdoc.follows = "mdbook-nixdoc";

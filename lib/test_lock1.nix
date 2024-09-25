@@ -79,11 +79,47 @@ in
     };
   };
 
-  # Tested by renderers
-  loadPackage = {
-    testDummy = {
-      expr = null;
-      expected = null;
+  getLocalPath = {
+    testEditable = {
+      expr = lock1.getLocalPath { source.editable = "foo"; };
+      expected = "foo";
+    };
+
+    testDirectory = {
+      expr = lock1.getLocalPath { source.directory = "foo"; };
+      expected = "foo";
+    };
+
+    testVirtual = {
+      expr = lock1.getLocalPath { source.virtual = "foo"; };
+      expected = "foo";
+    };
+
+    testNonLocal = {
+      expr = lock1.getLocalPath { source = { }; };
+      expectedError.msg = "Not a project path";
+    };
+  };
+
+  isLocalPackage = {
+    testEditable = {
+      expr = lock1.isLocalPackage { source.editable = "foo"; };
+      expected = true;
+    };
+
+    testDirectory = {
+      expr = lock1.isLocalPackage { source.directory = "foo"; };
+      expected = true;
+    };
+
+    testVirtual = {
+      expr = lock1.isLocalPackage { source.virtual = "foo"; };
+      expected = true;
+    };
+
+    testNonLocal = {
+      expr = lock1.isLocalPackage { source = { }; };
+      expected = false;
     };
   };
 

@@ -1,17 +1,6 @@
 {
   "dependencies": [],
-  "dev-dependencies": {
-    "haxx": [
-      {
-        "extra": [],
-        "marker": null,
-        "name": "arpeggio",
-        "source": {},
-        "version": null,
-        "version'": null
-      }
-    ]
-  },
+  "dev-dependencies": {},
   "metadata": {
     "requires-dev": {},
     "requires-dist": [

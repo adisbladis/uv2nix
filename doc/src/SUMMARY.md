@@ -4,7 +4,9 @@
 
 # Usage
 
-- [Basic usage](./basic.md)
+- [Basic usage]()
+  - [`pyproject.nix` builders](./usage/pyproject-build.md)
+  - [nixpkgs `buildPythonPackage`](./usage/buildpythonpackage.md)
 
 # Meta
 

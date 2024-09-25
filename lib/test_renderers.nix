@@ -55,11 +55,6 @@ in
           sourcePreference,
         }:
         let
-          loadPackage = lock1.loadPackage {
-            inherit workspaceRoot;
-            projects = lib.filterAttrs (n: _: n == projectName) projects;
-          };
-
           renderIntermediate = renderers.mkRenderIntermediate {
             inherit workspaceRoot;
             config = workspace.loadConfig [ projects.${projectName}.pyproject ];
@@ -68,11 +63,9 @@ in
         in
         depName:
         let
-          loadedPackage = loadPackage (
-            lock1.parsePackage (findFirstPkg depName locks.${projectName}.package)
-          );
+          package = lock1.parsePackage (findFirstPkg depName locks.${projectName}.package);
         in
-        (renderIntermediate loadedPackage) {
+        (renderIntermediate package) {
           inherit (pkgs)
             fetchurl
             stdenv
