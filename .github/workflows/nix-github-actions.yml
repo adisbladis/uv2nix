@@ -59,7 +59,7 @@ jobs:
       - name: Run tests
         run: nix develop -c nix-unit --flake .#libTests
 
-  nix-flake-templates:
+  nix-flake-show-templates:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
