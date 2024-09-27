@@ -83,24 +83,16 @@ let
 
   # Assemble overlay from spec
   pyprojectOverrides =
+    final: prev:
     let
-      overlay' =
-        final: prev:
-        let
-          inherit (final) resolveBuildSystem;
-          addBuildSystems =
-            pkg: spec:
-            pkg.overrideAttrs (old: {
-              nativeBuildInputs = old.nativeBuildInputs ++ resolveBuildSystem spec;
-            });
-        in
-        lib.mapAttrs (name: spec: addBuildSystems prev.${name} spec) buildSystemOverrides;
-
+      inherit (final) resolveBuildSystem;
+      addBuildSystems =
+        pkg: spec:
+        pkg.overrideAttrs (old: {
+          nativeBuildInputs = old.nativeBuildInputs ++ resolveBuildSystem spec;
+        });
     in
-    _final: prev: {
-      pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
-      pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
-    };
+    lib.mapAttrs (name: spec: addBuildSystems prev.${name} spec) buildSystemOverrides;
 
   mkCheck' =
     buildImpl: sourcePreference:

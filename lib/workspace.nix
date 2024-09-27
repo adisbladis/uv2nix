@@ -211,22 +211,21 @@ fix (self: {
           environ ? { },
         }:
         let
-          overlay' = mkOverlay' build.pyprojectBuild { inherit sourcePreference environ; };
+          overlay = mkOverlay' build.pyprojectBuild { inherit sourcePreference environ; };
+          crossOverlay = lib.composeExtensions (_final: prev: {
+            pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay;
+          }) overlay;
         in
-        final: prev: let
+        final: prev:
+        let
           inherit (prev) stdenv;
         in
-          # When doing native compilation pyproject.nix aliases pythonPkgsBuildHost to pythonPkgsHostHost
-          # for performance reasons.
-          #
-          # Mirror this behaviour by overriding both sets when cross compiling, but only override the
-          # build host when doing native compilation.
-        if stdenv.buildPlatform != stdenv.hostPlatform then {
-          pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
-          pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
-        } else {
-          pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
-        };
+        # When doing native compilation pyproject.nix aliases pythonPkgsBuildHost to pythonPkgsHostHost
+        # for performance reasons.
+        #
+        # Mirror this behaviour by overriding both sets when cross compiling, but only override the
+        # build host when doing native compilation.
+        if stdenv.buildPlatform != stdenv.hostPlatform then crossOverlay else overlay final prev;
 
       /*
         Generate an overlay to use with pyproject.nix's build infrastructure to install dependencies in editable mode.
@@ -259,29 +258,24 @@ fix (self: {
           # Filter any local packages that might be deactivated by markers or other filtration mechanisms.
           activeMembers = filter (name: !prev ? name) members;
         in
-        {
-          pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope (
-            _pyfinal: pyprev:
-            listToAttrs (
-              map (
-                name:
-                nameValuePair name (
-                  pyprev.${name}.override {
-                    # Prefer src layout if available
-                    editableRoot =
-                      let
-                        inherit (workspaceProjects.${name}) projectRoot;
-                      in
-                      root
-                      + (removePrefix (toString workspaceRoot) (
-                        toString (if pathExists (projectRoot + "/src") then (projectRoot + "/src") else projectRoot)
-                      ));
-                  }
-                )
-              ) activeMembers
+        listToAttrs (
+          map (
+            name:
+            nameValuePair name (
+              prev.${name}.override {
+                # Prefer src layout if available
+                editableRoot =
+                  let
+                    inherit (workspaceProjects.${name}) projectRoot;
+                  in
+                  root
+                  + (removePrefix (toString workspaceRoot) (
+                    toString (if pathExists (projectRoot + "/src") then (projectRoot + "/src") else projectRoot)
+                  ));
+              }
             )
-          );
-        };
+          ) activeMembers
+        );
 
       inherit topLevelDependencies;
     };

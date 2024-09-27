@@ -54,31 +54,9 @@
       # This is an additional overlay implementing build fixups.
       # See:
       # - https://adisbladis.github.io/uv2nix/FAQ.html
-      pyprojectOverrides =
-        let
-          # Implement build fixups here.
-          #
-          # In this example the same overlay is used for both build-system & final dependencies,
-          # but you can use different overrides if you want to.
-          overlay' = _final: _prev: {
-            # Implement build fixups here.
-          };
-        in
-        _final: prev: {
-          # Override build platform dependencies
-          #
-          # Use this when overriding build-systems that need to run on the build platform.
-          #
-          # Note that this is only relevant for cross compilation.
-          # For native compilation pythonPkgsBuildHost aliases pythonPkgsHostHost.
-          #
-          # pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
-
-          # Override target platform packages.
-          #
-          # Use this to override packages for the target platform.
-          pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
-        };
+      pyprojectOverrides = _final: _prev: {
+        # Implement build fixups here.
+      };
 
       # This example is only using x86_64-linux
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
@@ -132,10 +110,10 @@
             };
 
             # Override previous set with our overrideable overlay.
-            pythonSet' = pythonSet.overrideScope editableOverlay;
+            editablePythonSet = pythonSet.overrideScope editableOverlay;
 
             # Build virtual environment
-            virtualenv = pythonSet'.mkVirtualEnv "hello-world-dev-env" {
+            virtualenv = editablePythonSet.mkVirtualEnv "hello-world-dev-env" {
               # Add hello world with it's dev dependencies
               hello-world = [ "dev-dependencies" ];
             };
