@@ -121,10 +121,9 @@ in
             if preferWheel && compatibleWheels != [ ] then
               "wheel"
             else if package.sdist == { } then
-              assert compatibleWheels != [ ];
+              assert assertMsg (compatibleWheels != [ ]) "No compatible wheel, nor sdist found for package '${package.name}' ${package.version}";
               "wheel"
             else
-              assert package.sdist != { };
               "pyproject"
           )
         else
