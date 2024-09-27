@@ -212,11 +212,7 @@ fix (self: {
         let
           overlay' = mkOverlay' build.pyprojectBuild { inherit sourcePreference environ; };
         in
-        final: prev:
-        let
-          inherit (prev.pythonPkgsHostHost) stdenv;
-        in
-        {
+        _final: prev: {
           pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
           pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
         };

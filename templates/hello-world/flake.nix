@@ -23,7 +23,12 @@
   # It's using https://nix-community.github.io/pyproject.nix/build.html
 
   outputs =
-    { self, nixpkgs, uv2nix, pyproject-nix }:
+    {
+      nixpkgs,
+      uv2nix,
+      pyproject-nix,
+      ...
+    }:
     let
       inherit (nixpkgs) lib;
 
@@ -55,10 +60,11 @@
           #
           # In this example the same overlay is used for both build-system & final dependencies,
           # but you can use different overrides if you want to.
-          overlay' = final: prev: {
+          overlay' = _final: _prev: {
             # Implement build fixups here.
           };
-        in final: prev: {
+        in
+        _final: prev: {
           # Override build platform dependencies
           #
           # Use this when overriding build-systems that need to run on the build platform.
@@ -111,36 +117,38 @@
         # The notable difference is that we also apply another overlay here enabling editable mode ( https://setuptools.pypa.io/en/latest/userguide/development_mode.html ).
         #
         # This means that any changes done to your local files do not require a rebuild.
-        uv2nix = let
-          # Create an overlay enabling editable mode for all local dependencies.
-          editableOverlay = workspace.mkEditablePyprojectOverlay {
-            # Use environment variable
-            root = "$REPO_ROOT";
-            # Optional: Only enable editable for these packages
-            # members = [ "hello-world" ];
+        uv2nix =
+          let
+            # Create an overlay enabling editable mode for all local dependencies.
+            editableOverlay = workspace.mkEditablePyprojectOverlay {
+              # Use environment variable
+              root = "$REPO_ROOT";
+              # Optional: Only enable editable for these packages
+              # members = [ "hello-world" ];
+            };
+
+            # Override previous set with our overrideable overlay.
+            pythonSet' = pythonSet.overrideScope editableOverlay;
+
+            # Build virtual environment
+            virtualenv = pythonSet'.pythonPkgsHostHost.mkVirtualEnv "hello-world-dev-env" {
+              # Add hello world with it's dev dependencies
+              hello-world = [ "dev-dependencies" ];
+            };
+
+          in
+          pkgs.mkShell {
+            packages = [
+              virtualenv
+              pkgs.uv
+            ];
+            shellHook = ''
+              # Undo dependency propagation by nixpkgs.
+              unset PYTHONPATH
+              # Get repository root using git. This is expanded at runtime by the editable `.pth` machinery.
+              export REPO_ROOT=$(git rev-parse --show-toplevel)
+            '';
           };
-
-          # Override previous set with our overrideable overlay.
-          pythonSet' = pythonSet.overrideScope editableOverlay;
-
-          # Build virtual environment
-          virtualenv = pythonSet'.pythonPkgsHostHost.mkVirtualEnv "hello-world-dev-env" {
-            # Add hello world with it's dev dependencies
-            hello-world = [ "dev-dependencies" ];
-          };
-
-        in pkgs.mkShell {
-          packages = [
-            virtualenv
-            pkgs.uv
-          ];
-          shellHook = ''
-            # Undo dependency propagation by nixpkgs.
-            unset PYTHONPATH
-            # Get repository root using git. This is expanded at runtime by the editable `.pth` machinery.
-            export REPO_ROOT=$(git rev-parse --show-toplevel)
-          '';
-        };
       };
     };
 }
