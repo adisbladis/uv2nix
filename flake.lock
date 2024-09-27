@@ -163,11 +163,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1727430823,
-        "narHash": "sha256-pte0uyYgL8mE//C44ElADqNWTkMKq5QU+GjRf4fxzWk=",
+        "lastModified": 1727440891,
+        "narHash": "sha256-7nVW0nXENrwjsagN/8HvyuaTuE9TKVRSvTMdgR4ZIjw=",
         "owner": "nix-community",
         "repo": "pyproject.nix",
-        "rev": "e5139090a7930fd332c73510edd73619467fd25d",
+        "rev": "8df84939605e2d0f17ecb08f90db5247e5a922c9",
         "type": "github"
       },
       "original": {
