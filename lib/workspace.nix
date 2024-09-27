@@ -122,12 +122,13 @@ fix (self: {
       mkOverlay' =
         builderImpl:
         { sourcePreference, environ }:
+        let
+          # Instantiate builders
+          builders = builderImpl { defaultSourcePreference = sourcePreference; };
+        in
         final: prev:
         let
           inherit (final) callPackage;
-
-          # Instantiate builders
-          builders = builderImpl { defaultSourcePreference = sourcePreference; };
 
           # Note: Using Python from final here causes infinite recursion.
           # There is no correct way to override the python interpreter from within the set anyway,
@@ -212,8 +213,18 @@ fix (self: {
         let
           overlay' = mkOverlay' build.pyprojectBuild { inherit sourcePreference environ; };
         in
-        _final: prev: {
+        final: prev: let
+          inherit (prev) stdenv;
+        in
+          # When doing native compilation pyproject.nix aliases pythonPkgsBuildHost to pythonPkgsHostHost
+          # for performance reasons.
+          #
+          # Mirror this behaviour by overriding both sets when cross compiling, but only override the
+          # build host when doing native compilation.
+        if stdenv.buildPlatform != stdenv.hostPlatform then {
           pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
+          pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
+        } else {
           pythonPkgsHostHost = prev.pythonPkgsHostHost.overrideScope overlay';
         };
 

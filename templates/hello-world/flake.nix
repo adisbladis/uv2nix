@@ -68,7 +68,11 @@
           # Override build platform dependencies
           #
           # Use this when overriding build-systems that need to run on the build platform.
-          pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
+          #
+          # Note that this is only relevant for cross compilation.
+          # For native compilation pythonPkgsBuildHost aliases pythonPkgsHostHost.
+          #
+          # pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay';
 
           # Override target platform packages.
           #
@@ -93,7 +97,7 @@
     in
     {
       # Package a virtual environment as our main application.
-      packages.x86_64-linux.default = pythonSet.pythonPkgsHostHost.mkVirtualEnv "hello-world-env" {
+      packages.x86_64-linux.default = pythonSet.mkVirtualEnv "hello-world-env" {
         hello-world = [ ];
       };
 
@@ -131,7 +135,7 @@
             pythonSet' = pythonSet.overrideScope editableOverlay;
 
             # Build virtual environment
-            virtualenv = pythonSet'.pythonPkgsHostHost.mkVirtualEnv "hello-world-dev-env" {
+            virtualenv = pythonSet'.mkVirtualEnv "hello-world-dev-env" {
               # Add hello world with it's dev dependencies
               hello-world = [ "dev-dependencies" ];
             };
