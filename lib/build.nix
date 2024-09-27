@@ -146,6 +146,7 @@ in
           pyprojectHook,
           pyprojectBootstrapHook,
           pyprojectWheelHook,
+          unzip,
           sourcePreference ? defaultSourcePreference,
         }:
         let
@@ -174,6 +175,7 @@ in
 
             nativeBuildInputs =
               (attrs.nativeBuildInputs or [ ])
+              ++ lib.optional (lib.hasSuffix ".zip" (attrs.src.passthru.url or "")) [ unzip ]
               ++ lib.optional (format == "pyproject") (
                 if isBootstrapPackage attrs.pname then pyprojectBootstrapHook else pyprojectHook
               )

@@ -174,7 +174,10 @@ in
               )
             )
           else if isPath then
-            workspaceRoot + "/${source.path}"
+            {
+              outPath = "${workspaceRoot + "/${source.path}"}";
+              passthru.url = source.path;
+            }
           else if (isPypi || isURL) && format == "pyproject" then
             fetchurl { inherit (package.sdist) url hash; }
           else if isURL && format == "wheel" then
