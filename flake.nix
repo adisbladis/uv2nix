@@ -10,9 +10,6 @@
     nix-github-actions.url = "github:nix-community/nix-github-actions";
     nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
 
-    nixdoc.url = "github:nix-community/nixdoc";
-    nixdoc.inputs.nixpkgs.follows = "nixpkgs";
-
     pyproject-nix.url = "github:nix-community/pyproject.nix";
     pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
     pyproject-nix.inputs.nix-github-actions.follows = "nix-github-actions";
