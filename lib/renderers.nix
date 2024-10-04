@@ -27,23 +27,35 @@ let
   parseGitURL =
     url:
     let
-      m = match "([^?]+)\\?([^#]+)#?(.*)" url;
+      # No query params
+      m1 = match "([^#]+)#(.+)" url;
+
+      # With query params
+      m2 = match "([^?]+)\\?([^#]+)#(.+)" url;
     in
-    assert m != null;
-    {
-      url = elemAt m 0;
-      query = listToAttrs (
-        map (
-          s:
-          let
-            parts = splitString "=" s;
-          in
-          assert length parts == 2;
-          nameValuePair (elemAt parts 0) (elemAt parts 1)
-        ) (splitString "&" (elemAt m 1))
-      );
-      fragment = elemAt m 2;
-    };
+    if m1 != null then
+      {
+        url = elemAt m1 0;
+        query = { };
+        fragment = elemAt m1 1;
+      }
+    else if m2 != null then
+      {
+        url = elemAt m2 0;
+        query = listToAttrs (
+          map (
+            s:
+            let
+              parts = splitString "=" s;
+            in
+            assert length parts == 2;
+            nameValuePair (elemAt parts 0) (elemAt parts 1)
+          ) (splitString "&" (elemAt m2 1))
+        );
+        fragment = elemAt m2 2;
+      }
+    else
+      throw "Could not parse git url: ${url}";
 
 in
 {
@@ -121,7 +133,9 @@ in
             if preferWheel && compatibleWheels != [ ] then
               "wheel"
             else if package.sdist == { } then
-              assert assertMsg (compatibleWheels != [ ]) "No compatible wheel, nor sdist found for package '${package.name}' ${package.version}";
+              assert assertMsg (
+                compatibleWheels != [ ]
+              ) "No compatible wheel, nor sdist found for package '${package.name}' ${package.version}";
               "wheel"
             else
               "pyproject"
