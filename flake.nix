@@ -34,7 +34,6 @@
     {
       self,
       nixpkgs,
-      # flake-parts,
       treefmt-nix,
       pyproject-nix,
       nix-github-actions,
@@ -46,9 +45,6 @@
       inherit (nixpkgs) lib;
     in
     {
-
-      # imports = [ treefmt-nix.flakeModule ];
-
       githubActions = nix-github-actions.lib.mkGithubMatrix {
         checks = {
           inherit (self.checks) x86_64-linux;
@@ -99,7 +95,7 @@
                 pkgs.reflex
                 nix-unit
                 inputs.mdbook-nixdoc.packages.${system}.default
-                pkgs.uv
+                self.packages.${system}.uv-bin
               ] ++ self.packages.${system}.doc.nativeBuildInputs;
             };
         in
@@ -132,6 +128,8 @@
             inherit self;
             mdbook-nixdoc = inputs.mdbook-nixdoc.packages.${system}.default;
           };
+
+          uv-bin = pkgs.callPackage ./pkgs/uv-bin { };
         }
       );
 
