@@ -1,0 +1,66 @@
+{
+  "dependencies": [],
+  "dev-dependencies": {},
+  "metadata": {
+    "requires-dev": {},
+    "requires-dist": []
+  },
+  "name": "arpeggio",
+  "optional-dependencies": {},
+  "resolution-markers": [
+    "platform_release == '5.10.65'"
+  ],
+  "sdist": {
+    "hash": "sha256:8dfee59d546e0192e3c47f630f08f12ba7cf542caf157c58d516a193e3bfb854",
+    "size": 766688,
+    "url": "https://files.pythonhosted.org/packages/66/a5/4e39a94abf59bff8c9dde4880039172e0efe874453443e1e13651b6bd149/Arpeggio-2.0.1.tar.gz"
+  },
+  "source": {
+    "registry": "https://pypi.org/simple"
+  },
+  "version": "2.0.1",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      2,
+      0,
+      1
+    ],
+    "str": "2.0.1"
+  },
+  "wheels": [
+    {
+      "file'": {
+        "abiTag": {
+          "implementation": "none",
+          "rest": "",
+          "version": null
+        },
+        "buildTag": null,
+        "distribution": "Arpeggio",
+        "filename": "Arpeggio-2.0.1-py2.py3-none-any.whl",
+        "languageTags": [
+          {
+            "implementation": "python",
+            "version": "2"
+          },
+          {
+            "implementation": "python",
+            "version": "3"
+          }
+        ],
+        "platformTags": [
+          "any"
+        ],
+        "version": "2.0.1"
+      },
+      "hash": "sha256:5372cf9daee84bd695e99f17371c844504ead3b1d96c70b95dfc54f957fe69de",
+      "size": 55285,
+      "url": "https://files.pythonhosted.org/packages/02/1f/01b7e8d3dec71b52a149ac04f48fcc8e559bda065bcb1b39d32a4f1da474/Arpeggio-2.0.1-py2.py3-none-any.whl"
+    }
+  ]
+}

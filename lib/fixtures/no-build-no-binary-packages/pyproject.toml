@@ -1,0 +1,19 @@
+[project]
+name = "no-build-no-binary-packages"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "arpeggio>=2.0.2",
+    "urllib3>=2.2.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[tool.uv]
+no-build-package = ["arpeggio"]
+no-binary-package = ["urllib3"]

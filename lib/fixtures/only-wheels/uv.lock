@@ -1,0 +1,24 @@
+version = 1
+requires-python = ">=3.12"
+
+[options]
+exclude-newer = "2024-09-04T06:18:32Z"
+
+[[package]]
+name = "hgtk"
+version = "0.2.1"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4c/d0/d62a73954ab95a8d3967a063c371c16feddfb8bd2957fd11691adf7834e8/hgtk-0.2.1-py2.py3-none-any.whl", hash = "sha256:f3e33dacf6ab2564f6257418b718e2c7a4ae9fffa32e18d6c4f6278b72ba73ee", size = 12011 },
+]
+
+[[package]]
+name = "only-wheels"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "hgtk" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "hgtk", specifier = ">=0.2.1" }]

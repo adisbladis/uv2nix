@@ -1,0 +1,40 @@
+[project]
+name = "a"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  # Named requirement
+  "requests>=2.32.3",
+  # URL requirement (wheel)
+  "arpeggio",
+  # URL requirement (sdist)
+  "blinker",
+  # URL requirement (git)
+  "pip",
+  # Local dependency (path)
+  "b",
+  # Local dependency (sdist)
+  "attrs",
+  # Local dependency in editable mode
+  "c-editable",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+arpeggio = { url = "https://files.pythonhosted.org/packages/f7/4f/d28bf30a19d4649b40b501d531b44e73afada99044df100380fd9567e92f/Arpeggio-2.0.2-py2.py3-none-any.whl" }
+blinker = { url = "https://files.pythonhosted.org/packages/e8/f9/a05287f3d5c54d20f51a235ace01f50620984bc7ca5ceee781dc645211c5/blinker-1.6.2.tar.gz" }
+pip = { git = "https://github.com/pypa/pip.git", tag = "20.3.1" }
+b = { path = "../b/" }
+c-editable = { path = "../c-editable/", editable = true }
+
+# Uv contains a bug where local sources are fully resolved to a local path like:
+# /home/adisbladis/sauce/github.com/adisbladis/uv2nix/lib/fixtures/kitchen-sink/attrs-23.1.0.tar.gz
+#
+# To make this test pass and for future-compat when it's been fixed I've manually patched uv.lock
+# to remove the buggy behaviour.
+attrs = { path = "../attrs-23.1.0.tar.gz" }

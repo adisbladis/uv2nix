@@ -1,0 +1,237 @@
+{
+  "dependencies": [],
+  "dev-dependencies": {},
+  "metadata": {
+    "requires-dev": {},
+    "requires-dist": [
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "test"
+          },
+          "type": "compare"
+        },
+        "name": "coverage",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "test"
+          },
+          "type": "compare"
+        },
+        "name": "coveralls",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "test"
+          },
+          "type": "compare"
+        },
+        "name": "flake8",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "mike",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "mkdocs",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "test"
+          },
+          "type": "compare"
+        },
+        "name": "pytest",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "twine",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "wheel",
+        "path": null,
+        "specifier": null,
+        "url": null
+      }
+    ]
+  },
+  "name": "arpeggio",
+  "optional-dependencies": {},
+  "resolution-markers": [],
+  "sdist": {},
+  "source": {
+    "url": "https://files.pythonhosted.org/packages/f7/4f/d28bf30a19d4649b40b501d531b44e73afada99044df100380fd9567e92f/Arpeggio-2.0.2-py2.py3-none-any.whl"
+  },
+  "version": "2.0.2",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      2,
+      0,
+      2
+    ],
+    "str": "2.0.2"
+  },
+  "wheels": [
+    {
+      "file'": {
+        "abiTag": {
+          "implementation": "none",
+          "rest": "",
+          "version": null
+        },
+        "buildTag": null,
+        "distribution": "Arpeggio",
+        "filename": "Arpeggio-2.0.2-py2.py3-none-any.whl",
+        "languageTags": [
+          {
+            "implementation": "python",
+            "version": "2"
+          },
+          {
+            "implementation": "python",
+            "version": "3"
+          }
+        ],
+        "platformTags": [
+          "any"
+        ],
+        "version": "2.0.2"
+      },
+      "hash": "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250",
+      "size": null,
+      "url": "https://files.pythonhosted.org/packages/f7/4f/d28bf30a19d4649b40b501d531b44e73afada99044df100380fd9567e92f/Arpeggio-2.0.2-py2.py3-none-any.whl"
+    }
+  ]
+}

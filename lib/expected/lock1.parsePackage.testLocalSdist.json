@@ -1,0 +1,1520 @@
+{
+  "dependencies": [],
+  "dev-dependencies": {},
+  "metadata": {
+    "requires-dev": {},
+    "requires-dist": [
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "platform_python_implementation"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "string",
+              "value": "CPython"
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "extra"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "extra",
+              "value": "cov"
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "name": "cloudpickle",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "platform_python_implementation"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "string",
+              "value": "CPython"
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "extra"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "extra",
+              "value": "dev"
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "name": "cloudpickle",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "platform_python_implementation"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "string",
+              "value": "CPython"
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "extra"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "extra",
+              "value": "tests"
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "name": "cloudpickle",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "platform_python_implementation"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "string",
+              "value": "CPython"
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "extra"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "extra",
+              "value": "tests-no-zope"
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "name": "cloudpickle",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": [
+          "toml"
+        ],
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "cov"
+          },
+          "type": "compare"
+        },
+        "name": "coverage",
+        "path": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              5,
+              3
+            ],
+            "str": "5.3"
+          }
+        },
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "furo",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "docs"
+          },
+          "type": "compare"
+        },
+        "name": "furo",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "cov"
+          },
+          "type": "compare"
+        },
+        "name": "hypothesis",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "hypothesis",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "tests"
+          },
+          "type": "compare"
+        },
+        "name": "hypothesis",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "tests-no-zope"
+          },
+          "type": "compare"
+        },
+        "name": "hypothesis",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "python_full_version"
+          },
+          "op": "<",
+          "rhs": {
+            "type": "version",
+            "value": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                3,
+                8
+              ],
+              "str": "3.8"
+            }
+          },
+          "type": "compare"
+        },
+        "name": "importlib-metadata",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "platform_python_implementation"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "string",
+              "value": "CPython"
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "extra"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "extra",
+              "value": "cov"
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "name": "mypy",
+        "path": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              1,
+              1,
+              1
+            ],
+            "str": "1.1.1"
+          }
+        },
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "platform_python_implementation"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "string",
+              "value": "CPython"
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "extra"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "extra",
+              "value": "dev"
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "name": "mypy",
+        "path": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              1,
+              1,
+              1
+            ],
+            "str": "1.1.1"
+          }
+        },
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "platform_python_implementation"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "string",
+              "value": "CPython"
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "extra"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "extra",
+              "value": "tests"
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "name": "mypy",
+        "path": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              1,
+              1,
+              1
+            ],
+            "str": "1.1.1"
+          }
+        },
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "platform_python_implementation"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "string",
+              "value": "CPython"
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "extra"
+            },
+            "op": "==",
+            "rhs": {
+              "type": "extra",
+              "value": "tests-no-zope"
+            },
+            "type": "compare"
+          },
+          "type": "boolOp"
+        },
+        "name": "mypy",
+        "path": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              1,
+              1,
+              1
+            ],
+            "str": "1.1.1"
+          }
+        },
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "myst-parser",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "docs"
+          },
+          "type": "compare"
+        },
+        "name": "myst-parser",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "pre-commit",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "cov"
+          },
+          "type": "compare"
+        },
+        "name": "pympler",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "pympler",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "tests"
+          },
+          "type": "compare"
+        },
+        "name": "pympler",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "tests-no-zope"
+          },
+          "type": "compare"
+        },
+        "name": "pympler",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "cov"
+          },
+          "type": "compare"
+        },
+        "name": "pytest",
+        "path": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              4,
+              3,
+              0
+            ],
+            "str": "4.3.0"
+          }
+        },
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "pytest",
+        "path": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              4,
+              3,
+              0
+            ],
+            "str": "4.3.0"
+          }
+        },
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "tests"
+          },
+          "type": "compare"
+        },
+        "name": "pytest",
+        "path": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              4,
+              3,
+              0
+            ],
+            "str": "4.3.0"
+          }
+        },
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "tests-no-zope"
+          },
+          "type": "compare"
+        },
+        "name": "pytest",
+        "path": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              4,
+              3,
+              0
+            ],
+            "str": "4.3.0"
+          }
+        },
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "python_full_version"
+            },
+            "op": "<",
+            "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  11
+                ],
+                "str": "3.11"
+              }
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "lhs": {
+                "type": "variable",
+                "value": "platform_python_implementation"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "string",
+                "value": "CPython"
+              },
+              "type": "compare"
+            },
+            "op": "and",
+            "rhs": {
+              "lhs": {
+                "type": "variable",
+                "value": "extra"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "extra",
+                "value": "cov"
+              },
+              "type": "compare"
+            },
+            "type": "boolOp"
+          },
+          "type": "boolOp"
+        },
+        "name": "pytest-mypy-plugins",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "python_full_version"
+            },
+            "op": "<",
+            "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  11
+                ],
+                "str": "3.11"
+              }
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "lhs": {
+                "type": "variable",
+                "value": "platform_python_implementation"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "string",
+                "value": "CPython"
+              },
+              "type": "compare"
+            },
+            "op": "and",
+            "rhs": {
+              "lhs": {
+                "type": "variable",
+                "value": "extra"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "extra",
+                "value": "dev"
+              },
+              "type": "compare"
+            },
+            "type": "boolOp"
+          },
+          "type": "boolOp"
+        },
+        "name": "pytest-mypy-plugins",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "python_full_version"
+            },
+            "op": "<",
+            "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  11
+                ],
+                "str": "3.11"
+              }
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "lhs": {
+                "type": "variable",
+                "value": "platform_python_implementation"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "string",
+                "value": "CPython"
+              },
+              "type": "compare"
+            },
+            "op": "and",
+            "rhs": {
+              "lhs": {
+                "type": "variable",
+                "value": "extra"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "extra",
+                "value": "tests"
+              },
+              "type": "compare"
+            },
+            "type": "boolOp"
+          },
+          "type": "boolOp"
+        },
+        "name": "pytest-mypy-plugins",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "lhs": {
+              "type": "variable",
+              "value": "python_full_version"
+            },
+            "op": "<",
+            "rhs": {
+              "type": "version",
+              "value": {
+                "dev": null,
+                "epoch": 0,
+                "local": null,
+                "post": null,
+                "pre": null,
+                "release": [
+                  3,
+                  11
+                ],
+                "str": "3.11"
+              }
+            },
+            "type": "compare"
+          },
+          "op": "and",
+          "rhs": {
+            "lhs": {
+              "lhs": {
+                "type": "variable",
+                "value": "platform_python_implementation"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "string",
+                "value": "CPython"
+              },
+              "type": "compare"
+            },
+            "op": "and",
+            "rhs": {
+              "lhs": {
+                "type": "variable",
+                "value": "extra"
+              },
+              "op": "==",
+              "rhs": {
+                "type": "extra",
+                "value": "tests-no-zope"
+              },
+              "type": "compare"
+            },
+            "type": "boolOp"
+          },
+          "type": "boolOp"
+        },
+        "name": "pytest-mypy-plugins",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": [
+          "psutil"
+        ],
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "cov"
+          },
+          "type": "compare"
+        },
+        "name": "pytest-xdist",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": [
+          "psutil"
+        ],
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "pytest-xdist",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": [
+          "psutil"
+        ],
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "tests"
+          },
+          "type": "compare"
+        },
+        "name": "pytest-xdist",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": [
+          "psutil"
+        ],
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "tests-no-zope"
+          },
+          "type": "compare"
+        },
+        "name": "pytest-xdist",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "sphinx",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "docs"
+          },
+          "type": "compare"
+        },
+        "name": "sphinx",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "sphinx-notfound-page",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "docs"
+          },
+          "type": "compare"
+        },
+        "name": "sphinx-notfound-page",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "sphinxcontrib-towncrier",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "docs"
+          },
+          "type": "compare"
+        },
+        "name": "sphinxcontrib-towncrier",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "towncrier",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "docs"
+          },
+          "type": "compare"
+        },
+        "name": "towncrier",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "cov"
+          },
+          "type": "compare"
+        },
+        "name": "zope-interface",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "dev"
+          },
+          "type": "compare"
+        },
+        "name": "zope-interface",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "docs"
+          },
+          "type": "compare"
+        },
+        "name": "zope-interface",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "extra"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "extra",
+            "value": "tests"
+          },
+          "type": "compare"
+        },
+        "name": "zope-interface",
+        "path": null,
+        "specifier": null,
+        "url": null
+      }
+    ]
+  },
+  "name": "attrs",
+  "optional-dependencies": {},
+  "resolution-markers": [],
+  "sdist": {},
+  "source": {
+    "path": "../attrs-23.1.0.tar.gz"
+  },
+  "version": "23.1.0",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      23,
+      1,
+      0
+    ],
+    "str": "23.1.0"
+  },
+  "wheels": []
+}

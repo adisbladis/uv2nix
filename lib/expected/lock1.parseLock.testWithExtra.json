@@ -1,0 +1,30 @@
+{
+  "manifest": {
+    "members": []
+  },
+  "options": {
+    "exclude-newer": "2024-08-21T10:06:00Z",
+    "prerelease-mode": null,
+    "resolution-mode": null
+  },
+  "requires-python": [
+    {
+      "op": ">=",
+      "version": {
+        "dev": null,
+        "epoch": 0,
+        "local": null,
+        "post": null,
+        "pre": null,
+        "release": [
+          3,
+          12
+        ],
+        "str": "3.12"
+      }
+    }
+  ],
+  "resolution-markers": {},
+  "supported-markers": [],
+  "version": 1
+}

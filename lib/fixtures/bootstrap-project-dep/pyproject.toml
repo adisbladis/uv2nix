@@ -1,0 +1,16 @@
+[project]
+name = "bootstrap-project-dep"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "packaging>=24.1",
+]
+
+[project.scripts]
+hello = "bootstrap_project_dep:hello"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

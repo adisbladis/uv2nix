@@ -1,0 +1,129 @@
+{
+  "dependencies": [],
+  "dev-dependencies": {},
+  "metadata": {
+    "requires-dev": {},
+    "requires-dist": [
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "platform_release"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "platform_release",
+            "value": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                5,
+                10,
+                104
+              ],
+              "str": "5.10.104"
+            }
+          },
+          "type": "compare"
+        },
+        "name": "arpeggio",
+        "path": null,
+        "specifier": {
+          "op": "==",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              2,
+              0,
+              2
+            ],
+            "str": "2.0.2"
+          }
+        },
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": {
+          "lhs": {
+            "type": "variable",
+            "value": "platform_release"
+          },
+          "op": "==",
+          "rhs": {
+            "type": "platform_release",
+            "value": {
+              "dev": null,
+              "epoch": 0,
+              "local": null,
+              "post": null,
+              "pre": null,
+              "release": [
+                5,
+                10,
+                65
+              ],
+              "str": "5.10.65"
+            }
+          },
+          "type": "compare"
+        },
+        "name": "arpeggio",
+        "path": null,
+        "specifier": {
+          "op": "==",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              2,
+              0,
+              1
+            ],
+            "str": "2.0.1"
+          }
+        },
+        "url": null
+      }
+    ]
+  },
+  "name": "multi-choice-package",
+  "optional-dependencies": {},
+  "resolution-markers": [],
+  "sdist": {},
+  "source": {
+    "editable": "."
+  },
+  "version": "0.1.0",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      0,
+      1,
+      0
+    ],
+    "str": "0.1.0"
+  },
+  "wheels": []
+}

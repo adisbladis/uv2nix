@@ -1,0 +1,57 @@
+{
+  "dependencies": [],
+  "dev-dependencies": {
+    "dev": [
+      {
+        "extra": [],
+        "marker": null,
+        "name": "coverage",
+        "source": {},
+        "version": null,
+        "version'": null
+      }
+    ]
+  },
+  "metadata": {
+    "requires-dev": {
+      "dev": [
+        {
+          "directory": null,
+          "editable": null,
+          "extras": [
+            "toml"
+          ],
+          "git": null,
+          "marker": null,
+          "name": "coverage",
+          "path": null,
+          "specifier": null,
+          "url": null
+        }
+      ]
+    },
+    "requires-dist": []
+  },
+  "name": "with-tool-uv-devdeps",
+  "optional-dependencies": {},
+  "resolution-markers": [],
+  "sdist": {},
+  "source": {
+    "editable": "."
+  },
+  "version": "0.1.0",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      0,
+      1,
+      0
+    ],
+    "str": "0.1.0"
+  },
+  "wheels": []
+}

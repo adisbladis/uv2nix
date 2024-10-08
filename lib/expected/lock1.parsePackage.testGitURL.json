@@ -1,0 +1,30 @@
+{
+  "dependencies": [],
+  "dev-dependencies": {},
+  "metadata": {
+    "requires-dev": {},
+    "requires-dist": []
+  },
+  "name": "pip",
+  "optional-dependencies": {},
+  "resolution-markers": [],
+  "sdist": {},
+  "source": {
+    "git": "https://github.com/pypa/pip.git?tag=20.3.1#f94a429e17b450ac2d3432f46492416ac2cf58ad"
+  },
+  "version": "20.3.1",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      20,
+      3,
+      1
+    ],
+    "str": "20.3.1"
+  },
+  "wheels": []
+}

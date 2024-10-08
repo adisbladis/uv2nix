@@ -1,0 +1,25 @@
+version = 1
+requires-python = ">=3.12"
+
+[options]
+exclude-newer = "2024-08-21T10:06:00Z"
+
+[[package]]
+name = "arpeggio"
+version = "2.0.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/12/c4/516bb54456f85ad1947702ea4cef543a59de66d31a9887dbc3d9df36e3e1/Arpeggio-2.0.2.tar.gz", hash = "sha256:c790b2b06e226d2dd468e4fbfb5b7f506cec66416031fde1441cf1de2a0ba700", size = 766643 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f7/4f/d28bf30a19d4649b40b501d531b44e73afada99044df100380fd9567e92f/Arpeggio-2.0.2-py2.py3-none-any.whl", hash = "sha256:f7c8ae4f4056a89e020c24c7202ac8df3e2bc84e416746f20b0da35bb1de0250", size = 55287 },
+]
+
+[[package]]
+name = "no-binary"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "arpeggio" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "arpeggio", specifier = ">=2.0.2" }]
