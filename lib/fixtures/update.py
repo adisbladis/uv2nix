@@ -8,6 +8,7 @@ import os.path
 # ensure that the same dependency graph is being locked,
 # just with a newer version of uv.
 
+
 def find_roots():
     """Find all project roots with a uv.lock"""
     for root, _, files in os.walk("."):
@@ -17,14 +18,18 @@ def find_roots():
 
 
 def get_file_creation(path: str) -> str:
-    proc = subprocess.run([
-        "git", "log", "--follow", "--format=%ad", "--date", "iso-strict", path
-    ], check=True, stdout=subprocess.PIPE)
+    proc = subprocess.run(
+        ["git", "log", "--follow", "--format=%ad", "--date", "iso-strict", path],
+        check=True,
+        stdout=subprocess.PIPE,
+    )
     return [line for line in proc.stdout.decode().split("\n") if line][-1]
 
 
 def lock(root: str, exclude_newer: str):
-    subprocess.run(["uv", "lock", "--exclude-newer", exclude_newer], check=True, cwd=root)
+    subprocess.run(
+        ["uv", "lock", "--exclude-newer", exclude_newer], check=True, cwd=root
+    )
 
 
 if __name__ == "__main__":
