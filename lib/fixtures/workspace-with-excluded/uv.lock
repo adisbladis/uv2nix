@@ -6,14 +6,8 @@ exclude-newer = "2024-08-23T01:10:56Z"
 
 [manifest]
 members = [
-    "excluded-package",
     "included-package",
 ]
-
-[[package]]
-name = "excluded-package"
-version = "0.1.0"
-source = { editable = "packages/excluded-package" }
 
 [[package]]
 name = "included-package"

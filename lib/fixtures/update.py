@@ -2,6 +2,10 @@
 import subprocess
 import os.path
 
+SKIP = [
+    "./no-binary-no-build"
+]
+
 # Update test fixtures using a newer version of uv
 #
 # This will use git to figure out when the lock file was originally created to
@@ -34,6 +38,9 @@ def lock(root: str, exclude_newer: str):
 
 if __name__ == "__main__":
     for root in find_roots():
+        if root in SKIP:
+            continue
+
         print(f"Updating lock for: {root}")
         exclude_newer = get_file_creation(os.path.join(root, "uv.lock"))
         lock(root, exclude_newer)

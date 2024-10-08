@@ -96,7 +96,12 @@
                 nix-unit
                 inputs.mdbook-nixdoc.packages.${system}.default
                 self.packages.${system}.uv-bin
+                pkgs.python3
               ] ++ self.packages.${system}.doc.nativeBuildInputs;
+
+              shellHook = ''
+                UV_NO_SYNC=1
+              '';
             };
         in
         {
