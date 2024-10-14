@@ -2,9 +2,7 @@
 import subprocess
 import os.path
 
-SKIP = [
-    "./no-binary-no-build"
-]
+SKIP = ["./no-binary-no-build"]
 
 # Update test fixtures using a newer version of uv
 #
