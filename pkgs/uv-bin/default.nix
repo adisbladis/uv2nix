@@ -38,5 +38,14 @@ stdenv.mkDerivation (
       mv uv* $out/bin
     '';
 
+    meta = {
+      license = [
+        lib.licenses.asl20
+        lib.licenses.mit
+      ];
+      sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
+      homepage = "https://github.com/astral-sh/uv";
+      description = "An extremely fast Python package and project manager, written in Rust";
+    };
   }
 )
