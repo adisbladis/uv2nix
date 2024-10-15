@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import urllib.request
 from typing import (
     Any,
@@ -36,18 +37,25 @@ if __name__ == "__main__":
     # Output platform -> checksum
     checksums: dict[str, str] = {}
 
-    # For each uv binary platform, download the hash file
-    for filename in files:
-        m = match_uv(filename)
-        if not m:
-            continue
-
-        platform = m.group(1)
+    def get_file(match: re.Match[str]):
+        platform = match.group(1)
         sha256_url: str = files[f"{filename}.sha256"]["browser_download_url"]
 
         with urllib.request.urlopen(sha256_url) as resp:
             data: bytes = resp.read()
             checksums[platform] = data.split()[0].decode()
+
+
+
+    with ThreadPoolExecutor() as executor:
+        # For each uv binary platform, download the hash file
+        for filename in files:
+            m = match_uv(filename)
+            if not m:
+                continue
+
+            executor.submit(get_file, filename)
+
 
     with open("srcs.json", "w") as out:
         json.dump(
