@@ -1,0 +1,80 @@
+{
+  "manifest": {
+    "members": []
+  },
+  "options": {
+    "exclude-newer": "2024-08-21T10:06:00Z",
+    "prerelease-mode": null,
+    "resolution-mode": null
+  },
+  "requires-python": [
+    {
+      "op": ">=",
+      "version": {
+        "dev": null,
+        "epoch": 0,
+        "local": null,
+        "post": null,
+        "pre": null,
+        "release": [
+          3,
+          12
+        ],
+        "str": "3.12"
+      }
+    }
+  ],
+  "resolution-markers": {
+    "sys_platform == 'darwin'": {
+      "lhs": {
+        "type": "variable",
+        "value": "sys_platform"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "darwin"
+      },
+      "type": "compare"
+    },
+    "sys_platform == 'linux'": {
+      "lhs": {
+        "type": "variable",
+        "value": "sys_platform"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "linux"
+      },
+      "type": "compare"
+    }
+  },
+  "supported-markers": [
+    {
+      "lhs": {
+        "type": "variable",
+        "value": "sys_platform"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "darwin"
+      },
+      "type": "compare"
+    },
+    {
+      "lhs": {
+        "type": "variable",
+        "value": "sys_platform"
+      },
+      "op": "==",
+      "rhs": {
+        "type": "string",
+        "value": "linux"
+      },
+      "type": "compare"
+    }
+  ],
+  "version": 1
+}

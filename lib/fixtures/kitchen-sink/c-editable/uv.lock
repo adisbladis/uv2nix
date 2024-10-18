@@ -1,0 +1,10 @@
+version = 1
+requires-python = ">=3.12"
+
+[options]
+exclude-newer = "2024-08-21T10:06:00Z"
+
+[[package]]
+name = "c-editable"
+version = "0.1.0"
+source = { editable = "." }

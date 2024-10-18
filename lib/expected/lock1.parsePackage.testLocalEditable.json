@@ -1,0 +1,30 @@
+{
+  "dependencies": [],
+  "dev-dependencies": {},
+  "metadata": {
+    "requires-dev": {},
+    "requires-dist": []
+  },
+  "name": "c-editable",
+  "optional-dependencies": {},
+  "resolution-markers": [],
+  "sdist": {},
+  "source": {
+    "editable": "../c-editable"
+  },
+  "version": "0.1.0",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      0,
+      1,
+      0
+    ],
+    "str": "0.1.0"
+  },
+  "wheels": []
+}

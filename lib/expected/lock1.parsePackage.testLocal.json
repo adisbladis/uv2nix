@@ -1,0 +1,66 @@
+{
+  "dependencies": [
+    {
+      "extra": [],
+      "marker": null,
+      "name": "certifi",
+      "source": {},
+      "version": null,
+      "version'": null
+    }
+  ],
+  "dev-dependencies": {},
+  "metadata": {
+    "requires-dev": {},
+    "requires-dist": [
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": null,
+        "name": "certifi",
+        "path": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              2024,
+              7,
+              4
+            ],
+            "str": "2024.7.4"
+          }
+        },
+        "url": null
+      }
+    ]
+  },
+  "name": "b",
+  "optional-dependencies": {},
+  "resolution-markers": [],
+  "sdist": {},
+  "source": {
+    "directory": "../b"
+  },
+  "version": "0.1.0",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      0,
+      1,
+      0
+    ],
+    "str": "0.1.0"
+  },
+  "wheels": []
+}

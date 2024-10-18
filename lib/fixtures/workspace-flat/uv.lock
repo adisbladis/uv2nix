@@ -1,0 +1,27 @@
+version = 1
+requires-python = ">=3.12"
+
+[options]
+exclude-newer = "2024-08-21T10:06:00Z"
+
+[manifest]
+members = [
+    "pkg-a",
+    "pkg-b",
+]
+
+[[package]]
+name = "pkg-a"
+version = "0.1.0"
+source = { editable = "packages/pkg-a" }
+
+[[package]]
+name = "pkg-b"
+version = "0.1.0"
+source = { editable = "packages/pkg-b" }
+dependencies = [
+    { name = "pkg-a" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "pkg-a", editable = "packages/pkg-a" }]

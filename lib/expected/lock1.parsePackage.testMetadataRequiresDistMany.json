@@ -1,0 +1,180 @@
+{
+  "dependencies": [
+    {
+      "extra": [],
+      "marker": null,
+      "name": "arpeggio",
+      "source": {},
+      "version": null,
+      "version'": null
+    },
+    {
+      "extra": [],
+      "marker": null,
+      "name": "attrs",
+      "source": {},
+      "version": null,
+      "version'": null
+    },
+    {
+      "extra": [],
+      "marker": null,
+      "name": "b",
+      "source": {},
+      "version": null,
+      "version'": null
+    },
+    {
+      "extra": [],
+      "marker": null,
+      "name": "blinker",
+      "source": {},
+      "version": null,
+      "version'": null
+    },
+    {
+      "extra": [],
+      "marker": null,
+      "name": "c-editable",
+      "source": {},
+      "version": null,
+      "version'": null
+    },
+    {
+      "extra": [],
+      "marker": null,
+      "name": "pip",
+      "source": {},
+      "version": null,
+      "version'": null
+    },
+    {
+      "extra": [],
+      "marker": null,
+      "name": "requests",
+      "source": {},
+      "version": null,
+      "version'": null
+    }
+  ],
+  "dev-dependencies": {},
+  "metadata": {
+    "requires-dev": {},
+    "requires-dist": [
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": null,
+        "name": "arpeggio",
+        "path": null,
+        "specifier": null,
+        "url": "https://files.pythonhosted.org/packages/f7/4f/d28bf30a19d4649b40b501d531b44e73afada99044df100380fd9567e92f/Arpeggio-2.0.2-py2.py3-none-any.whl"
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": null,
+        "name": "attrs",
+        "path": "../attrs-23.1.0.tar.gz",
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": "../b",
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": null,
+        "name": "b",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": null,
+        "name": "blinker",
+        "path": null,
+        "specifier": null,
+        "url": "https://files.pythonhosted.org/packages/e8/f9/a05287f3d5c54d20f51a235ace01f50620984bc7ca5ceee781dc645211c5/blinker-1.6.2.tar.gz"
+      },
+      {
+        "directory": null,
+        "editable": "../c-editable",
+        "extras": null,
+        "git": null,
+        "marker": null,
+        "name": "c-editable",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": "https://github.com/pypa/pip.git?tag=20.3.1",
+        "marker": null,
+        "name": "pip",
+        "path": null,
+        "specifier": null,
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": null,
+        "name": "requests",
+        "path": null,
+        "specifier": {
+          "op": ">=",
+          "version": {
+            "dev": null,
+            "epoch": 0,
+            "local": null,
+            "post": null,
+            "pre": null,
+            "release": [
+              2,
+              32,
+              3
+            ],
+            "str": "2.32.3"
+          }
+        },
+        "url": null
+      }
+    ]
+  },
+  "name": "a",
+  "optional-dependencies": {},
+  "resolution-markers": [],
+  "sdist": {},
+  "source": {
+    "editable": "."
+  },
+  "version": "0.1.0",
+  "version'": {
+    "dev": null,
+    "epoch": 0,
+    "local": null,
+    "post": null,
+    "pre": null,
+    "release": [
+      0,
+      1,
+      0
+    ],
+    "str": "0.1.0"
+  },
+  "wheels": []
+}

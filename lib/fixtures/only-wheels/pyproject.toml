@@ -1,0 +1,16 @@
+[project]
+name = "only-wheels"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "hgtk>=0.2.1",
+]
+
+[project.scripts]
+hello = "only_wheels:hello"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
