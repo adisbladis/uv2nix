@@ -148,6 +148,7 @@ in
           pyprojectWheelHook,
           unzip,
           sourcePreference ? defaultSourcePreference,
+          resolveBuildSystem,
         }:
         let
           # Render common builder attributes
@@ -162,6 +163,7 @@ in
               ;
           };
           inherit (attrs.passthru) package format;
+          inherit (attrs) pname;
 
         in
         stdenv.mkDerivation (
@@ -177,8 +179,17 @@ in
               (attrs.nativeBuildInputs or [ ])
               ++ lib.optional (lib.hasSuffix ".zip" (attrs.src.passthru.url or "")) [ unzip ]
               ++ lib.optional (format == "pyproject") (
-                if isBootstrapPackage attrs.pname then pyprojectBootstrapHook else pyprojectHook
+                if isBootstrapPackage pname then pyprojectBootstrapHook else pyprojectHook
               )
+              ++
+                # Add pyproject.toml fallback build-systems as a default as documented in:
+                # - https://peps.python.org/pep-0517/#source-trees
+                # - https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/#fallback-behaviour
+                #
+                # Once https://github.com/astral-sh/uv/issues/5190 has been resolved the empty build-time specification & fallback behaviour will be replaced with the one from `uv.lock`.
+                lib.optionals (
+                  format == "pyproject" && !isBootstrapPackage pname && pname != "setuptools" && pname != "wheel"
+                ) (resolveBuildSystem { })
               ++ lib.optional (format == "wheel") pyprojectWheelHook;
           }
         );

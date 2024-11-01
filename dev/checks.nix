@@ -67,18 +67,9 @@ let
       hatch-vcs = [ ];
       hatch-fancy-pypi-readme = [ ];
     };
-    blinker.setuptools = [ ];
-    certifi.setuptools = [ ];
-    charset-normalizer.setuptools = [ ];
     idna.flit-core = [ ];
     urllib3.hatchling = [ ];
-    pip = {
-      setuptools = [ ];
-      wheel = [ ];
-    };
     packaging.flit-core = [ ];
-    requests.setuptools = [ ];
-    pysocks.setuptools = [ ];
   };
 
   # Assemble overlay from spec
