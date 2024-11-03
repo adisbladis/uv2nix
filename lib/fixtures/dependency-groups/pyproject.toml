@@ -1,0 +1,27 @@
+[project]
+name = "dependency-groups"
+version = "0.1.0"
+description = "Testing dependency groups"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+# Dependency groups are rendered in uv.lock as package.dev-dependencies
+[dependency-groups]
+group-a = ["urllib3"]
+
+# Special older syntax for dependency groups
+# tool.uv.dev-dependencies are rendered in lock file as:
+#
+# [package.dev-dependencies]
+# dev = [
+#     { name = "arpeggio" },
+# ]
+[tool.uv]
+dev-dependencies = [
+    "arpeggio"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

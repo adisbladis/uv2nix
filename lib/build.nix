@@ -100,6 +100,7 @@ in
             passthru = {
               dependencies = mkSpec package.dependencies;
               optional-dependencies = mapAttrs (_: mkSpec) package.optional-dependencies;
+              dependency-groups = mapAttrs (_: mkSpec) package.dev-dependencies;
               inherit format;
             };
 
