@@ -27,11 +27,16 @@ let
       hatch-vcs = [ ];
       hatch-fancy-pypi-readme = [ ];
     };
+    tomli.flit-core = [ ];
+    coverage.setuptools = [ ];
     blinker.setuptools = [ ];
     certifi.setuptools = [ ];
     charset-normalizer.setuptools = [ ];
     idna.flit-core = [ ];
-    urllib3.hatchling = [ ];
+    urllib3 = {
+      hatchling = [ ];
+      hatch-vcs = [ ];
+    };
     pip = {
       setuptools = [ ];
       wheel = [ ];
@@ -39,6 +44,7 @@ let
     packaging.flit-core = [ ];
     requests.setuptools = [ ];
     pysocks.setuptools = [ ];
+    pytest-cov.setuptools = [ ];
   };
 
   # Assemble overlay from spec
@@ -68,7 +74,8 @@ let
       ws = uv2nix.workspace.loadWorkspace { workspaceRoot = root; };
 
       # Build Python environment based on builder implementation
-      pythonEnv = let
+      pythonEnv =
+        let
           # Generate overlay
           overlay = ws.mkPyprojectOverlay { inherit sourcePreference environ; };
 
@@ -144,6 +151,13 @@ let
         root = ../lib/fixtures/no-deps;
         spec = {
           no-deps = [ ];
+        };
+      };
+
+      dependencyGroups = mkCheck {
+        root = ../lib/fixtures/dependency-groups;
+        spec = {
+          dependency-groups = [ "group-a" ];
         };
       };
 
