@@ -7,54 +7,14 @@
 let
   inherit (pkgs) runCommand;
   inherit (lib)
-    toList
     mapAttrs'
     nameValuePair
-    attrNames
     ;
 
   # Overrides for nixpkgs buildPythonPackage
   #
   # Just enough overrides to make tests pass.
   # This is not, and will not, become an overrides stdlib.
-  overrides =
-    final: prev:
-    let
-      addBuildSystem =
-        pkg: build-system:
-        pkg.overridePythonAttrs (old: {
-          nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ (toList build-system);
-        });
-    in
-    {
-      arpeggio = (addBuildSystem prev.arpeggio final.setuptools).overrideAttrs (old: {
-        propagatedBuildInputs = old.propagatedBuildInputs ++ [ final.pytest-runner ];
-      });
-      attrs = addBuildSystem prev.attrs [
-        final.hatchling
-        final.hatch-vcs
-        final.hatch-fancy-pypi-readme
-      ];
-      blinker = addBuildSystem prev.blinker final.setuptools;
-      certifi = addBuildSystem prev.certifi final.setuptools;
-      charset-normalizer = addBuildSystem prev.charset-normalizer final.setuptools;
-      idna = addBuildSystem prev.idna final.flit-core;
-      urllib3 = addBuildSystem prev.urllib3 final.hatchling;
-      pip = addBuildSystem prev.pip final.setuptools;
-      requests = addBuildSystem prev.requests final.setuptools;
-      pysocks = addBuildSystem prev.pysocks final.setuptools;
-
-      # Nixpkgs removed pytest-runner and it's not really required..
-      pytest-runner = final.mkPythonMetaPackage {
-        pname = "pytest-runner";
-        version = "6.0.1";
-      };
-
-      # Work around python-runtime-deps-check-hook bug where it can fail depending on uname
-      multi-choice-package = prev.multi-choice-package.overridePythonAttrs (_old: {
-        dontCheckRuntimeDeps = true;
-      });
-    };
 
   # Build system overrides for pyproject.nix's build infra
   buildSystemOverrides = {
@@ -95,7 +55,7 @@ let
     lib.mapAttrs (name: spec: addBuildSystems prev.${name} spec) buildSystemOverrides;
 
   mkCheck' =
-    buildImpl: sourcePreference:
+    sourcePreference:
     {
       root,
       interpreter ? pkgs.python312,
@@ -108,52 +68,20 @@ let
       ws = uv2nix.workspace.loadWorkspace { workspaceRoot = root; };
 
       # Build Python environment based on builder implementation
-      pythonEnv =
-        if buildImpl == "buildPythonPackage" then
-          (
-            let
-              # Generate overlay
-              overlay = ws.mkOverlay { inherit sourcePreference environ; };
+      pythonEnv = let
+          # Generate overlay
+          overlay = ws.mkPyprojectOverlay { inherit sourcePreference environ; };
 
-              # Override interpreter with generated overlay
-              python = interpreter.override {
-                self = python;
-                packageOverrides = lib.composeManyExtensions [
-                  overlay
-                  overrides
-                ];
-              };
+          # Construct package set
+          pythonSet =
+            (pkgs.callPackage pyproject-nix.build.packages {
+              python = interpreter;
+            }).overrideScope
+              (lib.composeExtensions overlay pyprojectOverrides);
 
-            in
-            # Render venv-like
-            python.withPackages (
-              ps:
-              map (
-                name:
-                assert spec.${name} == [ ];
-                ps.${name}
-              ) (attrNames spec)
-            )
-          )
-        else if buildImpl == "pyprojectBuild" then
-          (
-            let
-              # Generate overlay
-              overlay = ws.mkPyprojectOverlay { inherit sourcePreference environ; };
-
-              # Construct package set
-              pythonSet =
-                (pkgs.callPackage pyproject-nix.build.packages {
-                  python = interpreter;
-                }).overrideScope
-                  (lib.composeExtensions overlay pyprojectOverrides);
-
-            in
-            # Render venv
-            pythonSet.pythonPkgsHostHost.mkVirtualEnv "test-venv" spec
-          )
-        else
-          throw "Unsupported builder impl: ${buildImpl}";
+        in
+        # Render venv
+        pythonSet.pythonPkgsHostHost.mkVirtualEnv "test-venv" spec;
 
     in
     if check != null then
@@ -169,11 +97,11 @@ let
       pythonEnv;
 
   mkChecks =
-    buildImpl: sourcePreference:
+    sourcePreference:
     let
-      mkCheck = mkCheck' buildImpl sourcePreference;
+      mkCheck = mkCheck' sourcePreference;
     in
-    mapAttrs' (name: v: nameValuePair "${buildImpl}-${name}-pref-${sourcePreference}" v) {
+    mapAttrs' (name: v: nameValuePair "${name}-pref-${sourcePreference}" v) {
       trivial = mkCheck {
         root = ../lib/fixtures/trivial;
         spec = {
@@ -272,8 +200,6 @@ let
           platform_release = "5.10.65";
         };
       };
-    }
-    // lib.optionalAttrs (buildImpl == "pyprojectBuild") {
 
       # Nixpkgs buildPythonPackage explodes when bootstrap deps are overriden
       bootstrapProjectDep = mkCheck {
@@ -335,7 +261,4 @@ let
 in
 # Generate test matrix:
 # builder impl  -> sourcePreference
-mkChecks "buildPythonPackage" "wheel"
-// mkChecks "buildPythonPackage" "sdist"
-// mkChecks "pyprojectBuild" "wheel"
-// mkChecks "pyprojectBuild" "sdist"
+mkChecks "wheel" // mkChecks "sdist"

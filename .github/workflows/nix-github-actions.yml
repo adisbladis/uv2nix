@@ -70,8 +70,6 @@ jobs:
         with:
           name: adisbladis
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-      - name: Flake show buildPythonPackage
-        run: nix flake show --no-update-lock-file --override-input uv2nix .  --reference-lock-file ./flake.lock ./templates/app
       - name: Flake show pyproject-build
         run: nix flake show --no-update-lock-file --override-input uv2nix .  --reference-lock-file ./flake.lock ./templates/hello-world
 

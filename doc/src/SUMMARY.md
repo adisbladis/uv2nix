@@ -5,8 +5,7 @@
 # Usage
 
 - [Basic usage]()
-  - [`pyproject.nix` builders](./usage/pyproject-build.md)
-  - [nixpkgs `buildPythonPackage`](./usage/buildpythonpackage.md)
+  - [Hello world](./usage/pyproject-build.md)
 
 # Meta
 

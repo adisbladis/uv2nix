@@ -2,6 +2,7 @@
   workspace,
   pkgs,
   lib,
+  pyproject-nix,
   ...
 }:
 
@@ -56,7 +57,7 @@ in
     }
   ) workspaces;
 
-  loadWorkspace.mkOverlay =
+  loadWorkspace.mkPyprojectOverlay =
     let
       mkTest =
         workspaceRoot:
@@ -64,15 +65,15 @@ in
         let
           ws = workspace.loadWorkspace { inherit workspaceRoot; };
 
-          overlay = ws.mkOverlay { sourcePreference = "wheel"; };
+          overlay = ws.mkPyprojectOverlay { sourcePreference = "wheel"; };
 
-          python = pkgs.python312.override {
-            self = python;
-            packageOverrides = overlay;
-          };
-
+          pythonSet =
+            (pkgs.callPackage pyproject-nix.build.packages {
+              python = pkgs.python312;
+            }).overrideScope
+              overlay;
         in
-        listToAttrs (map (name: nameValuePair name python.pkgs.${name}.version) packages);
+        listToAttrs (map (name: nameValuePair name pythonSet.${name}.version) packages);
 
     in
     {

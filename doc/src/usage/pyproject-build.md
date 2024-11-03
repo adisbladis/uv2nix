@@ -1,10 +1,8 @@
 # pyproject.nix
 
-<div class="warning">
-This example is describing using uv2nix with pyproject.nix builders.
 
-The [`pyproject.nix` build infrastructure](https://nix-community.github.io/pyproject.nix/build.html) is brand new and experimental.
-</div>
+Note that `uv2nix` is not using the Nixpkgs Python build infrastructure, but is instead using the [`pyproject.nix` build infrastructure](https://nix-community.github.io/pyproject.nix/build.html).
+
 
 ## flake.nix
 ```nix

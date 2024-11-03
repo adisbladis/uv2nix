@@ -57,12 +57,8 @@ in
 
 fix (self: {
   /*
-    Load a workspace from a workspace root.
-
-    Returns an attribute set where you can call:
-    mkOverlay { sourcePreference = "wheel"; } # wheel or sdist
-
-    to create a Nixpkgs Python packageOverrides overlay
+    Load a workspace from a workspace root
+    .
   */
   loadWorkspace =
     {
@@ -173,25 +169,6 @@ fix (self: {
         .
       */
       config = config';
-
-      /*
-        Generate a Nixpkgs Python overlay from uv workspace.
-
-        See https://nixos.org/manual/nixpkgs/stable/#overriding-python-packages
-      */
-      mkOverlay =
-        {
-          # Whether to prefer sources from either:
-          # - wheel
-          # - sdist
-          #
-          # See FAQ for more information.
-          sourcePreference ? defaultSourcePreference,
-          # PEP-508 environment customisations.
-          # Example: { platform_release = "5.10.65"; }
-          environ ? { },
-        }:
-        mkOverlay' build.buildPythonPackage { inherit sourcePreference environ; };
 
       /*
         Generate an overlay to use with pyproject.nix's build infrastructure.
