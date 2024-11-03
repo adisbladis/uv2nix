@@ -114,8 +114,8 @@
 
             # Build virtual environment
             virtualenv = editablePythonSet.mkVirtualEnv "hello-world-dev-env" {
-              # Add hello world with it's dev dependencies
-              hello-world = [ "dev-dependencies" ];
+              # Add hello world with it's dev dependency group
+              hello-world = [ "dev" ];
             };
 
           in

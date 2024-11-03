@@ -3,7 +3,7 @@
 let
   inherit (pyproject-nix.lib.pep508) parseMarkers evalMarkers;
   inherit (pyproject-nix.lib.pypa) parseWheelFileName;
-  inherit (pyproject-nix.lib) pep440 pypa;
+  inherit (pyproject-nix.lib) pep440;
   inherit (builtins) baseNameOf toJSON;
   inherit (lib)
     mapAttrs
@@ -23,7 +23,6 @@ let
     elem
     head
     listToAttrs
-    nameValuePair
     any
     ;
 
@@ -91,7 +90,8 @@ fix (self: {
         # Recurse into top-level dependencies.
         startSet =
           filterTopLevelDeps dependencies.dependencies
-          ++ filterTopLevelDeps (concatLists (attrValues dependencies.extras));
+          ++ filterTopLevelDeps (concatLists (attrValues dependencies.extras))
+          ++ filterTopLevelDeps (concatLists (attrValues dependencies.groups));
 
         operator =
           { key, ... }:

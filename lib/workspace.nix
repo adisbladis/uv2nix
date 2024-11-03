@@ -138,6 +138,7 @@ fix (self: {
               dependencies = topLevelDependencies;
               extras = { };
               build-systems = [ ];
+              groups = { };
             };
             lock = uvLock;
             environ = environ';
