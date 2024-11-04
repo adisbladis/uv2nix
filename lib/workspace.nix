@@ -2,7 +2,6 @@
   lib,
   pyproject-nix,
   lock1,
-  renderers,
   build,
   ...
 }:
@@ -110,18 +109,8 @@ fix (self: {
         else
           throw "No sourcePreference was passed, and could not be automatically inferred from workspace config";
 
-      renderIntermediate = renderers.mkRenderIntermediate {
-        inherit workspaceRoot;
-        config = config';
-      };
-
       mkOverlay' =
-        builderImpl:
         { sourcePreference, environ }:
-        let
-          # Instantiate builders
-          builders = builderImpl { defaultSourcePreference = sourcePreference; };
-        in
         final: prev:
         let
           inherit (final) callPackage;
@@ -144,6 +133,12 @@ fix (self: {
             environ = environ';
           };
 
+          buildRemotePackage = build.remote {
+            inherit workspaceRoot;
+            config = config';
+            defaultSourcePreference = sourcePreference;
+          };
+
         in
         # Assert that requires-python from uv.lock is compatible with this interpreter
         assert all (spec: pep440.comparators.${spec.op} pythonVersion spec.version) uvLock.requires-python;
@@ -151,12 +146,12 @@ fix (self: {
           name: package:
           # Call different builder functions depending on if package is local or remote (pypi)
           if workspaceProjects ? ${name} then
-            callPackage (builders.local {
+            callPackage (build.local {
               environ = environ';
               localProject = workspaceProjects.${name};
             }) { }
           else
-            callPackage (builders.remote (renderIntermediate package)) { }
+            callPackage (buildRemotePackage package) { }
         ) resolved;
 
     in
@@ -189,7 +184,7 @@ fix (self: {
           environ ? { },
         }:
         let
-          overlay = mkOverlay' build.pyprojectBuild { inherit sourcePreference environ; };
+          overlay = mkOverlay' { inherit sourcePreference environ; };
           crossOverlay = lib.composeExtensions (_final: prev: {
             pythonPkgsBuildHost = prev.pythonPkgsBuildHost.overrideScope overlay;
           }) overlay;

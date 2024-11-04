@@ -22,7 +22,7 @@ in
 fix (self: {
   lock1 = callTest ./test_lock1.nix;
   workspace = callTest ./test_workspace.nix;
-  renderers = callTest ./test_renderers.nix;
+  build = callTest ./test_build.nix;
 
   # Yo dawg, I heard you like tests...
   #

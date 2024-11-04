@@ -4,7 +4,7 @@
   pkgs,
   lock1,
   workspace,
-  renderers,
+  build,
   ...
 }:
 
@@ -43,7 +43,7 @@ let
 in
 {
 
-  mkRenderIntermediate =
+  remote =
     let
 
       # Return a callPackage'd package.
@@ -55,23 +55,20 @@ in
           sourcePreference,
         }:
         let
-          renderIntermediate = renderers.mkRenderIntermediate {
+          buildRemotePackage = build.remote {
             inherit workspaceRoot;
             config = workspace.loadConfig [ projects.${projectName}.pyproject ];
+            defaultSourcePreference = sourcePreference;
           };
-
         in
         depName:
         let
           package = lock1.parsePackage (findFirstPkg depName locks.${projectName}.package);
         in
-        (renderIntermediate package) {
-          inherit (pkgs)
-            fetchurl
-            stdenv
-            autoPatchelfHook
-            pythonManylinuxPackages
-            ;
+        pkgs.callPackage (buildRemotePackage package) {
+          pyprojectHook = null;
+          pyprojectBootstrapHook = null;
+          pyprojectWheelHook = null;
           inherit python sourcePreference;
         };
 
