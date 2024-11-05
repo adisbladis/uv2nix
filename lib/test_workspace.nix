@@ -57,6 +57,56 @@ in
     }
   ) workspaces;
 
+  loadWorkspace.deps =
+    let
+      mkTest =
+        workspaceRoot:
+        let
+          ws = workspace.loadWorkspace { inherit workspaceRoot; };
+        in
+        ws.deps;
+    in
+    {
+      testTrivial = {
+        expr = mkTest ./fixtures/trivial;
+        expected = {
+          all = {
+            trivial = [ ];
+          };
+          default = {
+            trivial = [ ];
+          };
+        };
+      };
+
+      testOptionalDeps = {
+        expr = mkTest ./fixtures/optional-deps;
+        expected = {
+          all = {
+            optional-deps = [ "haxx" ];
+          };
+          default = {
+            optional-deps = [ ];
+          };
+        };
+      };
+
+      testDependencyGroups = {
+        expr = mkTest ./fixtures/dependency-groups;
+        expected = {
+          all = {
+            dependency-groups = [
+              "dev"
+              "group-a"
+            ];
+          };
+          default = {
+            dependency-groups = [ ];
+          };
+        };
+      };
+    };
+
   loadWorkspace.mkPyprojectOverlay =
     let
       mkTest =
