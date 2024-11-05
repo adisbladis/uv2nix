@@ -75,9 +75,9 @@
     in
     {
       # Package a virtual environment as our main application.
-      packages.x86_64-linux.default = pythonSet.mkVirtualEnv "hello-world-env" {
-        hello-world = [ ];
-      };
+      #
+      # Enable no optional dependencies for production build.
+      packages.x86_64-linux.default = pythonSet.mkVirtualEnv "hello-world-env" workspace.deps.default;
 
       # This example provides two different modes of development:
       # - Impurely using uv to manage virtual environments
@@ -112,11 +112,10 @@
             # Override previous set with our overrideable overlay.
             editablePythonSet = pythonSet.overrideScope editableOverlay;
 
-            # Build virtual environment
-            virtualenv = editablePythonSet.mkVirtualEnv "hello-world-dev-env" {
-              # Add hello world with it's dev dependency group
-              hello-world = [ "dev" ];
-            };
+            # Build virtual environment, with local packages being editable.
+            #
+            # Enable all optional dependencies for development.
+            virtualenv = editablePythonSet.mkVirtualEnv "hello-world-dev-env" workspace.deps.all;
 
           in
           pkgs.mkShell {

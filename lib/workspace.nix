@@ -34,6 +34,8 @@ let
     listToAttrs
     pathExists
     removePrefix
+    groupBy
+    head
     ;
   inherit (builtins) readDir;
   inherit (pyproject-nix.lib.project) loadUVPyproject; # Note: Maybe we want a loader that will just "remap-all-the-things" into standard attributes?
@@ -55,9 +57,26 @@ let
 in
 
 fix (self: {
-  /*
+  /**
     Load a workspace from a workspace root
-    .
+
+    # Arguments
+
+    `workspaceRoot`: Workspace root as a path
+
+    `config`: Config overrides for settings automatically inferred by `loadConfig`
+
+      Can be passed as either:
+      - An attribute set
+      - A function taking the generated config as an argument, and returning the augmented config
+
+    ## Workspace attributes
+    - `mkPyprojectOverlay`: Create an overlay for usage with pyproject.nix's builders
+    - `mkPyprojectEditableOverlay`: Generate an overlay to use with pyproject.nix's build infrastructure to install dependencies in editable mode.
+    - `config`: Workspace config as loaded by `loadConfig`
+    - `deps`: Pre-defined dependency declarations for top-level workspace packages
+      - `default`: No optional-dependencies or dependency-groups enabled
+      - `all`: All optional-dependencies & dependency-groups enabled
   */
   loadWorkspace =
     {
@@ -76,6 +95,7 @@ fix (self: {
       uvLock = lock1.parseLock (importTOML (workspaceRoot + "/uv.lock"));
 
       localPackages = filter lock1.isLocalPackage uvLock.package;
+
       workspaceProjects = listToAttrs (
         map (
           package:
@@ -155,7 +175,6 @@ fix (self: {
         ) resolved;
 
     in
-    #assert (builtins.trace localProjects' true);
     assert assertMsg (
       !(config'.no-binary && config'.no-build)
     ) "Both tool.uv.no-build and tool.uv.no-binary are set to true, making the workspace unbuildable";
@@ -206,16 +225,11 @@ fix (self: {
         See https://nix-community.github.io/pyproject.nix/lib/build.html
       */
       mkEditablePyprojectOverlay =
-        let
-          workspaceProjects' = attrNames workspaceProjects;
-          localProjects = map (package: package.name) (filter lock1.isLocalPackage uvLock.package);
-          allLocal = unique (workspaceProjects' ++ localProjects);
-        in
         {
           # Editable root as a string.
           root ? (toString workspaceRoot),
           # Workspace members to make editable as a list of strings. Defaults to all local projects.
-          members ? allLocal,
+          members ? map (package: package.name) localPackages,
         }:
         assert assertMsg (!lib.hasPrefix builtins.storeDir root) ''
           Editable root was passed as a Nix store path.
@@ -250,10 +264,39 @@ fix (self: {
           ) activeMembers
         );
 
-      inherit topLevelDependencies;
+      # Pre-defined dependency specifications.
+      deps =
+        let
+          # Extract dependency groups/optional-dependencies from all local projects
+          # operating under the assumptions that a local project only has one possible resolution
+          # and that no local projects are filtered out by markers
+          specs' =
+            mapAttrs
+              (
+                _name: packages:
+                assert length packages == 1;
+                let
+                  package = head packages;
+                in
+                unique (attrNames package.optional-dependencies ++ attrNames package.dev-dependencies)
+              )
+              (
+                groupBy (package: package.name)
+                  # Don't include local packages pulled in to the workspace from a directory specification.
+                  # These might be local, but are not considered as a part of the workspace
+                  (filter (package: !package.source ? directory) localPackages)
+              );
+        in
+        {
+          # Dependency specification with all optional dependencies
+          all = specs';
+
+          # Dependency specification with no optional dependencies
+          default = mapAttrs (_: _: [ ]) specs';
+        };
     };
 
-  /*
+  /**
     Load supported configuration from workspace
 
     Supports:
