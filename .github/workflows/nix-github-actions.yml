@@ -70,8 +70,16 @@ jobs:
         with:
           name: adisbladis
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-      - name: Flake show pyproject-build
-        run: nix flake show --no-update-lock-file --override-input uv2nix .  --reference-lock-file ./flake.lock ./templates/hello-world
+
+      - name: Flake show hello-world
+        run: nix flake show --no-update-lock-file --override-input uv2nix . --reference-lock-file ./flake.lock ./templates/hello-world
+      - name: Build hello-world template
+        run: nix build -L --no-update-lock-file --override-input uv2nix . --reference-lock-file ./flake.lock ./templates/hello-world ./templates/hello-world#devShells.x86_64-linux.uv2nix ./templates/hello-world#devShells.x86_64-linux.impure
+
+      - name: Show testing template
+        run: nix flake show --no-update-lock-file --override-input uv2nix . --reference-lock-file ./flake.lock ./templates/testing
+      - name: Build testing template
+        run: nix build -L --no-update-lock-file --override-input uv2nix . --reference-lock-file ./flake.lock ./templates/testing#default ./templates/testing#full ./templates/testing#checks.x86_64-linux.pytest ./templates/testing#devShells.x86_64-linux.default
 
   collect:
     runs-on: ubuntu-latest

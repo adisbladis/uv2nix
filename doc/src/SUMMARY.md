@@ -5,7 +5,8 @@
 # Usage
 
 - [Basic usage]()
-  - [Hello world](./usage/pyproject-build.md)
+  - [Hello world](./usage/hello-world.md)
+  - [Testing](./usage/testing.md)
 
 # Meta
 
