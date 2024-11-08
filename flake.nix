@@ -97,6 +97,7 @@
                 inputs.mdbook-nixdoc.packages.${system}.default
                 self.packages.${system}.uv-bin
                 pkgs.python3
+                self.formatter.${system}
               ] ++ self.packages.${system}.doc.nativeBuildInputs;
 
               shellHook = ''
