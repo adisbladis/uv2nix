@@ -45,10 +45,19 @@
       inherit (nixpkgs) lib;
     in
     {
+
       githubActions = nix-github-actions.lib.mkGithubMatrix {
-        checks = {
-          inherit (self.checks) x86_64-linux;
-        };
+        checks =
+          let
+            strip = lib.flip removeAttrs [
+              # No need to run formatter check on multiple platforms
+              "formatter"
+            ];
+          in
+          {
+            inherit (self.checks) x86_64-linux;
+            aarch64-darwin = strip self.checks.aarch64-darwin;
+          };
       };
 
       lib = import ./lib {
@@ -101,7 +110,7 @@
               ] ++ self.packages.${system}.doc.nativeBuildInputs;
 
               shellHook = ''
-                UV_NO_SYNC=1
+                export UV_NO_SYNC=1
               '';
             };
         in
@@ -121,6 +130,20 @@
         // import ./dev/checks.nix {
           inherit pyproject-nix pkgs lib;
           uv2nix = self.lib;
+        }
+        // {
+          formatter =
+            pkgs.runCommand "fmt-check"
+              {
+                nativeBuildInputs = [ self.formatter.${system} ];
+              }
+              ''
+                cp -r ${self} $(stripHash "${self}")
+                chmod -R +w .
+                cd source
+                treefmt --fail-on-change
+                touch $out
+              '';
         }
       );
 
