@@ -131,6 +131,47 @@
           inherit pyproject-nix pkgs lib;
           uv2nix = self.lib;
         }
+        //
+          # Test flake templates
+          (
+            let
+
+              inherit (builtins) mapAttrs functionArgs;
+
+              # Call a nested flake with the inputs from this one.
+              callFlake =
+                path:
+                let
+                  flake' = import (path + "/flake.nix");
+                  args = mapAttrs (name: _: inputs'.${name}) (functionArgs flake'.outputs);
+
+                  flake = flake'.outputs args;
+
+                  inputs' = inputs // {
+                    uv2nix = self;
+                    self = flake;
+                  };
+                in
+                flake;
+
+            in
+            lib.listToAttrs (
+              lib.concatLists (
+                lib.mapAttrsToList (
+                  template: _:
+                  let
+                    flake = callFlake (./templates + "/${template}");
+                    mkChecks =
+                      prefix: attr:
+                      lib.mapAttrsToList (check: drv: lib.nameValuePair "template-${template}-${prefix}-${check}" drv) (
+                        flake.${attr}.${system} or { }
+                      );
+                  in
+                  mkChecks "check" "checks" ++ mkChecks "package" "packages" ++ mkChecks "devShell" "devShells"
+                ) (builtins.readDir ./templates)
+              )
+            )
+          )
         // {
           formatter =
             pkgs.runCommand "fmt-check"
