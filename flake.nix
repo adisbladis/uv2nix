@@ -4,23 +4,18 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    treefmt-nix.url = "github:numtide/treefmt-nix";
-    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
-
     nix-github-actions.url = "github:nix-community/nix-github-actions";
     nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
 
     pyproject-nix.url = "github:nix-community/pyproject.nix";
     pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
     pyproject-nix.inputs.nix-github-actions.follows = "nix-github-actions";
-    pyproject-nix.inputs.treefmt-nix.follows = "treefmt-nix";
   };
 
   outputs =
     {
       self,
       nixpkgs,
-      treefmt-nix,
       pyproject-nix,
       nix-github-actions,
       ...
@@ -215,7 +210,7 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
-        (treefmt-nix.lib.evalModule pkgs ./dev/treefmt.nix).config.build.wrapper
+        pkgs.callPackage ./treefmt.nix { }
       );
     };
 }
