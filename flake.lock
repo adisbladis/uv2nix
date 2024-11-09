@@ -1,48 +1,5 @@
 {
   "nodes": {
-    "lix": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1730846669,
-        "narHash": "sha256-HUdKD2GLudNnQm4yvakMSUhcHF2g0Nc+1QxgDwrlU90=",
-        "ref": "refs/heads/main",
-        "rev": "72292671a9e1c7600d1cc4240e717ac3bdd6cef0",
-        "revCount": 16450,
-        "type": "git",
-        "url": "https://git.lix.systems/lix-project/lix.git"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.lix.systems/lix-project/lix.git"
-      }
-    },
-    "lix-unit": {
-      "inputs": {
-        "lix": "lix",
-        "nix-github-actions": [
-          "nix-github-actions"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt-nix": [
-          "treefmt-nix"
-        ]
-      },
-      "locked": {
-        "lastModified": 1731132652,
-        "narHash": "sha256-wf45evw+BvDccVrBuFfFOZjVxh6ZI/nS7S6Lq8mv/No=",
-        "owner": "adisbladis",
-        "repo": "lix-unit",
-        "rev": "6202da22614dc0fb849e34d761621d6b1a3c110e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "adisbladis",
-        "repo": "lix-unit",
-        "type": "github"
-      }
-    },
     "nix-github-actions": {
       "inputs": {
         "nixpkgs": [
@@ -81,9 +38,6 @@
     },
     "pyproject-nix": {
       "inputs": {
-        "lix-unit": [
-          "lix-unit"
-        ],
         "nix-github-actions": [
           "nix-github-actions"
         ],
@@ -95,11 +49,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1731132709,
-        "narHash": "sha256-7YLMpr7YnKicO9DpOXZ4D4vG7FQAhj8jJhV3twYyYl4=",
+        "lastModified": 1731136436,
+        "narHash": "sha256-EwTfRouTDIStFngnAVTguN5XzIQgcE7pTznXEoT2OuQ=",
         "owner": "nix-community",
         "repo": "pyproject.nix",
-        "rev": "5cdcac2657dffe522fe570aec1c03d172ed9be21",
+        "rev": "437f5268af40661864b26c83512705b064d12d2d",
         "type": "github"
       },
       "original": {
@@ -110,7 +64,6 @@
     },
     "root": {
       "inputs": {
-        "lix-unit": "lix-unit",
         "nix-github-actions": "nix-github-actions",
         "nixpkgs": "nixpkgs",
         "pyproject-nix": "pyproject-nix",
