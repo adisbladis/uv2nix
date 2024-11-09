@@ -83,6 +83,7 @@
                 self.packages.${system}.uv-bin
                 pkgs.python3
                 self.formatter.${system}
+                pkgs.npins
               ] ++ self.packages.${system}.doc.nativeBuildInputs;
 
               shellHook = ''

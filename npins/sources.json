@@ -23,12 +23,6 @@
       "revision": "e04df33f62cdcf93d73e9a04142464753a16db67",
       "url": "https://github.com/nix-community/nix-github-actions/archive/e04df33f62cdcf93d73e9a04142464753a16db67.tar.gz",
       "hash": "141jgrc5g0fz8fd8nd3zjy6746qi1wva9775lpfr259lqi6v7287"
-    },
-    "nixpkgs": {
-      "type": "Channel",
-      "name": "nixpkgs-unstable",
-      "url": "https://releases.nixos.org/nixpkgs/nixpkgs-24.11pre704822.85f7e662eda4/nixexprs.tar.xz",
-      "hash": "0dqlz0xqd3nn49hnx943y5sfqd7nmj25s6gi1pjm907j3vbgg47k"
     }
   },
   "version": 3
