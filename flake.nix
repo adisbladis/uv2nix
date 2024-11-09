@@ -3,13 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-
-    nix-github-actions.url = "github:nix-community/nix-github-actions";
-    nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
-
     pyproject-nix.url = "github:nix-community/pyproject.nix";
     pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
-    pyproject-nix.inputs.nix-github-actions.follows = "nix-github-actions";
   };
 
   outputs =
@@ -17,16 +12,17 @@
       self,
       nixpkgs,
       pyproject-nix,
-      nix-github-actions,
       ...
     }@inputs:
     let
+      npins = import ./npins;
+
       forAllSystems = lib.genAttrs lib.systems.flakeExposed;
       inherit (nixpkgs) lib;
     in
     {
 
-      githubActions = nix-github-actions.lib.mkGithubMatrix {
+      githubActions = (import npins.nix-github-actions).mkGithubMatrix {
         checks =
           let
             strip = lib.flip removeAttrs [
@@ -111,12 +107,7 @@
                   pname = "lix-unit";
                   name = "lix-unit-${lix.version}";
                   inherit (lix) version;
-                  src = pkgs.fetchFromGitHub {
-                    owner = "adisbladis";
-                    repo = "lix-unit";
-                    rev = "6202da22614dc0fb849e34d761621d6b1a3c110e";
-                    hash = "sha256-wf45evw+BvDccVrBuFfFOZjVxh6ZI/nS7S6Lq8mv/No=";
-                  };
+                  src = npins.lix-unit;
                 });
           };
 

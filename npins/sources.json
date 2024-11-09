@@ -1,0 +1,35 @@
+{
+  "pins": {
+    "lix-unit": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "adisbladis",
+        "repo": "lix-unit"
+      },
+      "branch": "main",
+      "revision": "6202da22614dc0fb849e34d761621d6b1a3c110e",
+      "url": "https://github.com/adisbladis/lix-unit/archive/6202da22614dc0fb849e34d761621d6b1a3c110e.tar.gz",
+      "hash": "1npwmz4sp2rfxp9gj8wr3v3db61rqmbvihasf7fg01iyzix3kzn1"
+    },
+    "nix-github-actions": {
+      "type": "Git",
+      "repository": {
+        "type": "GitHub",
+        "owner": "nix-community",
+        "repo": "nix-github-actions"
+      },
+      "branch": "master",
+      "revision": "e04df33f62cdcf93d73e9a04142464753a16db67",
+      "url": "https://github.com/nix-community/nix-github-actions/archive/e04df33f62cdcf93d73e9a04142464753a16db67.tar.gz",
+      "hash": "141jgrc5g0fz8fd8nd3zjy6746qi1wva9775lpfr259lqi6v7287"
+    },
+    "nixpkgs": {
+      "type": "Channel",
+      "name": "nixpkgs-unstable",
+      "url": "https://releases.nixos.org/nixpkgs/nixpkgs-24.11pre704822.85f7e662eda4/nixexprs.tar.xz",
+      "hash": "0dqlz0xqd3nn49hnx943y5sfqd7nmj25s6gi1pjm907j3vbgg47k"
+    }
+  },
+  "version": 3
+}

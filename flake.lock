@@ -1,25 +1,5 @@
 {
   "nodes": {
-    "nix-github-actions": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1729742964,
-        "narHash": "sha256-B4mzTcQ0FZHdpeWcpDYPERtyjJd/NIuaQ9+BV1h+MpA=",
-        "owner": "nix-community",
-        "repo": "nix-github-actions",
-        "rev": "e04df33f62cdcf93d73e9a04142464753a16db67",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "nix-github-actions",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1730785428,
@@ -38,19 +18,16 @@
     },
     "pyproject-nix": {
       "inputs": {
-        "nix-github-actions": [
-          "nix-github-actions"
-        ],
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1731141190,
-        "narHash": "sha256-qbDYPZ0TXX14Q3TSuPTKi3dMFDy6Hm0pudlLfobbguE=",
+        "lastModified": 1731142756,
+        "narHash": "sha256-sZwrrBGZAdE6gphY0E8XdXBjvpN3sYa+ysRouvX2zHY=",
         "owner": "nix-community",
         "repo": "pyproject.nix",
-        "rev": "569400c86ad7fb3757d6740b67f453cff156402e",
+        "rev": "c56379c2297a41b8d0f57c0010f7c24b28c313b3",
         "type": "github"
       },
       "original": {
@@ -61,7 +38,6 @@
     },
     "root": {
       "inputs": {
-        "nix-github-actions": "nix-github-actions",
         "nixpkgs": "nixpkgs",
         "pyproject-nix": "pyproject-nix"
       }
