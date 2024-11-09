@@ -5,8 +5,8 @@ multilingual = false
 src = "src"
 title = "uv2nix"
 
-[preprocessor.nixdoc]
-command = "mdbook-nixdoc"
+[preprocessor.cmdrun]
+command = "mdbook-cmdrun"
 
 [preprocessor.open-on-gh]
 command = "mdbook-open-on-gh"

@@ -19,9 +19,6 @@
     "lix-unit": {
       "inputs": {
         "lix": "lix",
-        "mdbook-nixdoc": [
-          "mdbook-nixdoc"
-        ],
         "nix-github-actions": [
           "nix-github-actions"
         ],
@@ -33,39 +30,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1730863251,
-        "narHash": "sha256-NoImlilaWPAGWz/Ja0uXcagQ8UK61KEev2jFDM+vgzQ=",
+        "lastModified": 1731132652,
+        "narHash": "sha256-wf45evw+BvDccVrBuFfFOZjVxh6ZI/nS7S6Lq8mv/No=",
         "owner": "adisbladis",
         "repo": "lix-unit",
-        "rev": "2893fe1a7e870a3da8a04be89ca494c1ff9c3e82",
+        "rev": "6202da22614dc0fb849e34d761621d6b1a3c110e",
         "type": "github"
       },
       "original": {
         "owner": "adisbladis",
         "repo": "lix-unit",
-        "type": "github"
-      }
-    },
-    "mdbook-nixdoc": {
-      "inputs": {
-        "nix-github-actions": [
-          "nix-github-actions"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1708395692,
-        "narHash": "sha256-smf0VmxGbjJDZqKvxxG3ZVqubgbVwAWG26wPo+BT/A0=",
-        "owner": "adisbladis",
-        "repo": "mdbook-nixdoc",
-        "rev": "d6a71b114b9221c0b4f20d31b81766d072cc26be",
-        "type": "github"
-      },
-      "original": {
-        "owner": "adisbladis",
-        "repo": "mdbook-nixdoc",
         "type": "github"
       }
     },
@@ -110,9 +84,6 @@
         "lix-unit": [
           "lix-unit"
         ],
-        "mdbook-nixdoc": [
-          "mdbook-nixdoc"
-        ],
         "nix-github-actions": [
           "nix-github-actions"
         ],
@@ -124,11 +95,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1731123337,
-        "narHash": "sha256-X+a9m9Qy6aSma9KvWy+xVELDYmUL/dsOlIyEHpZjW7E=",
+        "lastModified": 1731132709,
+        "narHash": "sha256-7YLMpr7YnKicO9DpOXZ4D4vG7FQAhj8jJhV3twYyYl4=",
         "owner": "nix-community",
         "repo": "pyproject.nix",
-        "rev": "123cefe19c19c38d747ab861771ac26d5e575bf4",
+        "rev": "5cdcac2657dffe522fe570aec1c03d172ed9be21",
         "type": "github"
       },
       "original": {
@@ -140,7 +111,6 @@
     "root": {
       "inputs": {
         "lix-unit": "lix-unit",
-        "mdbook-nixdoc": "mdbook-nixdoc",
         "nix-github-actions": "nix-github-actions",
         "nixpkgs": "nixpkgs",
         "pyproject-nix": "pyproject-nix",

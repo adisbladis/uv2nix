@@ -17,8 +17,8 @@
 
 # Reference
 
-- [workspace](./lib/workspace.nix)
-- [lock1](./lib/lock1.nix)
+- [workspace](./lib/workspace.md)
+- [lock1](./lib/lock1.md)
 
 # Contributing
 

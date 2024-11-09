@@ -13,17 +13,11 @@
     pyproject-nix.url = "github:nix-community/pyproject.nix";
     pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
     pyproject-nix.inputs.nix-github-actions.follows = "nix-github-actions";
-    pyproject-nix.inputs.mdbook-nixdoc.follows = "mdbook-nixdoc";
     pyproject-nix.inputs.treefmt-nix.follows = "treefmt-nix";
     pyproject-nix.inputs.lix-unit.follows = "lix-unit";
 
-    mdbook-nixdoc.url = "github:adisbladis/mdbook-nixdoc";
-    mdbook-nixdoc.inputs.nixpkgs.follows = "nixpkgs";
-    mdbook-nixdoc.inputs.nix-github-actions.follows = "nix-github-actions";
-
     lix-unit = {
       url = "github:adisbladis/lix-unit";
-      inputs.mdbook-nixdoc.follows = "mdbook-nixdoc";
       inputs.nix-github-actions.follows = "nix-github-actions";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.treefmt-nix.follows = "treefmt-nix";
@@ -103,7 +97,7 @@
                 pkgs.mdbook
                 pkgs.reflex
                 nix-unit
-                inputs.mdbook-nixdoc.packages.${system}.default
+                pkgs.mdbook-cmdrun
                 self.packages.${system}.uv-bin
                 pkgs.python3
                 self.formatter.${system}
@@ -196,7 +190,6 @@
         {
           doc = pkgs.callPackage ./doc {
             inherit self;
-            mdbook-nixdoc = inputs.mdbook-nixdoc.packages.${system}.default;
           };
 
           uv-bin = pkgs.callPackage ./pkgs/uv-bin { };
