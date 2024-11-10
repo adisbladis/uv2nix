@@ -1,6 +1,7 @@
 # Contents
 
 - [Introduction](./introduction.md)
+- [Installation](./install.md)
 
 # Usage
 
