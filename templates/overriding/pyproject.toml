@@ -1,0 +1,25 @@
+[project]
+name = "overriding"
+version = "0.1.0"
+description = "Show how to override dependencies"
+readme = "README.md"
+authors = [
+    { name = "adisbladis", email = "adisbladis@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "numba>=0.60.0",
+    "pyzmq>=26.2.0",
+]
+
+[project.scripts]
+overriding = "overriding:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+no-binary-package = [
+  "pyzmq"  # Force source builds
+]
