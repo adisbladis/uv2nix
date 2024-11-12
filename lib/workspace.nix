@@ -76,6 +76,8 @@ fix (self: {
     - `config`: Workspace config as loaded by `loadConfig`
     - `deps`: Pre-defined dependency declarations for top-level workspace packages
       - `default`: No optional-dependencies or dependency-groups enabled
+      - `optionals`: All optional-dependencies enabled
+      - `groups`: All dependency-groups enabled
       - `all`: All optional-dependencies & dependency-groups enabled
   */
   loadWorkspace =
@@ -270,15 +272,12 @@ fix (self: {
           # Extract dependency groups/optional-dependencies from all local projects
           # operating under the assumptions that a local project only has one possible resolution
           # and that no local projects are filtered out by markers
-          specs' =
+          packages' =
             mapAttrs
               (
                 _name: packages:
                 assert length packages == 1;
-                let
-                  package = head packages;
-                in
-                unique (attrNames package.optional-dependencies ++ attrNames package.dev-dependencies)
+                head packages
               )
               (
                 groupBy (package: package.name)
@@ -288,11 +287,19 @@ fix (self: {
               );
         in
         {
-          # Dependency specification with all optional dependencies
-          all = specs';
+          # Dependency specification with all optional dependencies & groups
+          all = mapAttrs (
+            _: package: unique (attrNames package.optional-dependencies ++ attrNames package.dev-dependencies)
+          ) packages';
+
+          # Dependency specifications with will all optional dependencies
+          optionals = mapAttrs (_: package: attrNames package.optional-dependencies) packages';
+
+          # Dependency specifications with will all groups
+          groups = mapAttrs (_: package: attrNames package.dev-dependencies) packages';
 
           # Dependency specification with no optional dependencies
-          default = mapAttrs (_: _: [ ]) specs';
+          default = mapAttrs (_: _: [ ]) packages';
         };
     };
 

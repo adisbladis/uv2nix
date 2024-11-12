@@ -73,6 +73,12 @@ in
           all = {
             trivial = [ ];
           };
+          groups = {
+            trivial = [ ];
+          };
+          optionals = {
+            trivial = [ ];
+          };
           default = {
             trivial = [ ];
           };
@@ -81,9 +87,13 @@ in
 
       testOptionalDeps = {
         expr = mkTest ./fixtures/optional-deps;
-        expected = {
-          all = {
+        expected = rec {
+          optionals = {
             optional-deps = [ "haxx" ];
+          };
+          all = optionals;
+          groups = {
+            optional-deps = [ ];
           };
           default = {
             optional-deps = [ ];
@@ -93,12 +103,16 @@ in
 
       testDependencyGroups = {
         expr = mkTest ./fixtures/dependency-groups;
-        expected = {
-          all = {
+        expected = rec {
+          all = groups;
+          groups = {
             dependency-groups = [
               "dev"
               "group-a"
             ];
+          };
+          optionals = {
+            dependency-groups = [ ];
           };
           default = {
             dependency-groups = [ ];
