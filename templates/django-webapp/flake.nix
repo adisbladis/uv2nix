@@ -338,10 +338,9 @@
               venv
               pkgs.uv
             ];
-            env.REPO_ROOT = "/home/adisbladis/sauce/github.com/adisbladis/uv2nix/templates/django-webapp";
             shellHook = ''
               unset PYTHONPATH
-              # export REPO_ROOT=$(git rev-parse --show-toplevel)
+              export REPO_ROOT=$(git rev-parse --show-toplevel)
               export UV_NO_SYNC=1
             '';
           };
