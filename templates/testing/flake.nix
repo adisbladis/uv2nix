@@ -132,13 +132,13 @@
         let
           pythonSet = pythonSets.${system};
 
-          # Add passthru attributes to the virtual environment.
+          # Add metadata attributes to the virtual environment.
           # This is useful to inject meta and other attributes onto the virtual environment derivation.
           #
           # See
           # - https://nixos.org/manual/nixpkgs/unstable/#chap-passthru
           # - https://nixos.org/manual/nixpkgs/unstable/#chap-meta
-          addPassthru =
+          addMeta =
             drv:
             drv.overrideAttrs (old: {
               # Pass through tests from our package into the virtualenv so they can be discovered externally.
@@ -155,8 +155,8 @@
 
         in
         {
-          default = addPassthru (pythonSet.mkVirtualEnv "testing-env" workspace.deps.default);
-          full = addPassthru (pythonSet.mkVirtualEnv "testing-env-full" workspace.deps.all);
+          default = addMeta (pythonSet.mkVirtualEnv "testing-env" workspace.deps.default);
+          full = addMeta (pythonSet.mkVirtualEnv "testing-env-full" workspace.deps.all);
         }
       );
 
