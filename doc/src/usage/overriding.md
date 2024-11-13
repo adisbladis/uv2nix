@@ -3,6 +3,8 @@
 For more detailed information on overriding, see [`pyproject.nix`](https://nix-community.github.io/pyproject.nix/builders/overriding.html).
 
 ## Overriding sdist's (source builds)
+
+- `overrides-sdist.nix`
 ```nix
 {{#include ../../../templates/overriding/overrides-sdist.nix}}
 ```
@@ -10,15 +12,22 @@ For more detailed information on overriding, see [`pyproject.nix`](https://nix-c
 The proper solution for this would be for [`uv` to lock build systems](https://github.com/astral-sh/uv/issues/5190).
 
 ## Overriding wheels (pre-built binaries)
+
+- `overrides-wheels.nix`
 ```nix
 {{#include ../../../templates/overriding/overrides-wheels.nix}}
 ```
 
 Long term this situation could be improved by [PEP-725](https://peps.python.org/pep-0725/).
 
-## pyproject.toml
+- `pyproject.toml`
 ```toml
 {{#include ../../../templates/overriding/pyproject.toml}}
+```
+
+- `flake.nix`
+```toml
+{{#include ../../../templates/overriding/flake.nix}}
 ```
 
 ## Resources
