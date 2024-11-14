@@ -24,7 +24,12 @@ let
     ;
   inherit (pyproject-nix.build.lib) isBootstrapPackage renderers;
   inherit (pyproject-nix.lib) pypa;
-  inherit (builtins) toJSON nixVersion;
+  inherit (builtins)
+    toJSON
+    nixVersion
+    replaceStrings
+    baseNameOf
+    ;
 
   parseGitURL =
     url:
@@ -60,6 +65,54 @@ let
       throw "Could not parse git url: ${url}";
 
   mkSpec = dependencies: listToAttrs (map (dep: nameValuePair dep.name dep.extra) dependencies);
+
+  unquoteURL =
+    replaceStrings
+      [
+        "%21"
+        "%23"
+        "%24"
+        "%26"
+        "%27"
+        "%28"
+        "%29"
+        "%2A"
+        "%2B"
+        "%2C"
+        "%2F"
+        "%3A"
+        "%3B"
+        "%3D"
+        "%3F"
+        "%40"
+        "%5B"
+        "%5D"
+      ]
+      [
+        "!"
+        "#"
+        "$"
+        "&"
+        "'"
+        "("
+        ")"
+        "*"
+        "+"
+        ","
+        "/"
+        ":"
+        ";"
+        "="
+        "?"
+        "@"
+        "["
+        "]"
+      ];
+
+  # `uv pip install` requires precisely matching the expected wheel file names.
+  # fetchurl doesn't un-escape the name, leaving percent encoding characters in the filename
+  # resulting in install failures.
+  srcFilename = url: unquoteURL (baseNameOf url);
 
 in
 
@@ -221,17 +274,23 @@ in
         else if (isPypi || isURL) && format == "pyproject" then
           fetchurl { inherit (package.sdist) url hash; }
         else if isURL && format == "wheel" then
+          let
+            wheel = findFirst (
+              whl: whl.url == source.url
+            ) (throw "Wheel URL ${source.url} not found in list of wheels: ${package.wheels}") package.wheels;
+          in
           fetchurl {
-            inherit
-              (findFirst (
-                whl: whl.url == source.url
-              ) (throw "Wheel URL ${source.url} not found in list of wheels: ${package.wheels}") package.wheels)
+            name = srcFilename wheel.url;
+            inherit (wheel)
               url
               hash
               ;
           }
         else if format == "wheel" then
-          fetchurl { inherit (selectedWheel) url hash; }
+          fetchurl {
+            name = srcFilename selectedWheel.url;
+            inherit (selectedWheel) url hash;
+          }
         else
           throw "Unhandled state: could not derive src for package '${package.name}' from: ${toJSON source}";
 
