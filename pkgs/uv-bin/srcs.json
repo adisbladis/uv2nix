@@ -1,20 +1,20 @@
 {
-  "version": "0.5.1",
+  "version": "0.5.2",
   "platforms": {
-    "aarch64-apple-darwin": "240bc4dc0d424ce652746ea030e61798c07e3d22426c0e0fb46d1b408078df91",
-    "aarch64-unknown-linux-gnu": "aab7f31071c548e3ce64de5f622494f8d8679ef838d5b07e53e74399d14ee79f",
-    "aarch64-unknown-linux-musl": "f7b2b4dfb45d6a6c1b98ce1b40b0a3b67b72263f5f722fc8b452d340325fd169",
-    "arm-unknown-linux-musleabihf": "0205c18b606dd9e496bd664190ab380da27cedb09a84857367431c48bec71c82",
-    "armv7-unknown-linux-gnueabihf": "f91a59e1fbd3f913464841afd6d7a65b570b2e9255e8df0b36866a8ccbe82833",
-    "armv7-unknown-linux-musleabihf": "6285fc7f9c3c6872c55846fe57c643e47ba8fabf3c8be825ccbbd373369dba5c",
-    "i686-unknown-linux-gnu": "db2950f841070db17192fbba149aebfe64f4087eb6ba842974a03ee12c66fddb",
-    "i686-unknown-linux-musl": "bac54f3c4afc0508fc91d03091dbce87efc8ab30e8d6ed2fcb7b9fc23533d040",
-    "powerpc64-unknown-linux-gnu": "40c415fa19fbaa4fe7452bea6248a381cc509c43eb25aa77b1d207b4d201987a",
-    "powerpc64le-unknown-linux-gnu": "1ce2764b411864597309fc331a31009dfb44abdd5ce767b83e4fa8208b9a7a9a",
-    "powerpc64le-unknown-linux-musl": "44239fdc81cd3eaf510683009aea1728cd7f647aea8b5901fa6e17071e77cbfa",
-    "s390x-unknown-linux-gnu": "362fbe64935721239c7e75e96ad1b313b30a2fc13b4a87470a5ff040c883bf2c",
-    "x86_64-apple-darwin": "817c11ee1808a775290d694c28090e032076be2c97e04c3fb7d5563a2aa52041",
-    "x86_64-unknown-linux-gnu": "942e29ff6769b096c7c99e9c3b1c08276869667d0d5d6121852dd9b9d875b3f3",
-    "x86_64-unknown-linux-musl": "c446a98876ed86c810a80621a43e2378c35f39794020f8de99da72b003b17dd5"
+    "aarch64-apple-darwin": "b4dc200d88ee9a8c9c3d5c755d9641fdf0e22b7d77239b4eeda08f204571f871",
+    "aarch64-unknown-linux-gnu": "e118c53908dc5baf779319129ed93ac783796fbe0b8416db03066877f0425ee6",
+    "aarch64-unknown-linux-musl": "4de0933b3a2dbdbf0bc17579ddda21e13d1a2cd6dfbc644e45ddab558f45e827",
+    "arm-unknown-linux-musleabihf": "926a0f6effd0439360fef7a6726320f0a5212da2259e68046882d4f32e69e933",
+    "armv7-unknown-linux-gnueabihf": "01e9c31b32f894b8e7b500991dfb35ed7f110d4c91ee9b2ead5f0408d8d91df5",
+    "armv7-unknown-linux-musleabihf": "b099de4fa747ea34f3f96122906143bf48de4c1c2529348e0651c95b53a0eea4",
+    "i686-unknown-linux-gnu": "c91111b470608555c3ed4dc140071d7b041be7fd4a3328cf5ed2ffc5b011b024",
+    "i686-unknown-linux-musl": "ce67a80b31785268e7252521565b8aca7db8cf7d2f5b4a712a3173d919ad6e33",
+    "powerpc64-unknown-linux-gnu": "ca6c5dd9f02dbf97b0dce1005ff299632a36a9bc28dd343f26a5ae7aaae4d778",
+    "powerpc64le-unknown-linux-gnu": "2c60b1537b82c0c873ca0666b69452775566c4519a85efab51f47e2e3e59841a",
+    "powerpc64le-unknown-linux-musl": "14126a436daf913c86fad68e13db002e7c92ced381a72e8f2df186c1a729a9cf",
+    "s390x-unknown-linux-gnu": "cad1e4ad85f29fc73ec8fe79b1c0498fdea8e0071e38ecacb953633f1b553c71",
+    "x86_64-apple-darwin": "00bf6b346cc8fcf57df7653f48fc4bad1b47c6024f75e96e32e3193e9bc8ff73",
+    "x86_64-unknown-linux-gnu": "d2d9d4b9ce536ab7ebb09d33629694385a3ebb72d156ae0b4dd28c9b6f6cbd13",
+    "x86_64-unknown-linux-musl": "61c386972ce13850cf20308de0be98a056d932e58d4154d1aec663714ac57067"
   }
 }
