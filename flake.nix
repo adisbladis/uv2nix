@@ -174,6 +174,7 @@
                 nativeBuildInputs = [ self.formatter.${system} ];
               }
               ''
+                export HOME=$(mktemp -d)
                 cp -r ${self} $(stripHash "${self}")
                 chmod -R +w .
                 cd source
