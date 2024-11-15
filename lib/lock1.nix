@@ -24,6 +24,7 @@ let
     head
     listToAttrs
     any
+    throwIf
     ;
 
 in
@@ -115,47 +116,50 @@ fix (self: {
 
       # Reduce dependency candidates down to the one resolved dependency.
       reduceDependencies =
-        attrs:
-        let
-          result = mapAttrs (
-            name: candidates:
-            if isAttrs candidates then
-              candidates # Already reduced
-            else if length candidates == 1 then
-              (head candidates).package
-            # Ambigious, filter further
-            else
-              let
-                # Get version declarations for this package from all other packages
-                versions = concatMap (
-                  n:
-                  let
-                    package = attrs.${n};
-                  in
-                  if isList package then
-                    map (pkg: pkg.version) (
-                      concatMap (pkg: filter (x: x.name == name) pkg.package.dependencies) package
-                    )
-                  else if isAttrs package then
-                    map (pkg: pkg.version) (filter (x: x.name == name) package.dependencies)
-                  else
-                    throw "Unhandled type: ${typeOf package}"
-                ) depNames;
-                # Filter candidates by possible versions
-                filtered =
-                  if length versions > 0 then
-                    filter (candidate: elem candidate.package.version versions) candidates
-                  else
-                    candidates;
-              in
-              filtered
-          ) attrs;
-          done = all isAttrs (attrValues result);
-        in
-        if done then result else reduceDependencies result;
+        i: attrs:
+        if i >= 100 then
+          throw "Infinite recursion: Could not resolve dependencies. Conflicting groups?"
+        else
+          let
+            result = mapAttrs (
+              name: candidates:
+              if isAttrs candidates then
+                candidates # Already reduced
+              else if length candidates == 1 then
+                (head candidates).package
+              # Ambigious, filter further
+              else
+                let
+                  # Get version declarations for this package from all other packages
+                  versions = concatMap (
+                    n:
+                    let
+                      package = attrs.${n};
+                    in
+                    if isList package then
+                      map (pkg: pkg.version) (
+                        concatMap (pkg: filter (x: x.name == name) pkg.package.dependencies) package
+                      )
+                    else if isAttrs package then
+                      map (pkg: pkg.version) (filter (x: x.name == name) package.dependencies)
+                    else
+                      throw "Unhandled type: ${typeOf package}"
+                  ) depNames;
+                  # Filter candidates by possible versions
+                  filtered =
+                    if length versions > 0 then
+                      filter (candidate: elem candidate.package.version versions) candidates
+                    else
+                      candidates;
+                in
+                filtered
+            ) attrs;
+            done = all isAttrs (attrValues result);
+          in
+          if done then result else reduceDependencies (i + 1) result;
 
     in
-    reduceDependencies allDependencies;
+    reduceDependencies 0 allDependencies;
 
   /*
     Check if a package is a local package.
@@ -220,9 +224,10 @@ fix (self: {
       resolution-markers ? [ ],
       supported-markers ? [ ],
       options ? { },
+      conflicts ? [ ],
     }:
     assert version == 1;
-    {
+    throwIf (conflicts != [ ]) "Conflicting resolutions not yet supported" {
       inherit version;
       requires-python = pep440.parseVersionConds requires-python;
       manifest = self.parseManifest manifest;
