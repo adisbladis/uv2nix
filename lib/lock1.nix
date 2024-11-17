@@ -130,25 +130,27 @@ fix (self: {
               # Ambigious, filter further
               else
                 let
-                  # Get version declarations for this package from all other packages
-                  versions = concatMap (
+                  # Get version declarations for this package from all other packages to use as a filter
+                  versions' = concatMap (
                     n:
                     let
                       package = attrs.${n};
+                      versions =
+                        if isList package then
+                          map (pkg: pkg.version) (
+                            concatMap (pkg: filter (x: x.name == name) pkg.package.dependencies) package
+                          )
+                        else if isAttrs package then
+                          map (pkg: pkg.version) (filter (x: x.name == name) package.dependencies)
+                        else
+                          throw "Unhandled type: ${typeOf package}";
                     in
-                    if isList package then
-                      map (pkg: pkg.version) (
-                        concatMap (pkg: filter (x: x.name == name) pkg.package.dependencies) package
-                      )
-                    else if isAttrs package then
-                      map (pkg: pkg.version) (filter (x: x.name == name) package.dependencies)
-                    else
-                      throw "Unhandled type: ${typeOf package}"
+                    if versions != [ ] then [ versions ] else [ ]
                   ) depNames;
-                  # Filter candidates by possible versions
+
                   filtered =
-                    if length versions > 0 then
-                      filter (candidate: elem candidate.package.version versions) candidates
+                    if length versions' > 0 then
+                      filter (candidate: all (versions: elem candidate.package.version versions) versions') candidates
                     else
                       candidates;
                 in
