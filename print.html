@@ -1,0 +1,1399 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>uv2nix</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded affix "><li class="part-title">Usage</li><li class="chapter-item expanded "><div><strong aria-hidden="true">3.</strong> Basic usage</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage/hello-world.html"><strong aria-hidden="true">3.1.</strong> Hello world</a></li><li class="chapter-item expanded "><a href="usage/testing.html"><strong aria-hidden="true">3.2.</strong> Testing</a></li><li class="chapter-item expanded "><a href="usage/overriding.html"><strong aria-hidden="true">3.3.</strong> Overriding</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">4.</strong> Showcases</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="showcases/django.html"><strong aria-hidden="true">4.1.</strong> Django</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">Meta</li><li class="chapter-item expanded "><a href="FAQ.html"><strong aria-hidden="true">5.</strong> FAQ</a></li><li class="chapter-item expanded affix "><li class="part-title">Reference</li><li class="chapter-item expanded "><a href="lib/workspace.html"><strong aria-hidden="true">6.</strong> workspace</a></li><li class="chapter-item expanded "><a href="lib/lock1.html"><strong aria-hidden="true">7.</strong> lock1</a></li><li class="chapter-item expanded affix "><li class="part-title">Contributing</li><li class="chapter-item expanded "><a href="HACKING.html"><strong aria-hidden="true">8.</strong> Hacking</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">uv2nix</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/adisbladis/uv2nix" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p><code>uv2nix</code> takes a <a href="https://docs.astral.sh/uv/"><code>uv</code></a> <a href="https://docs.astral.sh/uv/concepts/workspaces/">workspace</a> and generates Nix derivations dynamically using pure Nix code.
+It's designed to be used both as a development environment manager, and to build production packages for projects.</p>
+<p>It is heavily based on <a href="https://nix-community.github.io/pyproject.nix"><code>pyproject.nix</code></a> and it's <a href="https://nix-community.github.io/pyproject.nix/build.html">build infrastructure</a>.</p>
+<p>Disclaimer: <code>uv2nix</code> is new and experimental.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/adisbladis/uv2nix/edit/master/doc/src/introduction.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<h2 id="classic-nix"><a class="header" href="#classic-nix">Classic Nix</a></h2>
+<p>Documentation examples in <code>uv2nix</code> are using Flakes for the convenience of grouping multiple concepts into a single file.</p>
+<p>You can just as easily import <code>uv2nix</code> without using Flakes:</p>
+<pre><code class="language-nix">let
+  pkgs = import &lt;nixpkgs&gt; { };
+  inherit (pkgs) lib;
+
+  pyproject-nix = import (builtins.fetchGit {
+    url = "https://github.com/nix-community/pyproject.nix.git";
+  }) {
+    inherit lib;
+  };
+
+  uv2nix = import (builtins.fetchGit {
+    url = "https://github.com/adisbladis/uv2nix.git";
+  }) {
+    inherit pyproject-nix lib;
+  };
+
+in ...
+</code></pre>
+<h2 id="flakes"><a class="header" href="#flakes">Flakes</a></h2>
+<p>See <a href="usage/hello-world.html">usage/hello-world</a>.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/adisbladis/uv2nix/edit/master/doc/src/install.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="hello-world"><a class="header" href="#hello-world">Hello world</a></h1>
+<p>This example shows you how to set up a Uv workspace using <code>uv2nix</code>.</p>
+<p>It has the following features:</p>
+<ul>
+<li>
+<p>Creating package set from <code>uv.lock</code></p>
+</li>
+<li>
+<p>Development shells</p>
+<ul>
+<li>
+<p>One using <code>nix</code> to manage virtual environments</p>
+<p>With dependencies installed in editable mode.</p>
+</li>
+<li>
+<p>One using <code>uv</code> to manage virtual environments</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="flakenix"><a class="header" href="#flakenix">flake.nix</a></h2>
+<pre><code class="language-nix">{
+  description = "Hello world flake using uv2nix";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    pyproject-nix = {
+      url = "github:nix-community/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    uv2nix = {
+      url = "github:adisbladis/uv2nix";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  # Disclaimer: Uv2nix is new and experimental.
+  # Users are expected to be able to contribute fixes.
+  #
+  # Note that uv2nix is _not_ using Nixpkgs buildPythonPackage.
+  # It's using https://nix-community.github.io/pyproject.nix/build.html
+
+  outputs =
+    {
+      nixpkgs,
+      uv2nix,
+      pyproject-nix,
+      ...
+    }:
+    let
+      inherit (nixpkgs) lib;
+
+      # Load a uv workspace from a workspace root.
+      # Uv2nix treats all uv projects as workspace projects.
+      workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
+
+      # Create package overlay from workspace.
+      overlay = workspace.mkPyprojectOverlay {
+        # Prefer prebuilt binary wheels as a package source.
+        # Sdists are less likely to "just work" because of the metadata missing from uv.lock.
+        # Binary wheels are more likely to, but may still require overrides for library dependencies.
+        sourcePreference = "wheel"; # or sourcePreference = "sdist";
+        # Optionally customise PEP 508 environment
+        # environ = {
+        #   platform_release = "5.10.65";
+        # };
+      };
+
+      # Extend generated overlay with build fixups
+      #
+      # Uv2nix can only work with what it has, and uv.lock is missing essential metadata to perform some builds.
+      # This is an additional overlay implementing build fixups.
+      # See:
+      # - https://adisbladis.github.io/uv2nix/FAQ.html
+      pyprojectOverrides = _final: _prev: {
+        # Implement build fixups here.
+      };
+
+      # This example is only using x86_64-linux
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+
+      # Use Python 3.12 from nixpkgs
+      python = pkgs.python312;
+
+      # Construct package set
+      pythonSet =
+        # Use base package set from pyproject.nix builders
+        (pkgs.callPackage pyproject-nix.build.packages {
+          inherit python;
+        }).overrideScope
+          (lib.composeExtensions overlay pyprojectOverrides);
+
+    in
+    {
+      # Package a virtual environment as our main application.
+      #
+      # Enable no optional dependencies for production build.
+      packages.x86_64-linux.default = pythonSet.mkVirtualEnv "hello-world-env" workspace.deps.default;
+
+      # This example provides two different modes of development:
+      # - Impurely using uv to manage virtual environments
+      # - Pure development using uv2nix to manage virtual environments
+      devShells.x86_64-linux = {
+        # It is of course perfectly OK to keep using an impure virtualenv workflow and only use uv2nix to build packages.
+        # This devShell simply adds Python and undoes the dependency leakage done by Nixpkgs Python infrastructure.
+        impure = pkgs.mkShell {
+          packages = [
+            python
+            pkgs.uv
+          ];
+          shellHook = ''
+            unset PYTHONPATH
+          '';
+        };
+
+        # This devShell uses uv2nix to construct a virtual environment purely from Nix, using the same dependency specification as the application.
+        # The notable difference is that we also apply another overlay here enabling editable mode ( https://setuptools.pypa.io/en/latest/userguide/development_mode.html ).
+        #
+        # This means that any changes done to your local files do not require a rebuild.
+        uv2nix =
+          let
+            # Create an overlay enabling editable mode for all local dependencies.
+            editableOverlay = workspace.mkEditablePyprojectOverlay {
+              # Use environment variable
+              root = "$REPO_ROOT";
+              # Optional: Only enable editable for these packages
+              # members = [ "hello-world" ];
+            };
+
+            # Override previous set with our overrideable overlay.
+            editablePythonSet = pythonSet.overrideScope editableOverlay;
+
+            # Build virtual environment, with local packages being editable.
+            #
+            # Enable all optional dependencies for development.
+            virtualenv = editablePythonSet.mkVirtualEnv "hello-world-dev-env" workspace.deps.all;
+
+          in
+          pkgs.mkShell {
+            packages = [
+              virtualenv
+              pkgs.uv
+            ];
+            shellHook = ''
+              # Undo dependency propagation by nixpkgs.
+              unset PYTHONPATH
+              # Get repository root using git. This is expanded at runtime by the editable `.pth` machinery.
+              export REPO_ROOT=$(git rev-parse --show-toplevel)
+            '';
+          };
+      };
+    };
+}
+</code></pre>
+<h2 id="pyprojecttoml"><a class="header" href="#pyprojecttoml">pyproject.toml</a></h2>
+<pre><code class="language-nix">[project]
+name = "hello-world"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "&gt;=3.12"
+dependencies = [
+    "urllib3&gt;=2.2.3",
+]
+
+[project.scripts]
+hello = "hello_world:hello"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "ruff&gt;=0.6.7",
+]
+</code></pre>
+<h2 id="notes"><a class="header" href="#notes">Notes</a></h2>
+<p>In the interest of keeping documentation conceptually simple, no Flakes framework such as <code>flake-utils</code> or <code>flake-parts</code> are being used for this example.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/adisbladis/uv2nix/edit/master/doc/src/usage/hello-world.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="testing"><a class="header" href="#testing">Testing</a></h1>
+<p><code>uv2nix</code> uses the <a href="https://nix-community.github.io/pyproject.nix/build.html"><code>pyproject.nix</code> build infrastructure</a>.</p>
+<p>Unlike the nixpkgs, runtime &amp; test dependencies are not available at build time.
+Tests should instead be implemented as separate derivations.</p>
+<p>This example shows:</p>
+<ul>
+<li>Overriding a package adding tests to <code>passthru.tests</code></li>
+<li>Using <code>passthru.tests</code> in Flake checks</li>
+</ul>
+<h2 id="flakenix-1"><a class="header" href="#flakenix-1">flake.nix</a></h2>
+<pre><code class="language-nix">{
+  description = "Pytest flake using uv2nix";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    pyproject-nix = {
+      url = "github:nix-community/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    uv2nix = {
+      url = "github:adisbladis/uv2nix";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  # This example shows testing with pytest using uv2nix.
+  # You should first read and understand the hello-world example before this one.
+
+  outputs =
+    {
+      nixpkgs,
+      uv2nix,
+      pyproject-nix,
+      ...
+    }:
+    let
+      inherit (nixpkgs) lib;
+
+      forAllSystems = lib.genAttrs lib.systems.flakeExposed;
+
+      workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
+
+      overlay = workspace.mkPyprojectOverlay {
+        sourcePreference = "wheel";
+      };
+
+      editableOverlay = workspace.mkEditablePyprojectOverlay {
+        root = "$REPO_ROOT";
+      };
+
+      # Python sets grouped per system
+      pythonSets = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          inherit (pkgs) stdenv;
+
+          baseSet = pkgs.callPackage pyproject-nix.build.packages {
+            python = pkgs.python312;
+          };
+
+          # An overlay of build fixups &amp; test additions.
+          pyprojectOverrides = final: prev: {
+
+            # testing is the name of our example package
+            testing = prev.testing.overrideAttrs (old: {
+
+              passthru = old.passthru // {
+                # Put all tests in the passthru.tests attribute set.
+                # Nixpkgs also uses the passthru.tests mechanism for ofborg test discovery.
+                #
+                # For usage with Flakes we will refer to the passthru.tests attributes to construct the flake checks attribute set.
+                tests =
+                  let
+                    # Construct a virtual environment with only the test dependency-group enabled for testing.
+                    virtualenv = final.mkVirtualEnv "testing-pytest-env" {
+                      testing = [ "test" ];
+                    };
+
+                  in
+                  (old.tests or { })
+                  // {
+                    pytest = stdenv.mkDerivation {
+                      name = "${final.testing.name}-pytest";
+                      inherit (final.testing) src;
+                      nativeBuildInputs = [
+                        virtualenv
+                      ];
+                      dontConfigure = true;
+
+                      # Because this package is running tests, and not actually building the main package
+                      # the build phase is running the tests.
+                      #
+                      # In this particular example we also output a HTML coverage report, which is used as the build output.
+                      buildPhase = ''
+                        runHook preBuild
+                        pytest --cov tests --cov-report html
+                        runHook postBuild
+                      '';
+
+                      # Install the HTML coverage report into the build output.
+                      #
+                      # If you wanted to install multiple test output formats such as TAP outputs
+                      # you could make this derivation a multiple-output derivation.
+                      #
+                      # See https://nixos.org/manual/nixpkgs/stable/#chap-multiple-output for more information on multiple outputs.
+                      installPhase = ''
+                        runHook preInstall
+                        mv htmlcov $out
+                        runHook postInstall
+                      '';
+                    };
+
+                  };
+              };
+            });
+          };
+
+        in
+        baseSet.overrideScope (lib.composeExtensions overlay pyprojectOverrides)
+      );
+
+    in
+    {
+      # Construct flake checks from Python set
+      checks = forAllSystems (
+        system:
+        let
+          pythonSet = pythonSets.${system};
+        in
+        {
+          inherit (pythonSet.testing.passthru.tests) pytest;
+        }
+      );
+
+      # Expose Python virtual environments as packages.
+      packages = forAllSystems (
+        system:
+        let
+          pythonSet = pythonSets.${system};
+
+          # Add metadata attributes to the virtual environment.
+          # This is useful to inject meta and other attributes onto the virtual environment derivation.
+          #
+          # See
+          # - https://nixos.org/manual/nixpkgs/unstable/#chap-passthru
+          # - https://nixos.org/manual/nixpkgs/unstable/#chap-meta
+          addMeta =
+            drv:
+            drv.overrideAttrs (old: {
+              # Pass through tests from our package into the virtualenv so they can be discovered externally.
+              passthru = lib.recursiveUpdate (old.passthru or { }) {
+                inherit (pythonSet.testing.passthru) tests;
+              };
+
+              # Set meta.mainProgram for commands like `nix run`.
+              # https://nixos.org/manual/nixpkgs/stable/#var-meta-mainProgram
+              meta = (old.meta or { }) // {
+                mainProgram = "hello";
+              };
+            });
+
+        in
+        {
+          default = addMeta (pythonSet.mkVirtualEnv "testing-env" workspace.deps.default);
+          full = addMeta (pythonSet.mkVirtualEnv "testing-env-full" workspace.deps.all);
+        }
+      );
+
+      # Use an editable Python set for development.
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          editablePythonSet = pythonSets.${system}.overrideScope editableOverlay;
+          virtualenv = editablePythonSet.mkVirtualEnv "testing-dev-env" workspace.deps.all;
+        in
+        {
+          default = pkgs.mkShell {
+            packages = [
+              virtualenv
+              pkgs.uv
+            ];
+            shellHook = ''
+              unset PYTHONPATH
+              export REPO_ROOT=$(git rev-parse --show-toplevel)
+              export UV_NO_SYNC=1
+            '';
+          };
+        }
+      );
+    };
+}
+</code></pre>
+<h2 id="pyprojecttoml-1"><a class="header" href="#pyprojecttoml-1">pyproject.toml</a></h2>
+<pre><code class="language-nix">[project]
+name = "testing"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "&gt;=3.12"
+
+[project.scripts]
+hello = "testing:hello"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+  "ruff&gt;=0.7.2",
+  {include-group = "test"}
+]
+test = [
+  "pytest-cov&gt;=6.0.0",
+  "pytest&gt;=8.3.3",
+]
+</code></pre>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/adisbladis/uv2nix/edit/master/doc/src/usage/testing.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="overriding"><a class="header" href="#overriding">Overriding</a></h1>
+<p>For more detailed information on overriding, see <a href="https://nix-community.github.io/pyproject.nix/builders/overriding.html"><code>pyproject.nix</code></a>.</p>
+<h2 id="overriding-sdists-source-builds"><a class="header" href="#overriding-sdists-source-builds">Overriding sdist's (source builds)</a></h2>
+<ul>
+<li><code>overrides-sdist.nix</code></li>
+</ul>
+<pre><code class="language-nix">{ pkgs }:
+final: prev: {
+
+  pyzmq = prev.pyzmq.overrideAttrs (old: {
+
+    # Use the zeromq library from nixpkgs.
+    #
+    # If not provided by the system pyzmq will build a zeromq library
+    # as a part of it's package build, taking unnecessary time &amp; effort.
+    buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zeromq ];
+
+    # uv.lock does not contain build-system metadata.
+    # Meaning that for source builds, this needs to be provided by overriding.
+    #
+    # Pyproject.nix contains some of the most important build-system's already,
+    # so you don't have to add these to your project.
+    #
+    # For a comprehensive list see
+    # https://github.com/nix-community/pyproject.nix/tree/master/build/pkgs
+    #
+    # For build-systems that are not present in this list you can either:
+    # - Add it to your `uv` project
+    # - Add it manually in an overlay
+    # - Submit a PR to pyproject.nix adding the system
+    #   This will potentially be rejected.
+    #   Pyproject.nix only aims to contain a base set.
+    nativeBuildInputs = old.nativeBuildInputs ++ [
+      (final.resolveBuildSystem {
+        cmake = [ ];
+        ninja = [ ];
+        packaging = [ ];
+        pathspec = [ ];
+        scikit-build-core = [ ];
+        cython = [ ];
+      })
+    ];
+
+  });
+
+}
+</code></pre>
+<p>The proper solution for this would be for <a href="https://github.com/astral-sh/uv/issues/5190"><code>uv</code> to lock build systems</a>.</p>
+<h2 id="overriding-wheels-pre-built-binaries"><a class="header" href="#overriding-wheels-pre-built-binaries">Overriding wheels (pre-built binaries)</a></h2>
+<ul>
+<li><code>overrides-wheels.nix</code></li>
+</ul>
+<pre><code class="language-nix">{ pkgs }:
+_final: prev: {
+
+  # Wheels are automatically patched using autoPatchelfHook.
+  #
+  # For manylinux wheels the appropriate packages are added
+  # as described in https://peps.python.org/pep-0599/ and various other PEPs.
+  #
+  # Some packages provide binary libraries as a part of their binary wheels,
+  # others expect libraries to be provided by the system.
+  #
+  # Numba depends on libtbb, of a more recent version than nixpkgs provides in it's default tbb attribute.
+  numba = prev.numba.overrideAttrs (old: {
+    buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.tbb_2021_11 ];
+  });
+
+}
+</code></pre>
+<p>Long term this situation could be improved by <a href="https://peps.python.org/pep-0725/">PEP-725</a>.</p>
+<ul>
+<li><code>pyproject.toml</code></li>
+</ul>
+<pre><code class="language-toml">[project]
+name = "overriding"
+version = "0.1.0"
+description = "Show how to override dependencies"
+readme = "README.md"
+authors = [
+    { name = "adisbladis", email = "adisbladis@gmail.com" }
+]
+requires-python = "&gt;=3.12"
+dependencies = [
+    "numba&gt;=0.60.0",
+    "pyzmq&gt;=26.2.0",
+]
+
+[project.scripts]
+overriding = "overriding:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+no-binary-package = [
+  "pyzmq"  # Force source builds
+]
+</code></pre>
+<ul>
+<li><code>flake.nix</code></li>
+</ul>
+<pre><code class="language-toml">{
+  description = "Uv2nix overriding example";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    pyproject-nix = {
+      url = "github:nix-community/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    uv2nix = {
+      url = "github:adisbladis/uv2nix";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs =
+    {
+      nixpkgs,
+      uv2nix,
+      pyproject-nix,
+      ...
+    }:
+    let
+      inherit (nixpkgs) lib;
+
+      forAllSystems = lib.genAttrs lib.systems.flakeExposed;
+
+      workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
+
+      overlay = workspace.mkPyprojectOverlay {
+        sourcePreference = "wheel";
+      };
+
+      pythonSets = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+
+          baseSet = pkgs.callPackage pyproject-nix.build.packages {
+            python = pkgs.python312;
+          };
+
+          overlays = [
+            overlay
+            # Note: Files are only split for documentation structuring purposes.
+            # This is not considered a best practice.
+            (import ./overrides-sdist.nix { inherit pkgs; })
+            (import ./overrides-wheels.nix { inherit pkgs; })
+          ];
+
+        in
+        baseSet.overrideScope (lib.composeManyExtensions overlays)
+      );
+
+    in
+    {
+      packages = forAllSystems (
+        system:
+        let
+          pythonSet = pythonSets.${system};
+        in
+        {
+          default = pythonSet.mkVirtualEnv "overriding-env" workspace.deps.default;
+        }
+      );
+    };
+}
+</code></pre>
+<h2 id="resources"><a class="header" href="#resources">Resources</a></h2>
+<ul>
+<li>
+<p><a href="usage/../FAQ.html#why-doesnt-uv2nix-come-with-overrides"><code>uv2nix</code> FAQ on overrides</a></p>
+</li>
+<li>
+<p><a href="https://nix-community.github.io/pyproject.nix/builders/overriding.html"><code>pyproject.nix</code> overriding docs</a>.</p>
+</li>
+<li>
+<p><a href="https://nix-community.github.io/pyproject.nix/builders/hacks.html"><code>pyproject.nix</code> override hacks</a>.</p>
+<p>Override utility functions</p>
+</li>
+<li>
+<p><a href="https://github.com/TyberiusPrime/uv2nix_hammer_overrides/"><code>uv2nix_hammer_overrides</code></a></p>
+<p>Third party overrides collection</p>
+</li>
+</ul>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/adisbladis/uv2nix/edit/master/doc/src/usage/overriding.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="django"><a class="header" href="#django">Django</a></h1>
+<p>Building on the previous simple testing example we're building a web application using Django.</p>
+<p>This example aims to be a showcase of many different capabilities &amp; possibilites of <code>uv2nix</code>:</p>
+<ul>
+<li>
+<p>Packaging a web application using Django</p>
+</li>
+<li>
+<p>Using Django's <a href="https://docs.djangoproject.com/en/5.1/howto/static-files/">staticfiles</a> app</p>
+</li>
+<li>
+<p>Constructing Docker containers</p>
+<p>Using <code>dockerTools</code> from nixpkgs.</p>
+</li>
+<li>
+<p>Creating NixOS modules for <code>uv2nix</code> apps</p>
+<p>With accompanying NixOS tests.</p>
+<p>A real-world deployment should use a reverse proxy, for example <code>nginx</code>.
+Use this documentation as inspiration, not as a best practices guide.</p>
+</li>
+</ul>
+<h2 id="flakenix-2"><a class="header" href="#flakenix-2">flake.nix</a></h2>
+<pre><code class="language-nix">{
+  description = "Django application using uv2nix";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    pyproject-nix = {
+      url = "github:nix-community/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    uv2nix = {
+      url = "github:adisbladis/uv2nix";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs =
+    {
+      self,
+      nixpkgs,
+      uv2nix,
+      pyproject-nix,
+      ...
+    }:
+    let
+      inherit (nixpkgs) lib;
+      forAllSystems = lib.genAttrs lib.systems.flakeExposed;
+
+      asgiApp = "django_webapp.asgi:application";
+      settingsModules = {
+        prod = "django_webapp.settings";
+      };
+
+      workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
+
+      overlay = workspace.mkPyprojectOverlay {
+        sourcePreference = "wheel";
+      };
+
+      editableOverlay = workspace.mkEditablePyprojectOverlay {
+        root = "$REPO_ROOT";
+      };
+
+      # Python sets grouped per system
+      pythonSets = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          inherit (pkgs) stdenv;
+
+          # Base Python package set from pyproject.nix
+          baseSet = pkgs.callPackage pyproject-nix.build.packages {
+            python = pkgs.python312;
+          };
+
+          # An overlay of build fixups &amp; test additions
+          pyprojectOverrides = final: prev: {
+
+            # django-webapp is the name of our example package
+            django-webapp = prev.django-webapp.overrideAttrs (old: {
+
+              # Add tests to passthru.tests
+              #
+              # These attribute are used in Flake checks.
+              passthru = old.passthru // {
+                tests =
+                  (old.tests or { })
+                  // {
+
+                    # Run mypy checks
+                    mypy =
+                      let
+                        venv = final.mkVirtualEnv "django-webapp-typing-env" {
+                          django-webapp = [ "typing" ];
+                        };
+                      in
+                      stdenv.mkDerivation {
+                        name = "${final.django-webapp.name}-mypy";
+                        inherit (final.django-webapp) src;
+                        nativeBuildInputs = [
+                          venv
+                        ];
+                        dontConfigure = true;
+                        dontInstall = true;
+                        buildPhase = ''
+                          mkdir $out
+                          mypy --strict . --junit-xml $out/junit.xml
+                        '';
+                      };
+
+                    # Run pytest with coverage reports installed into build output
+                    pytest =
+                      let
+                        venv = final.mkVirtualEnv "django-webapp-pytest-env" {
+                          django-webapp = [ "test" ];
+                        };
+                      in
+                      stdenv.mkDerivation {
+                        name = "${final.django-webapp.name}-pytest";
+                        inherit (final.django-webapp) src;
+                        nativeBuildInputs = [
+                          venv
+                        ];
+
+                        dontConfigure = true;
+
+                        buildPhase = ''
+                          runHook preBuild
+                          pytest --cov tests --cov-report html tests
+                          runHook postBuild
+                        '';
+
+                        installPhase = ''
+                          runHook preInstall
+                          mv htmlcov $out
+                          runHook postInstall
+                        '';
+                      };
+                  }
+                  // lib.optionalAttrs stdenv.isLinux {
+
+                    # NixOS module test
+                    nixos =
+                      let
+                        venv = final.mkVirtualEnv "django-webapp-nixos-test-env" {
+                          django-webapp = [ ];
+                        };
+                      in
+                      pkgs.nixosTest {
+                        name = "django-webapp-nixos-test";
+
+                        nodes.machine =
+                          { ... }:
+                          {
+                            imports = [
+                              self.nixosModules.django-webapp
+                            ];
+
+                            services.django-webapp = {
+                              enable = true;
+                              inherit venv;
+                            };
+
+                            system.stateVersion = "24.11";
+                          };
+
+                        testScript = ''
+                          machine.wait_for_unit("django-webapp.service")
+
+                          with subtest("Web interface getting ready"):
+                              machine.wait_until_succeeds("curl -fs localhost:8000")
+                        '';
+                      };
+
+                  };
+              };
+            });
+
+          };
+
+        in
+        baseSet.overrideScope (lib.composeExtensions overlay pyprojectOverrides)
+      );
+
+      # Django static roots grouped per system
+      staticRoots = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          inherit (pkgs) stdenv;
+
+          pythonSet = pythonSets.${system};
+
+          venv = pythonSet.mkVirtualEnv "django-webapp-env" workspace.deps.default;
+
+        in
+        stdenv.mkDerivation {
+          name = "django-webapp-static";
+          inherit (pythonSet.django-webapp) src;
+
+          dontConfigure = true;
+          dontBuild = true;
+
+          nativeBuildInputs = [
+            venv
+          ];
+
+          installPhase = ''
+            env DJANGO_STATIC_ROOT="$out" python manage.py collectstatic
+          '';
+        }
+      );
+
+    in
+    {
+      checks = forAllSystems (
+        system:
+        let
+          pythonSet = pythonSets.${system};
+        in
+        # Inherit tests from passthru.tests into flake checks
+        pythonSet.django-webapp.passthru.tests
+      );
+
+      nixosModules = {
+        django-webapp =
+          {
+            config,
+            lib,
+            pkgs,
+            ...
+          }:
+
+          let
+            cfg = config.services.django-webapp;
+            inherit (pkgs) system;
+
+            pythonSet = pythonSets.${system};
+
+            inherit (lib.options) mkOption;
+            inherit (lib.modules) mkIf;
+          in
+          {
+            options.services.django-webapp = {
+              enable = mkOption {
+                type = lib.types.bool;
+                default = false;
+                description = ''
+                  Enable django-webapp
+                '';
+              };
+
+              settings-module = mkOption {
+                type = lib.types.string;
+                default = settingsModules.prod;
+                description = ''
+                  Django settings module
+                '';
+              };
+
+              venv = mkOption {
+                type = lib.types.package;
+                default = pythonSet.mkVirtualEnv "django-webapp-env" workspace.deps.default;
+                description = ''
+                  Django-webapp virtual environment package
+                '';
+              };
+
+              static-root = mkOption {
+                type = lib.types.package;
+                default = staticRoots.${system};
+                description = ''
+                  Django-webapp static root
+                '';
+              };
+            };
+
+            config = mkIf cfg.enable {
+              systemd.services.django-webapp = {
+                description = "Django Webapp server";
+
+                environment.DJANGO_STATIC_ROOT = cfg.static-root;
+
+                serviceConfig = {
+                  ExecStart = ''
+                    ${cfg.venv}/bin/daphne django_webapp.asgi:application
+                  '';
+                  Restart = "on-failure";
+
+                  DynamicUser = true;
+                  StateDirectory = "django-webapp";
+                  RuntimeDirectory = "django-webapp";
+
+                  BindReadOnlyPaths = [
+                    "${
+                      config.environment.etc."ssl/certs/ca-certificates.crt".source
+                    }:/etc/ssl/certs/ca-certificates.crt"
+                    builtins.storeDir
+                    "-/etc/resolv.conf"
+                    "-/etc/nsswitch.conf"
+                    "-/etc/hosts"
+                    "-/etc/localtime"
+                  ];
+                };
+
+                wantedBy = [ "multi-user.target" ];
+              };
+            };
+
+          };
+
+      };
+
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          pythonSet = pythonSets.${system};
+        in
+        lib.optionalAttrs pkgs.stdenv.isLinux {
+          # Expose Docker container in packages
+          docker =
+            let
+              venv = pythonSet.mkVirtualEnv "django-webapp-env" workspace.deps.default;
+            in
+            pkgs.dockerTools.buildLayeredImage {
+              name = "django-webapp";
+              contents = [ pkgs.cacert ];
+              config = {
+                Cmd = [
+                  "${venv}/bin/daphne"
+                  asgiApp
+                ];
+                Env = [
+                  "DJANGO_SETTINGS_MODULE=${settingsModules.prod}"
+                  "DJANGO_STATIC_ROOT=${staticRoots.${system}}"
+                ];
+              };
+            };
+        }
+      );
+
+      # Use an editable Python set for development.
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          editablePythonSet = pythonSets.${system}.overrideScope editableOverlay;
+          venv = editablePythonSet.mkVirtualEnv "django-webapp-dev-env" {
+            django-webapp = [ "dev" ];
+          };
+        in
+        {
+          default = pkgs.mkShell {
+            packages = [
+              venv
+              pkgs.uv
+            ];
+            shellHook = ''
+              unset PYTHONPATH
+              export REPO_ROOT=$(git rev-parse --show-toplevel)
+              export UV_NO_SYNC=1
+            '';
+          };
+        }
+      );
+    };
+}
+</code></pre>
+<h2 id="pyprojecttoml-2"><a class="header" href="#pyprojecttoml-2">pyproject.toml</a></h2>
+<pre><code class="language-nix">[project]
+name = "django-webapp"
+version = "0.1.0"
+description = "A django web application developed &amp; deployed using uv2nix"
+readme = "README.md"
+requires-python = "&gt;=3.12"
+dependencies = [
+    "django&gt;=5.1.3",
+    "daphne&gt;=4.1.2",
+]
+
+[dependency-groups]
+dev = [
+  {include-group = "test"},
+  {include-group = "typing"},
+  {include-group = "lint"},
+]
+typing = [
+  "django-stubs[compatible-mypy]&gt;=5.1.1",
+  "mypy&gt;=1.13.0",
+]
+test = [
+  "pytest-cov&gt;=6.0.0",
+  "pytest-django&gt;=4.9.0",
+  "pytest&gt;=8.3.3",
+]
+lint = [
+  "ruff&gt;=0.7.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "django_webapp.settings"
+
+[tool.mypy]
+exclude =  ["manage.py"]
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "django_webapp.settings"
+</code></pre>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/adisbladis/uv2nix/edit/master/doc/src/showcases/django.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="faq"><a class="header" href="#faq">FAQ</a></h1>
+<h2 id="my-package-foo-doesnt-build"><a class="header" href="#my-package-foo-doesnt-build">My package $foo doesn't build!</a></h2>
+<p><code>uv2nix</code> can only work with what it has, and <code>uv.lock</code> metadata is notably absent of important metadata.</p>
+<p>For more details see <a href="./usage/overriding.html">overriding</a>.</p>
+<h2 id="why-doesnt-uv2nix-come-with-overrides"><a class="header" href="#why-doesnt-uv2nix-come-with-overrides">Why doesn't uv2nix come with overrides?</a></h2>
+<p>Users coming from <a href="https://github.com/nix-community/poetry2nix">poetry2nix</a> may be surprised to find that uv2nix doesn't come with any bundled overrides.</p>
+<p>Overrides are required because Python tooling is lacking important metadata, complexity which surfaces when using Nix.
+Uv2nix focuses on getting the translation from <code>pyproject.toml</code> &amp; <code>uv.lock</code> to Nix right, without trying to taper over deficiencies in metadata.</p>
+<p>In poetry2nix much of the requirement of overriding came from it's choice to build sdist's by default.
+uv2nix doesn't have a default package source preference, instead requiring users to make that choice.
+Binary wheels are much more likely to "just work", making it feasible to use uv2nix without an overrides collection at all.
+Maintaining overrides was the <a href="https://github.com/nix-community/poetry2nix/issues/1865#issue-2640023203">biggest source of maintainer burnout for poetry2nix</a>.</p>
+<p>Users will either have to maintain their own set of overrides, or use a third-party override collection.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/adisbladis/uv2nix/edit/master/doc/src/FAQ.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-workspace"><a class="header" href="#sec-functions-library-workspace">workspace</a></h1>
+<h2 id="function-library-lib.workspace.loadWorkspace"><a class="header" href="#function-library-lib.workspace.loadWorkspace"><code>lib.workspace.loadWorkspace</code></a></h2>
+<p>Load a workspace from a workspace root</p>
+<h3 id="arguments"><a class="header" href="#arguments">Arguments</a></h3>
+<p><code>workspaceRoot</code>: Workspace root as a path</p>
+<p><code>config</code>: Config overrides for settings automatically inferred by <code>loadConfig</code></p>
+<p>Can be passed as either:</p>
+<ul>
+<li>An attribute set</li>
+<li>A function taking the generated config as an argument, and returning the augmented config</li>
+</ul>
+<h4 id="workspace-attributes"><a class="header" href="#workspace-attributes">Workspace attributes</a></h4>
+<ul>
+<li><code>mkPyprojectOverlay</code>: Create an overlay for usage with pyproject.nix's builders</li>
+<li><code>mkPyprojectEditableOverlay</code>: Generate an overlay to use with pyproject.nix's build infrastructure to install dependencies in editable mode.</li>
+<li><code>config</code>: Workspace config as loaded by <code>loadConfig</code></li>
+<li><code>deps</code>: Pre-defined dependency declarations for top-level workspace packages
+<ul>
+<li><code>default</code>: No optional-dependencies or dependency-groups enabled</li>
+<li><code>optionals</code>: All optional-dependencies enabled</li>
+<li><code>groups</code>: All dependency-groups enabled</li>
+<li><code>all</code>: All optional-dependencies &amp; dependency-groups enabled</li>
+</ul>
+</li>
+</ul>
+<h2 id="function-library-lib.workspace.loadConfig"><a class="header" href="#function-library-lib.workspace.loadConfig"><code>lib.workspace.loadConfig</code></a></h2>
+<p>Load supported configuration from workspace</p>
+<p>Supports:</p>
+<ul>
+<li>tool.uv.no-binary</li>
+<li>tool.uv.no-build</li>
+<li>tool.uv.no-binary-packages</li>
+<li>tool.uv.no-build-packages</li>
+</ul>
+<h2 id="function-library-lib.workspace.discoverWorkspace"><a class="header" href="#function-library-lib.workspace.discoverWorkspace"><code>lib.workspace.discoverWorkspace</code></a></h2>
+<p>Discover workspace member directories from a workspace root.
+Returns a list of strings relative to the workspace root.</p>
+<p>structured function argument</p>
+<p>: <code>workspaceRoot</code></p>
+<p>: Workspace root directory</p>
+<p><code>pyproject</code></p>
+<p>: Workspace top-level pyproject.toml</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/adisbladis/uv2nix/edit/master/doc/src/lib/workspace.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="sec-functions-library-lock1"><a class="header" href="#sec-functions-library-lock1">lock1</a></h1>
+<h2 id="function-library-lib.lock1.resolveDependencies"><a class="header" href="#function-library-lib.lock1.resolveDependencies"><code>lib.lock1.resolveDependencies</code></a></h2>
+<p>Resolve dependencies from uv.lock
+.</p>
+<p>structured function argument</p>
+<p>: <code>lock</code></p>
+<p>: Lock file as parsed by parseLock</p>
+<p><code>environ</code></p>
+<p>: PEP-508 environment as returned by pyproject-nix.lib.pep508.mkEnviron</p>
+<p><code>dependencies</code></p>
+<p>: Top-level project dependencies: - as parsed by pyproject-nix.lib.pep621.parseDependencies - as filtered by pyproject-nix.lib.pep621.filterDependencies</p>
+<h2 id="function-library-lib.lock1.isLocalPackage"><a class="header" href="#function-library-lib.lock1.isLocalPackage"><code>lib.lock1.isLocalPackage</code></a></h2>
+<p>Check if a package is a local package.
+.</p>
+<p><code>package</code></p>
+<p>: Function argument</p>
+<h2 id="function-library-lib.lock1.getLocalPath"><a class="header" href="#function-library-lib.lock1.getLocalPath"><code>lib.lock1.getLocalPath</code></a></h2>
+<p>Get relative path for a local package
+.</p>
+<p><code>package</code></p>
+<p>: Function argument</p>
+<h2 id="function-library-lib.lock1.filterPackage"><a class="header" href="#function-library-lib.lock1.filterPackage"><code>lib.lock1.filterPackage</code></a></h2>
+<p>Filter dependencies/optional-dependencies/dev-dependencies from a uv.lock package entry
+.</p>
+<p><code>environ</code></p>
+<p>: Function argument</p>
+<h2 id="function-library-lib.lock1.parseLock"><a class="header" href="#function-library-lib.lock1.parseLock"><code>lib.lock1.parseLock</code></a></h2>
+<p>Parse unmarshaled uv.lock
+.</p>
+<h2 id="function-library-lib.lock1.parsePackage"><a class="header" href="#function-library-lib.lock1.parsePackage"><code>lib.lock1.parsePackage</code></a></h2>
+<p>Parse a package entry from uv.lock
+.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/adisbladis/uv2nix/edit/master/doc/src/lib/lock1.md">Edit this page on GitHub.</a>
+</footer><div style="break-before: page; page-break-before: always;"></div><h1 id="hacking"><a class="header" href="#hacking">Hacking</a></h1>
+<p>This document outlines hacking on <code>uv2nix</code> itself, and lays out it's project structure.</p>
+<h2 id="project-structure--testing"><a class="header" href="#project-structure--testing">Project structure &amp; testing</a></h2>
+<p>All Nix code lives in <code>lib/</code>. Each file has an implementation and a test suite.
+The attribute path to a an attribute <code>mkOverlay</code> in <code>lib/lock.nix</code> would be <code>lib.lock.mkOverlay</code>.</p>
+<p>A function in <code>lib/test.nix</code> maps over the public interface of the library and the test suite to generate coverage tests, ensuring that every exported symbol has at least one test covering it.</p>
+<p>Integration tests meaning tests that perform environment constructions &amp; builds lives in <code>test/</code> and are exposed through Flake checks.</p>
+<p>The manual you are reading right now is built from the <code>doc/</code> directory.
+To edit a specific page see the "Edit this page on GitHub" link in the footer for each respective page.</p>
+<h2 id="running-tests"><a class="header" href="#running-tests">Running tests</a></h2>
+<ul>
+<li>
+<p>Run the entire unit test suite
+<code>$ nix-unit --flake .#libTests</code></p>
+</li>
+<li>
+<p>Run unit tests for an individual function
+`$ nix-unit --flake .#libTests.lock.mkOverlay</p>
+</li>
+<li>
+<p>Run integration tests
+<code>$ nix flake check</code></p>
+</li>
+</ul>
+<h2 id="formatter"><a class="header" href="#formatter">Formatter</a></h2>
+<p>Before submitting a PR format the code with <code>nix fmt</code> and ensure Flake checks pass with <code>nix flake check</code>.</p>
+<footer id="open-on-gh"><hr style="margin-top: 5em;" />
+Found an issue? <a href="https://github.com/adisbladis/uv2nix/edit/master/doc/src/HACKING.md">Edit this page on GitHub.</a>
+</footer>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>
