@@ -103,7 +103,11 @@ fix (self: {
         map (
           package:
           nameValuePair package.name (loadUVPyproject {
-            projectRoot = workspaceRoot + "/${lock1.getLocalPath package}";
+            projectRoot =
+              let
+                localPath = lock1.getLocalPath package;
+              in
+              if localPath == "." then workspaceRoot else workspaceRoot + "/${localPath}";
           })
         ) localPackages
       );
