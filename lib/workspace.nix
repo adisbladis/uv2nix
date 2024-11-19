@@ -219,7 +219,7 @@ fix (self: {
         #
         # Mirror this behaviour by overriding both sets when cross compiling, but only override the
         # build host when doing native compilation.
-        if stdenv.buildPlatform != stdenv.hostPlatform then crossOverlay else overlay final prev;
+        if stdenv.buildPlatform != stdenv.hostPlatform then crossOverlay final prev else overlay final prev;
 
       /*
         Generate an overlay to use with pyproject.nix's build infrastructure to install dependencies in editable mode.
