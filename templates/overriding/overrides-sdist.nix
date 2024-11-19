@@ -16,7 +16,7 @@ final: prev: {
     # so you don't have to add these to your project.
     #
     # For a comprehensive list see
-    # https://github.com/nix-community/pyproject.nix/tree/master/build/pkgs
+    # https://github.com/pyproject-nix/pyproject.nix/tree/master/build/pkgs
     #
     # For build-systems that are not present in this list you can either:
     # - Add it to your `uv` project

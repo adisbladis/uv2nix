@@ -11,13 +11,13 @@ let
   inherit (pkgs) lib;
 
   pyproject-nix = import (builtins.fetchGit {
-    url = "https://github.com/nix-community/pyproject.nix.git";
+    url = "https://github.com/pyproject-nix/pyproject.nix.git";
   }) {
     inherit lib;
   };
 
   uv2nix = import (builtins.fetchGit {
-    url = "https://github.com/adisbladis/uv2nix.git";
+    url = "https://github.com/pyproject-nix/uv2nix.git";
   }) {
     inherit pyproject-nix lib;
   };
