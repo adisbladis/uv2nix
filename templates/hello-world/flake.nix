@@ -53,7 +53,7 @@
       # Uv2nix can only work with what it has, and uv.lock is missing essential metadata to perform some builds.
       # This is an additional overlay implementing build fixups.
       # See:
-      # - https://adisbladis.github.io/uv2nix/FAQ.html
+      # - https://pyproject-nix.github.io/uv2nix/FAQ.html
       pyprojectOverrides = _final: _prev: {
         # Implement build fixups here.
       };

@@ -14,4 +14,4 @@ https://matrix.to/#/#pyproject.nix:blad.is
 
 ## Docs
 
-https://adisbladis.github.io/uv2nix/
+https://pyproject-nix.github.io/uv2nix/
