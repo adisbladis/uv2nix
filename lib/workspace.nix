@@ -36,8 +36,9 @@ let
     removePrefix
     groupBy
     head
+    isString
     ;
-  inherit (builtins) readDir;
+  inherit (builtins) readDir hasContext;
   inherit (pyproject-nix.lib.project) loadUVPyproject; # Note: Maybe we want a loader that will just "remap-all-the-things" into standard attributes?
   inherit (pyproject-nix.lib) pep440 pep508;
 
@@ -90,7 +91,7 @@ fix (self: {
       # - A function taking the generated config as an argument, and returning the augmented config
       config ? { },
     }:
-    assert isPath workspaceRoot;
+    assert (isPath workspaceRoot || (isString workspaceRoot || hasContext workspaceRoot));
     assert isAttrs config || isFunction config;
     let
       pyproject = importTOML (workspaceRoot + "/pyproject.toml");
