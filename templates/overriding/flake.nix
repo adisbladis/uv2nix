@@ -14,6 +14,13 @@
       inputs.pyproject-nix.follows = "pyproject-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    pyproject-build-systems = {
+      url = "github:pyproject-nix/build-system-pkgs";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.uv2nix.follows = "uv2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -21,6 +28,7 @@
       nixpkgs,
       uv2nix,
       pyproject-nix,
+      pyproject-build-systems,
       ...
     }:
     let
@@ -44,6 +52,7 @@
           };
 
           overlays = [
+            pyproject-build-systems.overlays.default
             overlay
             # Note: Files are only split for documentation structuring purposes.
             # This is not considered a best practice.

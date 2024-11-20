@@ -14,6 +14,13 @@
       inputs.pyproject-nix.follows = "pyproject-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    pyproject-build-systems = {
+      url = "github:pyproject-nix/build-system-pkgs";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.uv2nix.follows = "uv2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -22,6 +29,7 @@
       nixpkgs,
       uv2nix,
       pyproject-nix,
+      pyproject-build-systems,
       ...
     }:
     let
@@ -161,7 +169,13 @@
           };
 
         in
-        baseSet.overrideScope (lib.composeExtensions overlay pyprojectOverrides)
+        baseSet.overrideScope (
+          lib.composeManyExtensions [
+            pyproject-build-systems.overlays.default
+            overlay
+            pyprojectOverrides
+          ]
+        )
       );
 
       # Django static roots grouped per system
