@@ -47,6 +47,10 @@ let
     pytest-cov.setuptools = [ ];
   };
 
+  buildSystems = import ./build-systems.nix {
+    inherit lib pyproject-nix;
+  };
+
   # Assemble overlay from spec
   pyprojectOverrides =
     final: prev:
@@ -84,7 +88,13 @@ let
             (pkgs.callPackage pyproject-nix.build.packages {
               python = interpreter;
             }).overrideScope
-              (lib.composeExtensions overlay pyprojectOverrides);
+              (
+                lib.composeManyExtensions [
+                  buildSystems
+                  overlay
+                  pyprojectOverrides
+                ]
+              );
 
         in
         # Render venv
@@ -247,6 +257,7 @@ let
           # Override package set with our overlays
           pythonSet = baseSet.overrideScope (
             lib.composeManyExtensions [
+              buildSystems
               overlay
               pyprojectOverrides
               editableOverlay
