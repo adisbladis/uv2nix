@@ -14,6 +14,13 @@
       inputs.pyproject-nix.follows = "pyproject-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    pyproject-build-systems = {
+      url = "github:pyproject-nix/build-system-pkgs";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.uv2nix.follows = "uv2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   # Disclaimer: Uv2nix is new and experimental.
@@ -27,6 +34,7 @@
       nixpkgs,
       uv2nix,
       pyproject-nix,
+      pyproject-build-systems,
       ...
     }:
     let
@@ -70,7 +78,13 @@
         (pkgs.callPackage pyproject-nix.build.packages {
           inherit python;
         }).overrideScope
-          (lib.composeExtensions overlay pyprojectOverrides);
+          (
+            lib.composeManyExtensions [
+              pyproject-build-systems.overlays.default
+              overlay
+              pyprojectOverrides
+            ]
+          );
 
     in
     {
