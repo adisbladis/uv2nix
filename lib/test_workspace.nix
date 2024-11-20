@@ -182,4 +182,35 @@ in
       };
     };
 
+  # Test workspaceRoot passed as a string
+  # This is analogous to using Flake inputs which are passed as contextful strings.
+  loadWorkspace.stringlyWorkspace =
+    let
+      mkTestSet =
+        workspaceRoot:
+        let
+          ws = workspace.loadWorkspace { inherit workspaceRoot; };
+
+          overlay = ws.mkPyprojectOverlay { sourcePreference = "wheel"; };
+
+          pythonSet =
+            (pkgs.callPackage pyproject-nix.build.packages {
+              python = pkgs.python312;
+            }).overrideScope
+              overlay;
+        in
+        pythonSet;
+
+      wsRoot = "${./fixtures/workspace-flat}";
+      testSet = mkTestSet wsRoot;
+
+    in
+    {
+      # Test that the stringly src lookup is correct relative to the workspace root
+      testStringlySrc = {
+        expr = testSet."pkg-a".src == "${wsRoot}/packages/pkg-a";
+        expected = true;
+      };
+    };
+
 }
