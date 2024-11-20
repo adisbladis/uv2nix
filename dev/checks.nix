@@ -47,9 +47,7 @@ let
     pytest-cov.setuptools = [ ];
   };
 
-  buildSystems = import ./build-systems.nix {
-    inherit lib pyproject-nix;
-  };
+  buildSystems = import ./build-systems.nix;
 
   # Assemble overlay from spec
   pyprojectOverrides =

@@ -67,7 +67,6 @@ in
         in
         pkgs.callPackage (buildRemotePackage package) {
           pyprojectHook = null;
-          pyprojectBootstrapHook = null;
           pyprojectWheelHook = null;
           inherit python sourcePreference;
         };

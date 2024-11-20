@@ -22,7 +22,7 @@ let
     mapAttrs
     groupBy
     ;
-  inherit (pyproject-nix.build.lib) isBootstrapPackage renderers;
+  inherit (pyproject-nix.build.lib) renderers;
   inherit (pyproject-nix.lib) pypa;
   inherit (builtins)
     toJSON
@@ -195,7 +195,6 @@ in
       autoPatchelfHook,
       pythonManylinuxPackages,
       unzip,
-      pyprojectBootstrapHook,
       pyprojectHook,
       pyprojectWheelHook,
       sourcePreference ? defaultSourcePreference,
@@ -325,9 +324,7 @@ in
 
         nativeBuildInputs =
           lib.optional (lib.hasSuffix ".zip" (src.passthru.url or "")) unzip
-          ++ lib.optional (format == "pyproject") (
-            if isBootstrapPackage package.name then pyprojectBootstrapHook else pyprojectHook
-          )
+          ++ lib.optional (format == "pyproject") pyprojectHook
           ++ lib.optional (format == "wheel") pyprojectWheelHook
           ++ lib.optional (format == "wheel" && stdenv.isLinux) autoPatchelfHook;
       }

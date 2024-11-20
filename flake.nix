@@ -146,9 +146,7 @@
                     uv2nix = self;
                     self = flake;
                     pyproject-build-systems = {
-                      overlays.default = import ./dev/build-systems.nix {
-                        inherit pyproject-nix lib;
-                      };
+                      overlays.default = import ./dev/build-systems.nix;
                     };
                   };
                 in
