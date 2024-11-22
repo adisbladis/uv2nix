@@ -303,8 +303,10 @@ fix (self: {
           # Dependency specifications with will all groups
           groups = mapAttrs (_: package: attrNames package.dev-dependencies) packages';
 
-          # Dependency specification with no optional dependencies
-          default = mapAttrs (_: _: [ ]) packages';
+          # Dependency specification with default dependencies
+          default = mapAttrs (
+            name: _: workspaceProjects.${name}.pyproject.tool.uv.default-groups or [ ]
+          ) packages';
         };
     };
 
