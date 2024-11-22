@@ -27,7 +27,7 @@
   # Users are expected to be able to contribute fixes.
   #
   # Note that uv2nix is _not_ using Nixpkgs buildPythonPackage.
-  # It's using https://nix-community.github.io/pyproject.nix/build.html
+  # It's using https://pyproject-nix.github.io/pyproject.nix/build.html
 
   outputs =
     {

@@ -1,9 +1,6 @@
 version = 1
 requires-python = ">=3.12"
 
-[options]
-exclude-newer = "2024-08-21T10:06:00Z"
-
 [manifest]
 members = [
     "pkg-a",

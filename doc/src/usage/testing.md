@@ -1,6 +1,6 @@
 # Testing
 
-`uv2nix` uses the [`pyproject.nix` build infrastructure](https://nix-community.github.io/pyproject.nix/build.html).
+`uv2nix` uses the [`pyproject.nix` build infrastructure](https://pyproject-nix.github.io/pyproject.nix/build.html).
 
 Unlike the nixpkgs, runtime & test dependencies are not available at build time.
 Tests should instead be implemented as separate derivations.

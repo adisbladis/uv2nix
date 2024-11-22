@@ -195,7 +195,7 @@ fix (self: {
       /*
         Generate an overlay to use with pyproject.nix's build infrastructure.
 
-        See https://nix-community.github.io/pyproject.nix/lib/build.html
+        See https://pyproject-nix.github.io/pyproject.nix/lib/build.html
       */
       mkPyprojectOverlay =
         {
@@ -229,7 +229,7 @@ fix (self: {
       /*
         Generate an overlay to use with pyproject.nix's build infrastructure to install dependencies in editable mode.
 
-        See https://nix-community.github.io/pyproject.nix/lib/build.html
+        See https://pyproject-nix.github.io/pyproject.nix/lib/build.html
       */
       mkEditablePyprojectOverlay =
         {

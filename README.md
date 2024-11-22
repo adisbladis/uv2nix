@@ -1,7 +1,7 @@
 # Uv2nix - Ingest uv workspaces using Nix
 
 Ingest [uv](https://docs.astral.sh/uv/) workspace using [Nix](https://nixos.org/).
-Powered by [pyproject.nix](https://nix-community.github.io/pyproject.nix/).
+Powered by [pyproject.nix](https://github.com/pyproject-nix/pyproject.nix).
 
 ## Status
 
