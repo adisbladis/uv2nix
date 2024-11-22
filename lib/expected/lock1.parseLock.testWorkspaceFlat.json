@@ -6,7 +6,7 @@
     ]
   },
   "options": {
-    "exclude-newer": "2024-08-21T10:06:00Z",
+    "exclude-newer": null,
     "prerelease-mode": null,
     "resolution-mode": null
   },
