@@ -118,7 +118,7 @@ fix (self: {
       reduceDependencies =
         i: attrs:
         if i >= 100 then
-          throw "Infinite recursion: Could not resolve dependencies. Conflicting groups?"
+          throw "Infinite recursion: Could not resolve dependencies."
         else
           let
             result = mapAttrs (
@@ -130,6 +130,19 @@ fix (self: {
               # Ambigious, filter further
               else
                 let
+                  filterDeps' = package: let
+                    filtered' = filter (x: x.name == name) package.dependencies;
+                  in
+                    if length filtered' > 1 then (
+                      throw ''
+                        Non disjoint install time resolution for package '${name}' depending on multiple versions of '${package.name}'.
+
+                        You are most likely using an older version of uv to produce uv.lock which contains marker bugs.
+                        Re-lock with a later version of uv and try again.
+                      ''
+                    )
+                    else filtered';
+
                   # Get version declarations for this package from all other packages to use as a filter
                   versions' = concatMap (
                     n:
@@ -138,10 +151,10 @@ fix (self: {
                       versions =
                         if isList package then
                           map (pkg: pkg.version) (
-                            concatMap (pkg: filter (x: x.name == name) pkg.package.dependencies) package
+                            concatMap (pkg: filterDeps' pkg.package) package
                           )
                         else if isAttrs package then
-                          map (pkg: pkg.version) (filter (x: x.name == name) package.dependencies)
+                          map (pkg: pkg.version) (filterDeps' package)
                         else
                           throw "Unhandled type: ${typeOf package}";
                     in
