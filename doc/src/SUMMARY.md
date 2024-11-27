@@ -13,6 +13,7 @@
 
 - [Patterns]()
   - [Testing](./patterns/testing.md)
+  - [Development scripts](./patterns/scripts.md)
 
 - [Showcases]()
   - [Django](./showcases/django.md)
