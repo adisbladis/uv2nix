@@ -5,16 +5,8 @@
     "enabled": true,
     "extends": ["schedule:weekly"]
   },
+  "ignorePaths": [ "lib/fixtures/**" ],
   "nix": {
     "enabled": true
-  },
-  "pep621": {
-    "enabled": false
-  },
-  "pip_requirements": {
-    "enabled": false
-  },
-  "python": {
-    "enabled": false
   }
 }
