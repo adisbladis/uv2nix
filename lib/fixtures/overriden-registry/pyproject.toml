@@ -1,0 +1,23 @@
+[project]
+name = "overriden-registry"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "adisbladis", email = "adisbladis@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+  "urllib3==2.2.3",
+  "attrs==23.1.0",
+]
+
+[project.scripts]
+overriden-registry = "overriden_registry:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+find-links = ["../kitchen-sink/"]

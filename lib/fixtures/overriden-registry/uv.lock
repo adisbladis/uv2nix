@@ -1,0 +1,33 @@
+version = 1
+requires-python = ">=3.12"
+
+[[package]]
+name = "attrs"
+version = "23.1.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f0/eb/fcb708c7bf5056045e9e98f62b93bd7467eb718b0202e7698eb11d66416c/attrs-23.1.0-py3-none-any.whl", hash = "sha256:1f28b4522cdc2fb4256ac1a020c78acf9cba2c6b461ccd2c126f3aa8e8335d04", size = 61160 },
+]
+
+[[package]]
+name = "overriden-registry"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "attrs" },
+    { name = "urllib3" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "attrs", specifier = "==23.1.0" },
+    { name = "urllib3", specifier = "==2.2.3" },
+]
+
+[[package]]
+name = "urllib3"
+version = "2.2.3"
+source = { registry = "../kitchen-sink" }
+wheels = [
+    { path = "urllib3-2.2.3-py3-none-any.whl" },
+]

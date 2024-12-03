@@ -273,13 +273,16 @@ fix (self: {
         {
           url ? null,
           filename ? null,
-          hash,
+          path ? null,
+          hash ? null,
           size ? null,
         }@whl:
-        assert (whl ? url) -> (!whl ? filename);
-        assert (whl ? filename) -> (!whl ? url);
+        # Assert mutually exclusive args
+        assert (whl ? url) -> (!whl ? filename && !whl ? path);
+        assert (whl ? filename) -> (!whl ? url && !whl ? path);
+        assert (whl ? path) -> (!whl ? url && !whl ? filename);
         {
-          inherit hash size;
+          inherit size;
         }
         // optionalAttrs (url != null) {
           inherit url;
@@ -288,6 +291,13 @@ fix (self: {
         // optionalAttrs (filename != null) {
           inherit filename;
           file' = parseWheelFileName filename;
+        }
+        // optionalAttrs (path != null) {
+          inherit path;
+          file' = parseWheelFileName (baseNameOf path);
+        }
+        // optionalAttrs (whl ? hash) {
+          inherit hash;
         };
 
       parseMetadata =

@@ -291,10 +291,19 @@ in
               ;
           }
         else if format == "wheel" then
-          fetchurl {
-            name = srcFilename selectedWheel.url;
-            inherit (selectedWheel) url hash;
-          }
+          (
+            # Fetch wheel from URL
+            if selectedWheel ? url then
+              (fetchurl {
+                name = srcFilename selectedWheel.url;
+                inherit (selectedWheel) url hash;
+              })
+            # Get wheel from local path
+            else if selectedWheel ? path then
+              (workspaceRoot + "/${source.registry}/${selectedWheel.path}")
+            else
+              throw "Internal uv2nix error: unsupported selected wheel: ${toJSON selectedWheel}"
+          )
         else
           throw "Unhandled state: could not derive src for package '${package.name}' from: ${toJSON source}";
 
