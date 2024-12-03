@@ -9,5 +9,5 @@
   "idna": "idna-3.7",
   "pip": "pip-20.3.1",
   "requests": "requests-2.32.3",
-  "urllib3": "urllib3-2.2.2"
+  "urllib3": "urllib3-2.2.3"
 }

@@ -244,6 +244,11 @@ in
             else
               "pyproject"
           )
+        else if isPath then
+          (
+
+            if compatibleWheels != [ ] then "wheel" else "pyproject"
+          )
         else
           "pyproject";
 
