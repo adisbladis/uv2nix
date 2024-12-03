@@ -130,18 +130,20 @@ fix (self: {
               # Ambigious, filter further
               else
                 let
-                  filterDeps' = package: let
-                    filtered' = filter (x: x.name == name) package.dependencies;
-                  in
-                    if length filtered' > 1 then (
-                      throw ''
+                  filterDeps' =
+                    package:
+                    let
+                      filtered' = filter (x: x.name == name) package.dependencies;
+                    in
+                    if length filtered' > 1 then
+                      (throw ''
                         Non disjoint install time resolution for package '${name}' depending on multiple versions of '${package.name}'.
 
                         You are most likely using an older version of uv to produce uv.lock which contains marker bugs.
                         Re-lock with a later version of uv and try again.
-                      ''
-                    )
-                    else filtered';
+                      '')
+                    else
+                      filtered';
 
                   # Get version declarations for this package from all other packages to use as a filter
                   versions' = concatMap (
@@ -150,9 +152,7 @@ fix (self: {
                       package = attrs.${n};
                       versions =
                         if isList package then
-                          map (pkg: pkg.version) (
-                            concatMap (pkg: filterDeps' pkg.package) package
-                          )
+                          map (pkg: pkg.version) (concatMap (pkg: filterDeps' pkg.package) package)
                         else if isAttrs package then
                           map (pkg: pkg.version) (filterDeps' package)
                         else
