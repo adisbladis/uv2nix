@@ -9,11 +9,11 @@
   - [Hello world](./usage/hello-world.md)
 
 - [Overriding](./overriding/index.md)
-  - [Build systems](./usage/overriding-build-systems.md)
 
 - [Patterns]()
   - [Testing](./patterns/testing.md)
   - [Development scripts](./patterns/scripts.md)
+  - [Overriding build systems](./patterns/overriding-build-systems.md)
 
 - [Showcases]()
   - [Django](./showcases/django.md)
