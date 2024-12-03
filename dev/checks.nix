@@ -184,6 +184,13 @@ let
         };
       };
 
+      overridenRegistry = mkCheck {
+        root = ../lib/fixtures/overriden-registry;
+        spec = {
+          overriden-registry = [ ];
+        };
+      };
+
       editable-workspace =
         let
           workspaceRoot = ../lib/fixtures/workspace;
