@@ -15,6 +15,8 @@
   - [Development scripts](./patterns/scripts.md)
   - [Overriding build systems](./patterns/overriding-build-systems.md)
 
+- [Platform quirks](./platform-quirks.md)
+
 - [Showcases]()
   - [Django](./showcases/django.md)
 
