@@ -5,7 +5,7 @@
 Unlike the nixpkgs, runtime & test dependencies are not available at build time.
 Tests should instead be implemented as separate derivations.
 
-This example shows:
+This usage pattern shows how to:
 - Overriding a package adding tests to `passthru.tests`
 - Using `passthru.tests` in Flake checks
 

@@ -7,10 +7,12 @@
 
 - [Basic usage]()
   - [Hello world](./usage/hello-world.md)
-  - [Testing](./usage/testing.md)
 
 - [Overriding](./overriding/index.md)
   - [Build systems](./usage/overriding-build-systems.md)
+
+- [Patterns]()
+  - [Testing](./patterns/testing.md)
 
 - [Showcases]()
   - [Django](./showcases/django.md)
