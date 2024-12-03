@@ -25,6 +25,7 @@ let
     listToAttrs
     any
     throwIf
+    optionalAttrs
     ;
 
 in
@@ -270,13 +271,23 @@ fix (self: {
     let
       parseWheel =
         {
-          url,
+          url ? null,
+          filename ? null,
           hash,
           size ? null,
-        }:
+        }@whl:
+        assert (whl ? url) -> (!whl ? filename);
+        assert (whl ? filename) -> (!whl ? url);
         {
-          inherit url hash size;
+          inherit hash size;
+        }
+        // optionalAttrs (url != null) {
+          inherit url;
           file' = parseWheelFileName (baseNameOf url);
+        }
+        // optionalAttrs (filename != null) {
+          inherit filename;
+          file' = parseWheelFileName filename;
         };
 
       parseMetadata =

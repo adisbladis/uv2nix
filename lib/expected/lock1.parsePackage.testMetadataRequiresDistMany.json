@@ -55,6 +55,14 @@
       "source": {},
       "version": null,
       "version'": null
+    },
+    {
+      "extra": [],
+      "marker": null,
+      "name": "urllib3",
+      "source": {},
+      "version": null,
+      "version'": null
     }
   ],
   "dev-dependencies": {},
@@ -151,6 +159,17 @@
             "str": "2.32.3"
           }
         },
+        "url": null
+      },
+      {
+        "directory": null,
+        "editable": null,
+        "extras": null,
+        "git": null,
+        "marker": null,
+        "name": "urllib3",
+        "path": "../urllib3-2.2.3-py3-none-any.whl",
+        "specifier": null,
         "url": null
       }
     ]
