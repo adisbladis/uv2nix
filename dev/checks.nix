@@ -11,56 +11,9 @@ let
     nameValuePair
     ;
 
-  # Overrides for nixpkgs buildPythonPackage
-  #
-  # Just enough overrides to make tests pass.
-  # This is not, and will not, become an overrides stdlib.
-
-  # Build system overrides for pyproject.nix's build infra
-  buildSystemOverrides = {
-    arpeggio = {
-      setuptools = [ ];
-      pytest-runner = [ ];
-    };
-    attrs = {
-      hatchling = [ ];
-      hatch-vcs = [ ];
-      hatch-fancy-pypi-readme = [ ];
-    };
-    tomli.flit-core = [ ];
-    coverage.setuptools = [ ];
-    blinker.setuptools = [ ];
-    certifi.setuptools = [ ];
-    charset-normalizer.setuptools = [ ];
-    idna.flit-core = [ ];
-    urllib3 = {
-      hatchling = [ ];
-      hatch-vcs = [ ];
-    };
-    pip = {
-      setuptools = [ ];
-      wheel = [ ];
-    };
-    packaging.flit-core = [ ];
-    requests.setuptools = [ ];
-    pysocks.setuptools = [ ];
-    pytest-cov.setuptools = [ ];
-  };
-
   buildSystems = import ./build-systems.nix;
 
-  # Assemble overlay from spec
-  pyprojectOverrides =
-    final: prev:
-    let
-      inherit (final) resolveBuildSystem;
-      addBuildSystems =
-        pkg: spec:
-        pkg.overrideAttrs (old: {
-          nativeBuildInputs = old.nativeBuildInputs ++ resolveBuildSystem spec;
-        });
-    in
-    lib.mapAttrs (name: spec: addBuildSystems prev.${name} spec) buildSystemOverrides;
+  buildSystemOverrides = import ./build-system-overrides.nix;
 
   mkCheck' =
     sourcePreference:
@@ -90,7 +43,7 @@ let
                 lib.composeManyExtensions [
                   buildSystems
                   overlay
-                  pyprojectOverrides
+                  buildSystemOverrides
                 ]
               );
 
@@ -257,7 +210,7 @@ let
             lib.composeManyExtensions [
               buildSystems
               overlay
-              pyprojectOverrides
+              buildSystemOverrides
               editableOverlay
             ]
           );

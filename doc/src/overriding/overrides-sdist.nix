@@ -12,18 +12,16 @@ final: prev: {
     # uv.lock does not contain build-system metadata.
     # Meaning that for source builds, this needs to be provided by overriding.
     #
-    # Pyproject.nix contains some of the most important build-system's already,
-    # so you don't have to add these to your project.
+    # Pyproject.nix's build-system-pkgs contains some of the most
+    # important build systems already, so you don't have to add these to your project.
     #
     # For a comprehensive list see
-    # https://github.com/pyproject-nix/pyproject.nix/tree/master/build/pkgs
+    # https://github.com/pyproject-nix/build-system-pkgs/blob/master/pyproject.toml
     #
     # For build-systems that are not present in this list you can either:
     # - Add it to your `uv` project
     # - Add it manually in an overlay
-    # - Submit a PR to pyproject.nix adding the system
-    #   This will potentially be rejected.
-    #   Pyproject.nix only aims to contain a base set.
+    # - Submit a PR to build-system-pkgs adding the build system
     nativeBuildInputs = old.nativeBuildInputs ++ [
       (final.resolveBuildSystem {
         cmake = [ ];
