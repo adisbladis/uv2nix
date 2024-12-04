@@ -5,15 +5,15 @@
 
 # Usage
 
-- [Basic usage]()
-  - [Hello world](./usage/hello-world.md)
+- [Basic usage](./usage/hello-world.md)
 
 - [Overriding](./overriding/index.md)
 
 - [Patterns]()
+  - [Overriding build systems](./patterns/overriding-build-systems.md)
   - [Testing](./patterns/testing.md)
   - [Development scripts](./patterns/scripts.md)
-  - [Overriding build systems](./patterns/overriding-build-systems.md)
+  - [Using `meta`](./patterns/meta.md)
 
 - [Platform quirks](./platform-quirks.md)
 
