@@ -176,6 +176,7 @@ fix (self: {
             callPackage (build.local {
               environ = environ';
               localProject = workspaceProjects.${name};
+              inherit package;
             }) { }
           else
             callPackage (buildRemotePackage package) { }

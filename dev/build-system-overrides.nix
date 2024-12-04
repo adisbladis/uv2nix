@@ -37,6 +37,7 @@ let
     requests.setuptools = [ ];
     pysocks.setuptools = [ ];
     pytest-cov.setuptools = [ ];
+    tqdm.setuptools = [ ];
   };
 
 in
