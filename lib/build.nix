@@ -119,7 +119,11 @@ in
 {
   # Build a local package
   local =
-    { localProject, environ, package }:
+    {
+      localProject,
+      environ,
+      package,
+    }:
     {
       stdenv,
       python,
@@ -130,43 +134,51 @@ in
       editableRoot ? null,
     }:
     let
-      attrs = if editableRoot == null then
-        renderers.mkDerivation
-          {
-            project = localProject;
-            inherit environ;
-          }
-          {
-            inherit pyprojectHook resolveBuildSystem;
-          }
-      else
-        renderers.mkDerivationEditable
-          {
-            project = localProject;
-            inherit environ;
-            root = editableRoot;
-          }
-          {
-            inherit
-              python
-              pyprojectHook
-              pythonPkgsBuildHost
-              resolveBuildSystem
-              ;
+      isEditable = editableRoot == null;
 
-          };
+      attrs =
+        if isEditable then
+          renderers.mkDerivation
+            {
+              project = localProject;
+              inherit environ;
+            }
+            {
+              inherit pyprojectHook resolveBuildSystem;
+            }
+        else
+          renderers.mkDerivationEditable
+            {
+              project = localProject;
+              inherit environ;
+              root = editableRoot;
+            }
+            {
+              inherit
+                python
+                pyprojectHook
+                pythonPkgsBuildHost
+                resolveBuildSystem
+                ;
+
+            };
 
     in
-      stdenv.mkDerivation (attrs // {
+    stdenv.mkDerivation (
+      attrs
+      // {
         # Take potentially dynamic fields from uv.lock package
         inherit (package) version;
 
         passthru = attrs.passthru // {
-          dependencies = mkSpec package.dependencies;
+          dependencies =
+            # Include build-system dependencies for editable mode by merging pyproject.toml rendered deps with uv.lock
+            (lib.optionalAttrs isEditable attrs.passthru.dependencies) // (mkSpec package.dependencies);
           optional-dependencies = mapAttrs (_: mkSpec) package.optional-dependencies;
           dependency-groups = mapAttrs (_: mkSpec) package.dev-dependencies;
         };
-      });
+      }
+    );
 
   /*
     Create a function returning an intermediate attributes set shared between builder implementations
