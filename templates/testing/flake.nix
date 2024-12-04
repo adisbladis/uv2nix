@@ -45,10 +45,6 @@
         sourcePreference = "wheel";
       };
 
-      editableOverlay = workspace.mkEditablePyprojectOverlay {
-        root = "$REPO_ROOT";
-      };
-
       # Python sets grouped per system
       pythonSets = forAllSystems (
         system:
@@ -137,63 +133,6 @@
         in
         {
           inherit (pythonSet.testing.passthru.tests) pytest;
-        }
-      );
-
-      # Expose Python virtual environments as packages.
-      packages = forAllSystems (
-        system:
-        let
-          pythonSet = pythonSets.${system};
-
-          # Add metadata attributes to the virtual environment.
-          # This is useful to inject meta and other attributes onto the virtual environment derivation.
-          #
-          # See
-          # - https://nixos.org/manual/nixpkgs/unstable/#chap-passthru
-          # - https://nixos.org/manual/nixpkgs/unstable/#chap-meta
-          addMeta =
-            drv:
-            drv.overrideAttrs (old: {
-              # Pass through tests from our package into the virtualenv so they can be discovered externally.
-              passthru = lib.recursiveUpdate (old.passthru or { }) {
-                inherit (pythonSet.testing.passthru) tests;
-              };
-
-              # Set meta.mainProgram for commands like `nix run`.
-              # https://nixos.org/manual/nixpkgs/stable/#var-meta-mainProgram
-              meta = (old.meta or { }) // {
-                mainProgram = "hello";
-              };
-            });
-
-        in
-        {
-          default = addMeta (pythonSet.mkVirtualEnv "testing-env" workspace.deps.default);
-          full = addMeta (pythonSet.mkVirtualEnv "testing-env-full" workspace.deps.all);
-        }
-      );
-
-      # Use an editable Python set for development.
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-          editablePythonSet = pythonSets.${system}.overrideScope editableOverlay;
-          virtualenv = editablePythonSet.mkVirtualEnv "testing-dev-env" workspace.deps.all;
-        in
-        {
-          default = pkgs.mkShell {
-            packages = [
-              virtualenv
-              pkgs.uv
-            ];
-            shellHook = ''
-              unset PYTHONPATH
-              export REPO_ROOT=$(git rev-parse --show-toplevel)
-              export UV_NO_SYNC=1
-            '';
-          };
         }
       );
     };
