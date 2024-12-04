@@ -1,11 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": [
+    "config:recommended"
+  ],
   "lockFileMaintenance": {
     "enabled": true,
-    "extends": ["schedule:weekly"]
+    "extends": [
+      "schedule:weekly"
+    ]
   },
-  "ignorePaths": [ "lib/fixtures/**" ],
+  "ignorePaths": [
+    "lib/fixtures/**"
+  ],
   "nix": {
     "enabled": true
   }
