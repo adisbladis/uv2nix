@@ -191,6 +191,17 @@ let
         };
       };
 
+      dynamicDeps = mkCheck {
+        name = "dynamic-deps";
+        root = ../lib/fixtures/dynamic-dependencies;
+        spec = {
+          dynamic-dependencies = [ ];
+        };
+        check = ''
+          python -c 'import tqdm'
+        '';
+      };
+
       editable-workspace =
         let
           workspaceRoot = ../lib/fixtures/workspace;
