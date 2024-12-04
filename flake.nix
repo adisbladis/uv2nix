@@ -88,6 +88,7 @@
 
               shellHook = ''
                 export UV_NO_SYNC=1
+                export UV_PYTHON_DOWNLOADS=never
               '';
             };
         in

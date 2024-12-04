@@ -106,6 +106,7 @@
           ];
           shellHook = ''
             unset PYTHONPATH
+            export UV_PYTHON_DOWNLOADS=never
           '';
         };
 
@@ -140,6 +141,13 @@
             shellHook = ''
               # Undo dependency propagation by nixpkgs.
               unset PYTHONPATH
+
+              # Don't create venv using uv
+              export UV_NO_SYNC=1
+
+              # Prevent uv from downloading managed Python's
+              export UV_PYTHON_DOWNLOADS=never
+
               # Get repository root using git. This is expanded at runtime by the editable `.pth` machinery.
               export REPO_ROOT=$(git rev-parse --show-toplevel)
             '';
