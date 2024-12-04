@@ -119,7 +119,7 @@ in
 {
   # Build a local package
   local =
-    { localProject, environ }:
+    { localProject, environ, package }:
     {
       stdenv,
       python,
@@ -129,8 +129,8 @@ in
       # Editable root as a string
       editableRoot ? null,
     }:
-    stdenv.mkDerivation (
-      if editableRoot == null then
+    let
+      attrs = if editableRoot == null then
         renderers.mkDerivation
           {
             project = localProject;
@@ -154,8 +154,20 @@ in
               resolveBuildSystem
               ;
 
-          }
-    );
+          };
+
+    in
+      stdenv.mkDerivation (attrs // {
+        # Take potentially dynamic fields from uv.lock package
+        inherit (package) version;
+
+        passthru = attrs.passthru // {
+          dependencies = mkSpec package.dependencies;
+          optional-dependencies = mapAttrs (_: mkSpec) package.optional-dependencies;
+          dependency-groups = mapAttrs (_: mkSpec) package.dev-dependencies;
+        };
+      });
+
   /*
     Create a function returning an intermediate attributes set shared between builder implementations
     .
