@@ -22,7 +22,14 @@ let
     inherit pyproject-nix lib;
   };
 
-in ...
+  pyproject-build-systems = import (builtins.fetchGit {
+    url = "https://github.com/pyproject-nix/build-system-pkgs.git";
+  }) {
+    inherit pyproject-nix uv2nix lib;
+  };
+
+in
+  ...
 ```
 
 ## Flakes
